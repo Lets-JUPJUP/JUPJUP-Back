@@ -1,5 +1,6 @@
 package efub.back.jupjup.global.exception;
 
+import efub.back.jupjup.domain.member.exception.InvalidNicknameException;
 import efub.back.jupjup.global.exception.custom.ApplicationException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +13,10 @@ import java.util.Objects;
 public enum ExceptionType {
     // 서버 자체 관련 - C0***
     UNHANDLED_EXCEPTION("C0000", "알 수 없는 서버 에러가 발생했습니다."),
-    METHOD_ARGUMENT_NOT_VALID_EXCEPTION("C0001", "요청 데이터가 잘못되었습니다.");
+    METHOD_ARGUMENT_NOT_VALID_EXCEPTION("C0001", "요청 데이터가 잘못되었습니다."),
+
+    //회원 관련 - C1***
+    INVALID_NICKNAME_EXCEPTION("C1000", "유효하지 않은 닉네임입니다.",InvalidNicknameException.class);
 
     private final String errorCode;
     private final String message;
