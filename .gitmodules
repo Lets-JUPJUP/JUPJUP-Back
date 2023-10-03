@@ -1,0 +1,3 @@
+[submodule "back-submodule"]
+	path = back-submodule
+	url = https://github.com/Lets-JUPJUP/back-submodule.git
