@@ -1,4 +1,4 @@
-package efub.back.jupjup.domain.Postjoinbutton.domain;
+package efub.back.jupjup.domain.postjoinbutton.domain;
 
 import efub.back.jupjup.global.BaseTimeEntity;
 
