@@ -1,5 +1,6 @@
 package efub.back.jupjup.domain.post.domain;
 
+import efub.back.jupjup.domain.post.dto.PostUpdateRequestDto;
 import efub.back.jupjup.global.BaseTimeEntity;
 import java.time.LocalDateTime;
 import javax.persistence.*;
@@ -50,7 +51,8 @@ public class Post extends BaseTimeEntity {
 	private Long memberId;
 
 	public Post(String title, String content, String startPlace,
-		LocalDateTime startDate, int minMember, int maxMember, Gender gender, AgeRange ageRange, LocalDateTime dueDate, Long memberId) {
+		LocalDateTime startDate, int minMember, int maxMember, Gender gender, AgeRange ageRange, LocalDateTime dueDate,
+		Long memberId) {
 		this.title = title;
 		this.content = content;
 		this.startPlace = startPlace;
@@ -61,5 +63,18 @@ public class Post extends BaseTimeEntity {
 		this.ageRange = ageRange;
 		this.dueDate = dueDate;
 		this.memberId = memberId;
+	}
+
+	// 플로깅 게시글 수정 메서드
+	public void update(PostUpdateRequestDto requestDto) {
+		this.title = title;
+		this.content = content;
+		this.startPlace = startPlace;
+		this.startDate = startDate;
+		this.minMember = minMember;
+		this.maxMember = maxMember;
+		this.gender = gender;
+		this.ageRange = ageRange;
+		this.dueDate = dueDate;
 	}
 }
