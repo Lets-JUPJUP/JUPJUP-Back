@@ -1,6 +1,8 @@
 package efub.back.jupjup.domain.post.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import efub.back.jupjup.domain.post.domain.Gender;
 import efub.back.jupjup.domain.post.domain.AgeRange;
 
@@ -23,5 +25,5 @@ public class PostRequestDto {
 	private Gender gender;
 	private AgeRange ageRange;
 	private LocalDateTime dueDate;
-	// Image 관련 필드 추가해야함
+	private List<String> images;
 }

@@ -4,7 +4,7 @@ import efub.back.jupjup.domain.post.domain.Gender;
 import efub.back.jupjup.domain.post.domain.AgeRange;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.member.domain.Member;
-import lombok.AccessLevel;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,7 +30,8 @@ public class PostResponseDto {
 	private LocalDateTime modifiedAt;
 	// Image 관련 필드 추가해야함
 
-	public PostResponseDto(Post post, Member member) {
+	public PostResponseDto (Post post, Member member) {
+
 		this.postId = post.getPostId();
 		this.title = post.getTitle();
 		this.hostnickname = member.getNickname();
@@ -42,7 +43,7 @@ public class PostResponseDto {
 		this.gender = post.getGender();
 		this.ageRange = post.getAgeRange();
 		this.dueDate = post.getDueDate();
-		this.createdAt=post.getCreatedAt();
-		this.modifiedAt=post.getModifiedAt();
+		this.createdAt = post.getCreatedAt();
+		this.modifiedAt = post.getModifiedAt();
 	}
 }

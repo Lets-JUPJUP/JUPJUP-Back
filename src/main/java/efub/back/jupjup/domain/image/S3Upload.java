@@ -31,6 +31,11 @@ public class S3Upload {
 		return presignedUrl;
 	}
 
+
+	/**
+	 * presigned url 유효 기간 설정
+	 * @return 유효기간
+	 */
 	private Date getPresignedUrlExpiration() {
 		Date expiration = new Date();
 		long expTimeMillis = expiration.getTime();
