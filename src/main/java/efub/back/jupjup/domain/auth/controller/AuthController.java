@@ -1,4 +1,4 @@
-package efub.back.jupjup.domain.auth;
+package efub.back.jupjup.domain.auth.controller;
 
 import efub.back.jupjup.domain.auth.dto.DemoResDto;
 import efub.back.jupjup.domain.security.exception.EmptyTokenException;
