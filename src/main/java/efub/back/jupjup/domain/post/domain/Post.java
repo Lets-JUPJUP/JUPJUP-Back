@@ -2,6 +2,9 @@ package efub.back.jupjup.domain.post.domain;
 
 import efub.back.jupjup.global.BaseTimeEntity;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 
 import lombok.AccessLevel;
@@ -38,11 +41,13 @@ public class Post extends BaseTimeEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private Gender gender;
+	private PostGender postGender;
 
+	@ElementCollection(targetClass = PostAgeRange.class, fetch = FetchType.EAGER)
+	@CollectionTable(name = "post_age_range", joinColumns = @JoinColumn(name = "post_id"))
 	@Enumerated(EnumType.STRING)
-	@Column(name = "age_range", nullable = false)
-	private AgeRange ageRange;
+	private List<PostAgeRange> postAgeRanges = new ArrayList<>();
+
 
 	@Column(name = "due_date", nullable = false)
 	private LocalDateTime dueDate;
@@ -52,7 +57,7 @@ public class Post extends BaseTimeEntity {
 
 	@Builder
 	public Post(String title, String content, String startPlace,
-		LocalDateTime startDate, int minMember, int maxMember, Gender gender, AgeRange ageRange, LocalDateTime dueDate,
+		LocalDateTime startDate, int minMember, int maxMember, PostGender postGender, List<PostAgeRange> postAgeRanges, LocalDateTime dueDate,
 		Long memberId) {
 		this.title = title;
 		this.content = content;
@@ -60,8 +65,8 @@ public class Post extends BaseTimeEntity {
 		this.startDate = startDate;
 		this.minMember = minMember;
 		this.maxMember = maxMember;
-		this.gender = gender;
-		this.ageRange = ageRange;
+		this.postGender = postGender;
+		this.postAgeRanges = postAgeRanges;
 		this.dueDate = dueDate;
 		this.memberId = memberId;
 	}

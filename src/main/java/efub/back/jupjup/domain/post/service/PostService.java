@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 import efub.back.jupjup.domain.image.S3Upload;
 import efub.back.jupjup.domain.member.domain.Member;
-import efub.back.jupjup.domain.post.domain.AgeRange;
-import efub.back.jupjup.domain.post.domain.Gender;
+import efub.back.jupjup.domain.post.domain.PostAgeRange;
+import efub.back.jupjup.domain.post.domain.PostGender;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.domain.PostImage;
 import efub.back.jupjup.domain.post.dto.ImageUploadRequestDto;
@@ -24,7 +24,6 @@ import efub.back.jupjup.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,12 +46,12 @@ public class PostService {
 		LocalDateTime startDate = requestDto.getStartDate();
 		Integer minMember = requestDto.getMinMember();
 		Integer maxMember = requestDto.getMaxMember();
-		Gender gender = requestDto.getGender();
-		AgeRange ageRange = requestDto.getAgeRange();
+		PostGender postGender = requestDto.getPostGender();
+		List<PostAgeRange> postAgeRanges = requestDto.getPostAgeRanges();
 		LocalDateTime dueDate = requestDto.getDueDate();
 		Long memberId = member.getId();
 
-		Post post = new Post(title, content, startPlace, startDate, minMember, maxMember, gender, ageRange, dueDate, memberId);
+		Post post = new Post(title, content, startPlace, startDate, minMember, maxMember, postGender, postAgeRanges, dueDate, memberId);
 		postRepository.save(post);
 
 		List<String> images = requestDto.getImages();

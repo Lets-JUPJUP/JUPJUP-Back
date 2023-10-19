@@ -1,8 +1,9 @@
 package efub.back.jupjup.domain.post.dto;
 
-import efub.back.jupjup.domain.post.domain.Gender;
-import efub.back.jupjup.domain.post.domain.AgeRange;
+import efub.back.jupjup.domain.post.domain.PostGender;
+import efub.back.jupjup.domain.post.domain.PostAgeRange;
 import efub.back.jupjup.domain.post.domain.Post;
+import efub.back.jupjup.domain.post.domain.PostImage;
 import efub.back.jupjup.domain.member.domain.Member;
 
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -23,12 +25,12 @@ public class PostResponseDto {
 	private LocalDateTime startDate;
 	private int minMember;
 	private int maxMember;
-	private Gender gender;
-	private AgeRange ageRange;
+	private PostGender postGender;
+	private List<PostAgeRange> postAgeRanges;
 	private LocalDateTime dueDate;
 	private LocalDateTime createdAt;
 	private LocalDateTime modifiedAt;
-	// Image 관련 필드 추가해야함
+	private List<String> imageUrls;
 
 	public PostResponseDto (Post post, Member member) {
 
@@ -40,8 +42,8 @@ public class PostResponseDto {
 		this.startDate = post.getStartDate();
 		this.minMember = post.getMinMember();
 		this.maxMember = post.getMaxMember();
-		this.gender = post.getGender();
-		this.ageRange = post.getAgeRange();
+		this.postGender = post.getPostGender();
+		this.postAgeRanges = post.getPostAgeRanges();
 		this.dueDate = post.getDueDate();
 		this.createdAt = post.getCreatedAt();
 		this.modifiedAt = post.getModifiedAt();

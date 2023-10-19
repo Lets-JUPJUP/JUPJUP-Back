@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Gender {
-	ANY("any"),
+public enum PostGender {
 	FEMALE("female"),
-	MALE("male");
+	MALE("male"),
+	NOT_DEFINED("not defined");
 
 	private final String description;
 }
