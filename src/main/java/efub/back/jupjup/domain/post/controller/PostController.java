@@ -13,7 +13,6 @@ import efub.back.jupjup.domain.post.dto.PostRequestDto;
 import efub.back.jupjup.domain.post.dto.PostResponseDto;
 import efub.back.jupjup.domain.post.service.PostService;
 import efub.back.jupjup.domain.security.userInfo.AuthUser;
-import efub.back.jupjup.global.response.StatusResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/posts")
+@RequestMapping("/posts")
 public class PostController {
 	private final PostService postService;
 	private final MemberService memberService;
@@ -31,7 +30,7 @@ public class PostController {
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public PostResponseDto createPost(
 		@AuthUser Member member,
-		@RequestPart(value = "dto") PostRequestDto requestDto) throws IOException {
+		@RequestBody PostRequestDto requestDto) throws IOException {
 
 		Post post = postService.addPost(member, requestDto);
 
