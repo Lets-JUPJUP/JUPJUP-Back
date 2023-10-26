@@ -67,7 +67,7 @@ public class Member extends BaseTimeEntity {
     }
 
     public boolean validateNickName(String nickname) {
-        if (Objects.isNull(nickname) || nickname.isBlank() || nickname.length() > 15 || !nickname.matches("[a-zA-Z0-9_]+") || nickname.equalsIgnoreCase(INFO_UNKNOWN)) {
+        if (Objects.isNull(nickname) || nickname.isBlank() || nickname.length() > 15 || !nickname.matches("[ㄱ-ㅎ가-힣a-zA-Z0-9_]+") || nickname.equalsIgnoreCase(INFO_UNKNOWN)) {
             throw new InvalidNicknameException();
         }else{
             return true;
