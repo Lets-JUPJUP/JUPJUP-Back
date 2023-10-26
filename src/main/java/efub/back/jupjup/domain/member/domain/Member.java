@@ -73,9 +73,13 @@ public class Member extends BaseTimeEntity {
             return true;
         }
     }
-    public void updateMember(String email) {
+    public void updateMember(String email, String ageRangeStr) {
         if (!this.email.equals(email)) {
             this.email = email;
+        }
+        AgeRange inputRange = AgeRange.fromString(ageRangeStr);
+        if(!this.ageRange.equals(inputRange)){
+            this.ageRange = inputRange;
         }
     }
     public void updateNickname(String nickname) {
