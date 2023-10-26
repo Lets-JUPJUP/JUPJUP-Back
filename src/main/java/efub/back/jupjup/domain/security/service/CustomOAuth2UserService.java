@@ -47,7 +47,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private Member saveOrUpdate(OAuth2UserInfo oAuth2UserInfo) {
         Member member = memberRepository.findByUsername(oAuth2UserInfo.getName())
                 .map(entity -> {
-                    entity.updateMember(oAuth2UserInfo.getEmail());
+                    entity.updateMember(oAuth2UserInfo.getEmail(), oAuth2UserInfo.getAgeRange());
                     return entity;
                 })
                 .orElseGet(() -> {
@@ -75,7 +75,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (member == null) {
             member = memberRepository.findByEmail(oAuth2UserInfo.getEmail()).orElseThrow(MemberNotFoundException::new);
-            member.updateMember(oAuth2UserInfo.getEmail());
+            member.updateMember(oAuth2UserInfo.getEmail(), oAuth2UserInfo.getAgeRange());
             return member;
         }
 

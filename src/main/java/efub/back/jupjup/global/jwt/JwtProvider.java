@@ -22,7 +22,7 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class JwtProvider { //TODO : 예외 처리
+public class JwtProvider {
     private final AuthExceptionHandler authExceptionHandler;
 
     private final UserDetailsServcieImpl userDetailsService;
@@ -168,7 +168,7 @@ public class JwtProvider { //TODO : 예외 처리
 
     public String tokenToEmail(String authorization){
         String accessToken = getAccessToken(authorization);
-        Claims claims = getClaims(accessToken); //TODO 임시로직 변경 필요
+        Claims claims = getClaims(accessToken);
         return claims.getSubject();
     }
     public String getAccessToken(String authorizationHeader) {
