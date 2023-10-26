@@ -91,7 +91,7 @@ public class SecurityConfig {
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedOrigin("https://kuddy.co.kr");
+        configuration.addAllowedOrigin("https://localhost:8080"); //TODO : 배포시 도메인 추가
         configuration.setAllowCredentials(true);
         configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
 
