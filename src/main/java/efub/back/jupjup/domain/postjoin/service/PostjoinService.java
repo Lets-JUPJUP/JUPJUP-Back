@@ -1,13 +1,13 @@
-package efub.back.jupjup.domain.postjoinbutton.service;
+package efub.back.jupjup.domain.postjoin.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.post.repository.PostRepository;
-import efub.back.jupjup.domain.postjoinbutton.domain.Postjoin;
-import efub.back.jupjup.domain.postjoinbutton.dto.PostjoinResponseDto;
-import efub.back.jupjup.domain.postjoinbutton.repository.PostjoinRepository;
+import efub.back.jupjup.domain.postjoin.domain.Postjoin;
+import efub.back.jupjup.domain.postjoin.dto.PostjoinResponseDto;
+import efub.back.jupjup.domain.postjoin.repository.PostjoinRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

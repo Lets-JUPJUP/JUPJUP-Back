@@ -1,10 +1,9 @@
-package efub.back.jupjup.domain.postjoinbutton.repository;
+package efub.back.jupjup.domain.postjoin.repository;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import efub.back.jupjup.domain.postjoinbutton.domain.Postjoin;
+import efub.back.jupjup.domain.postjoin.domain.Postjoin;
 
 public interface PostjoinRepository extends JpaRepository<Postjoin, Long> {
 	Optional<Postjoin> findByMemberIdAndPostId(Long memberId, Long postId);

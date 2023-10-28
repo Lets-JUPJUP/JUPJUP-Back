@@ -1,4 +1,4 @@
-package efub.back.jupjup.domain.postjoinbutton.dto;
+package efub.back.jupjup.domain.postjoin.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
