@@ -1,5 +1,6 @@
 package efub.back.jupjup.domain.post.domain;
 
+import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.global.BaseTimeEntity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ import lombok.NoArgsConstructor;
 public class Post extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long postId;
+	@Column(name = "post_id", updatable = false)
+	private Long Id;
 
 	@Column(nullable = false)
 	private String title;
@@ -40,7 +41,7 @@ public class Post extends BaseTimeEntity {
 	private int maxMember;
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
+	@Column(name = "post_gender", nullable = false)
 	private PostGender postGender;
 
 	@ElementCollection(targetClass = PostAgeRange.class, fetch = FetchType.EAGER)
@@ -48,17 +49,17 @@ public class Post extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private List<PostAgeRange> postAgeRanges = new ArrayList<>();
 
-
 	@Column(name = "due_date", nullable = false)
 	private LocalDateTime dueDate;
 
-	@Column(name = "member_id", nullable = false)
-	private Long memberId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id")
+	private Member author;
 
 	@Builder
 	public Post(String title, String content, String startPlace,
 		LocalDateTime startDate, int minMember, int maxMember, PostGender postGender, List<PostAgeRange> postAgeRanges, LocalDateTime dueDate,
-		Long memberId) {
+		Member author) {
 		this.title = title;
 		this.content = content;
 		this.startPlace = startPlace;
@@ -68,6 +69,6 @@ public class Post extends BaseTimeEntity {
 		this.postGender = postGender;
 		this.postAgeRanges = postAgeRanges;
 		this.dueDate = dueDate;
-		this.memberId = memberId;
+		this.author = author;
 	}
 }

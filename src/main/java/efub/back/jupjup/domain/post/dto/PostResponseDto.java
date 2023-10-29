@@ -14,12 +14,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 @Builder
 public class PostResponseDto {
-	private Long postId;
+	private Long id;
 	private String title;
-	private String hostnickname;
 	private String content;
 	private String startPlace;
 	private LocalDateTime startDate;
@@ -29,23 +27,24 @@ public class PostResponseDto {
 	private List<PostAgeRange> postAgeRanges;
 	private LocalDateTime dueDate;
 	private LocalDateTime createdAt;
-	private LocalDateTime modifiedAt;
-	private List<String> imageUrls;
+	private List<String> fileUrls;
+	private Long authorId;
 
-	public PostResponseDto (Post post, Member member) {
-
-		this.postId = post.getPostId();
-		this.title = post.getTitle();
-		this.hostnickname = member.getNickname();
-		this.content = post.getContent();
-		this.startPlace = post.getStartPlace();
-		this.startDate = post.getStartDate();
-		this.minMember = post.getMinMember();
-		this.maxMember = post.getMaxMember();
-		this.postGender = post.getPostGender();
-		this.postAgeRanges = post.getPostAgeRanges();
-		this.dueDate = post.getDueDate();
-		this.createdAt = post.getCreatedAt();
-		this.modifiedAt = post.getModifiedAt();
+	public static PostResponseDto of(Post post, List<String> imgUrlList) {
+		return PostResponseDto.builder()
+			.id(post.getId())
+			.title(post.getTitle())
+			.content(post.getContent())
+			.startPlace(post.getStartPlace())
+			.startDate(post.getStartDate())
+			.minMember(post.getMinMember())
+			.maxMember(post.getMaxMember())
+			.postGender(post.getPostGender())
+			.postAgeRanges(post.getPostAgeRanges())
+			.dueDate(post.getDueDate())
+			.createdAt(post.getCreatedAt())
+			.fileUrls(imgUrlList)
+			.authorId(post.getAuthor().getId())
+			.build();
 	}
 }
