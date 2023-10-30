@@ -1,6 +1,7 @@
 package efub.back.jupjup.domain.post.domain;
 
 import efub.back.jupjup.domain.member.domain.Member;
+import efub.back.jupjup.domain.member.domain.AgeRange;
 import efub.back.jupjup.global.BaseTimeEntity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

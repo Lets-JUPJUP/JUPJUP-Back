@@ -15,7 +15,7 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Member extends BaseTimeEntity {
-    public static final String FORBIDDEN_WORD = "unknown";
+    public static final String INFO_UNKNOWN = "unknown";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id", updatable = false)
@@ -67,15 +67,19 @@ public class Member extends BaseTimeEntity {
     }
 
     public boolean validateNickName(String nickname) {
-        if (Objects.isNull(nickname) || nickname.isBlank() || nickname.length() > 15 || !nickname.matches("[a-zA-Z0-9_]+") || nickname.equalsIgnoreCase(FORBIDDEN_WORD)) {
+        if (Objects.isNull(nickname) || nickname.isBlank() || nickname.length() > 15 || !nickname.matches("[ㄱ-ㅎ가-힣a-zA-Z0-9_]+") || nickname.equalsIgnoreCase(INFO_UNKNOWN)) {
             throw new InvalidNicknameException();
         }else{
             return true;
         }
     }
-    public void updateMember(String email) {
+    public void updateMember(String email, String ageRangeStr) {
         if (!this.email.equals(email)) {
             this.email = email;
+        }
+        AgeRange inputRange = AgeRange.fromString(ageRangeStr);
+        if(!this.ageRange.equals(inputRange)){
+            this.ageRange = inputRange;
         }
     }
     public void updateNickname(String nickname) {
@@ -111,9 +115,9 @@ public class Member extends BaseTimeEntity {
         }
     }
     public void withdrawInfoProcess(){
-        this.nickname = FORBIDDEN_WORD;
-        this.email = FORBIDDEN_WORD;
-        this.username = FORBIDDEN_WORD;
+        this.nickname = INFO_UNKNOWN;
+        this.email = INFO_UNKNOWN;
+        this.username = INFO_UNKNOWN;
         this.providerType = null;
         this.profileImageUrl = null;
         this.memberStatus = MemberStatus.WITHDRAWN;

@@ -1,8 +1,6 @@
 package efub.back.jupjup.domain.security.service;
 
-import efub.back.jupjup.domain.member.domain.Member;
-import efub.back.jupjup.domain.member.domain.MemberStatus;
-import efub.back.jupjup.domain.member.domain.RoleType;
+import efub.back.jupjup.domain.member.domain.*;
 import efub.back.jupjup.domain.member.repository.MemberRepository;
 import efub.back.jupjup.domain.security.userInfo.KakaoUserInfo;
 import efub.back.jupjup.domain.security.userInfo.PrincipalDetails;
@@ -19,7 +17,7 @@ import efub.back.jupjup.domain.member.exception.MemberNotFoundException;
 
 import java.util.Objects;
 
-import static efub.back.jupjup.domain.member.domain.Member.FORBIDDEN_WORD;
+import static efub.back.jupjup.domain.member.domain.Member.INFO_UNKNOWN;
 
 
 @Slf4j
@@ -49,12 +47,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private Member saveOrUpdate(OAuth2UserInfo oAuth2UserInfo) {
         Member member = memberRepository.findByUsername(oAuth2UserInfo.getName())
                 .map(entity -> {
-                    entity.updateMember(oAuth2UserInfo.getEmail());
+                    entity.updateMember(oAuth2UserInfo.getEmail(), oAuth2UserInfo.getAgeRange());
                     return entity;
                 })
                 .orElseGet(() -> {
                     if (!memberRepository.existsByEmail(oAuth2UserInfo.getEmail())) {
                         String nickname = oAuth2UserInfo.getNickname();
+                        log.info("카카오 닉네임 : " + nickname);
                         if(invalidateNickname(nickname)){
                             nickname = String.valueOf(System.currentTimeMillis());
                         }
@@ -64,6 +63,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                                 .profileImageUrl(oAuth2UserInfo.getProfileImageUrl())
                                 .username(oAuth2UserInfo.getName())
                                 .providerType(oAuth2UserInfo.getProvider())
+                                .ageRange(AgeRange.fromString(oAuth2UserInfo.getAgeRange()))
+                                .gender(oAuth2UserInfo.getGender() == null ? Gender.NOT_DEFINED : Gender.valueOf(oAuth2UserInfo.getGender().toUpperCase().trim()))
                                 .roleType(RoleType.MEMBER)
                                 .status(MemberStatus.ACTIVE)
                                 .build();
@@ -74,7 +75,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (member == null) {
             member = memberRepository.findByEmail(oAuth2UserInfo.getEmail()).orElseThrow(MemberNotFoundException::new);
-            member.updateMember(oAuth2UserInfo.getEmail());
+            member.updateMember(oAuth2UserInfo.getEmail(), oAuth2UserInfo.getAgeRange());
             return member;
         }
 
@@ -82,7 +83,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     public boolean invalidateNickname(String nickname) {
-        if (Objects.isNull(nickname) || nickname.isBlank() || nickname.length() > 15 || !nickname.matches("[a-zA-Z0-9_]+") || nickname.equalsIgnoreCase(FORBIDDEN_WORD)) {
+        if (Objects.isNull(nickname) || nickname.isBlank() || nickname.length() > 15 || !nickname.matches("[ㄱ-ㅎ가-힣a-zA-Z0-9_]+") || nickname.equalsIgnoreCase(INFO_UNKNOWN)) {
             return true;
         }
 
