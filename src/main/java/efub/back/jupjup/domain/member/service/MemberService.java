@@ -22,7 +22,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class MemberService {
+
     private final MemberRepository memberRepository;
+    
+  	public Member findMemberById(Long memberId) {
+	  	  return memberRepository.findById(memberId)
+		  	    .orElseThrow(() -> new IllegalArgumentException("해당하는 멤버가 존재하지 않습니다."));
+        }
 
     public ResponseEntity<StatusResponse> updateProfile(Member member, MemberReqDto memberReqDto) {
         member.updateNickname(memberReqDto.getNickname());
