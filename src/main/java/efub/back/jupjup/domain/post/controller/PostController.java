@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/posts")
+@RequestMapping("/api/v1/posts")
 public class PostController {
 	private final PostService postService;
 
@@ -28,8 +28,14 @@ public class PostController {
 
 	// 전체 게시글 조회 : 1개
 	@GetMapping("/{postId}")
-	public ResponseEntity<StatusResponse> getPost(@PathVariable Long postId){
-		return postService.getPost(postId);
+	public ResponseEntity<StatusResponse> getPost(@PathVariable Long postId, @AuthUser Member member){
+		return postService.getPost(postId, member);
+	}
+
+	// 전체 게시글 리스트 조회
+	@GetMapping("/list")
+	public ResponseEntity<StatusResponse> getPosts(@AuthUser Member member) {
+		return postService.getAllPosts(member);
 	}
 
 	// 게시글 삭제
