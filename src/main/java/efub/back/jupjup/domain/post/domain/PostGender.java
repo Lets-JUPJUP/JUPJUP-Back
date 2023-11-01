@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum PostGender {
 	FEMALE("female"),
 	MALE("male"),
-	NOT_DEFINED("not defined");
+	ANY("any");
 
 	private final String description;
 }
