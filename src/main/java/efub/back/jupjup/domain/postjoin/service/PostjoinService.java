@@ -24,8 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 public class PostjoinService {
 	private final PostjoinRepository postjoinRepository;
 	private final PostRepository postRepository;
-
-	private final PostService postService;
 	private final MemberService memberService;
 
 	// 플로깅 모집 신청하기
