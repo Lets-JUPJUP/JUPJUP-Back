@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import efub.back.jupjup.domain.image.S3Upload;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.post.domain.Post;
+import efub.back.jupjup.domain.post.domain.PostAgeRange;
 import efub.back.jupjup.domain.post.domain.PostGender;
 import efub.back.jupjup.domain.post.domain.PostImage;
 import efub.back.jupjup.domain.post.dto.ImageUploadRequestDto;
@@ -105,6 +106,48 @@ public class PostService {
 
 		PostGender postGender = PostGender.valueOf(postGenderStr.toUpperCase());
 		List<Post> posts = postRepository.findAllByPostGender(postGender);
+
+		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
+			List<String> urlList = postImageRepository.findAllByPost(post)
+				.stream()
+				.map(PostImage::getFileUrl)
+				.collect(Collectors.toList());
+
+			boolean isJoined = postjoinService.findExistence(member, post.getId()).getIsJoined();
+			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
+
+			return PostResponseDto.of(post, urlList, isJoined, isEnded);
+		}).collect(Collectors.toList());
+
+		return ResponseEntity.ok(createStatusResponse(responseDtos));
+	}
+
+	// 나이를 기준으로 게시글 필터링 하는 기능
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getPostsByAgeRange(PostAgeRange postAge, Member member) {
+
+		List<Post> posts = postRepository.findAllByPostAgeRangesContaining(postAge);
+
+		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
+			List<String> urlList = postImageRepository.findAllByPost(post)
+				.stream()
+				.map(PostImage::getFileUrl)
+				.collect(Collectors.toList());
+
+			boolean isJoined = postjoinService.findExistence(member, post.getId()).getIsJoined();
+			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
+
+			return PostResponseDto.of(post, urlList, isJoined, isEnded);
+		}).collect(Collectors.toList());
+
+		return ResponseEntity.ok(createStatusResponse(responseDtos));
+	}
+
+	// 반려동물 여부 기준으로 게시글 필터링 하는 기능
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getPostsByWithPet(boolean withPetValue, Member member) {
+
+		List<Post> posts = postRepository.findAllByWithPet(withPetValue);
 
 		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
 			List<String> urlList = postImageRepository.findAllByPost(post)

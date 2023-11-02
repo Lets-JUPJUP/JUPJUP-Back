@@ -29,6 +29,7 @@ public class PostResponseDto {
 	private LocalDateTime dueDate;
 	private LocalDateTime createdAt;
 	private List<String> fileUrls;
+	private Boolean withPet;
 	private Long authorId;
 	private Boolean isJoined; // 참여 여부를 표시하는 필드
 	private Boolean isEnded;  // 모집 마감 여부를 표시하는 필드
@@ -48,6 +49,7 @@ public class PostResponseDto {
 			.dueDate(post.getDueDate())
 			.createdAt(post.getCreatedAt())
 			.fileUrls(imgUrlList)
+			.withPet(post.isWithPet())
 			.authorId(post.getAuthor().getId())
 			.isJoined(isJoined)
 			.isEnded(isEnded)

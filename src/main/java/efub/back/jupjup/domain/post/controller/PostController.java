@@ -1,6 +1,7 @@
 package efub.back.jupjup.domain.post.controller;
 
 import efub.back.jupjup.domain.member.domain.Member;
+import efub.back.jupjup.domain.post.domain.PostAgeRange;
 import efub.back.jupjup.domain.post.dto.ImageUploadRequestDto;
 import efub.back.jupjup.domain.post.dto.PostRequestDto;
 import efub.back.jupjup.domain.post.service.PostService;
@@ -42,6 +43,19 @@ public class PostController {
 	@GetMapping("/listByGender")
 	public ResponseEntity<StatusResponse> getPostsByGender(@RequestParam String postGender, @AuthUser Member member) {
 		return postService.getPostsByGender(postGender, member);
+	}
+
+	// 나이대 필터링 게시글 리스트 조회
+	@GetMapping("/listByAgeRange")
+	public ResponseEntity<StatusResponse> getPostsByAgeRange(@RequestParam String postAgeRangeStr, @AuthUser Member member) {
+		PostAgeRange postAgeRange = PostAgeRange.fromString(postAgeRangeStr);
+		return postService.getPostsByAgeRange(postAgeRange, member);
+	}
+
+	// 반려동물 여부 필터링 게시글 리스트 조회
+	@GetMapping("/listByPet")
+	public ResponseEntity<StatusResponse> getPostsByWithPet(@RequestParam boolean withPet, @AuthUser Member member) {
+		return postService.getPostsByWithPet(withPet, member);
 	}
 
 	// 게시글 삭제

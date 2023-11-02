@@ -22,7 +22,8 @@ public enum PostAgeRange {
 	AGE_60_69("8", "60~69"),
 	AGE_70_79("9", "70~79"),
 	AGE_80_80("10", "80~89"),
-	AGE_90_ABOVE("11", "90~");
+	AGE_90_ABOVE("11", "90~"),
+	AGE_ANY("12", "any");
 
 	private final String code;
 	private final String description;
