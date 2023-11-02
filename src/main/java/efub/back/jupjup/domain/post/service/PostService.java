@@ -21,6 +21,7 @@ import efub.back.jupjup.domain.post.exception.EmptyInputFilenameException;
 import efub.back.jupjup.domain.post.exception.WrongImageFormatException;
 import efub.back.jupjup.domain.post.repository.PostImageRepository;
 import efub.back.jupjup.domain.post.repository.PostRepository;
+import efub.back.jupjup.domain.postjoin.repository.PostjoinRepository;
 import efub.back.jupjup.domain.postjoin.service.PostjoinService;
 import efub.back.jupjup.global.response.StatusEnum;
 import efub.back.jupjup.global.response.StatusResponse;
@@ -39,7 +40,7 @@ public class PostService {
 	private final S3Upload s3Upload;
 	private final PostRepository postRepository;
 	private final PostImageRepository postImageRepository;
-	private final PostjoinService postjoinService;
+	private final PostjoinRepository postjoinRepository;
 
 	private StatusResponse createStatusResponse(Object data) {
 		return StatusResponse.builder()
@@ -73,7 +74,7 @@ public class PostService {
 			.map(PostImage::getFileUrl)
 			.collect(Collectors.toList());
 
-		boolean isJoined = postjoinService.findExistence(member, post.getId()).getIsJoined();
+		boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
 		boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
 		PostResponseDto responseDto = PostResponseDto.of(post, urlList, isJoined, isEnded);
@@ -91,7 +92,7 @@ public class PostService {
 				.map(PostImage::getFileUrl)
 				.collect(Collectors.toList());
 
-			boolean isJoined = postjoinService.findExistence(member, post.getId()).getIsJoined();
+			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
 			return PostResponseDto.of(post, urlList, isJoined, isEnded);
@@ -113,7 +114,7 @@ public class PostService {
 				.map(PostImage::getFileUrl)
 				.collect(Collectors.toList());
 
-			boolean isJoined = postjoinService.findExistence(member, post.getId()).getIsJoined();
+			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
 			return PostResponseDto.of(post, urlList, isJoined, isEnded);
@@ -134,7 +135,7 @@ public class PostService {
 				.map(PostImage::getFileUrl)
 				.collect(Collectors.toList());
 
-			boolean isJoined = postjoinService.findExistence(member, post.getId()).getIsJoined();
+			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
 			return PostResponseDto.of(post, urlList, isJoined, isEnded);
@@ -155,7 +156,7 @@ public class PostService {
 				.map(PostImage::getFileUrl)
 				.collect(Collectors.toList());
 
-			boolean isJoined = postjoinService.findExistence(member, post.getId()).getIsJoined();
+			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
 			return PostResponseDto.of(post, urlList, isJoined, isEnded);
