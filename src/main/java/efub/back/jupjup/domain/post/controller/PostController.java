@@ -38,6 +38,12 @@ public class PostController {
 		return postService.getAllPosts(member);
 	}
 
+	// 성별 필터링 게시글 리스트 조회
+	@GetMapping("/listByGender")
+	public ResponseEntity<StatusResponse> getPostsByGender(@RequestParam String postGender, @AuthUser Member member) {
+		return postService.getPostsByGender(postGender, member);
+	}
+
 	// 게시글 삭제
 	@DeleteMapping("/{postId}")
 	public ResponseEntity<StatusResponse> deletePost(@AuthUser Member member, @PathVariable Long postId) {
