@@ -2,6 +2,7 @@ package efub.back.jupjup.domain.postjoin.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,5 +34,11 @@ public class PostjoinController {
 	@DeleteMapping("/{postId}/unjoin")
 	public ResponseEntity<StatusResponse> unjoinPost(@PathVariable Long postId, @AuthUser Member member) {
 		return postjoinService.unjoinPost(member, postId);
+	}
+
+	// 게시글에 참여한 멤버 조회
+	@GetMapping("/{postId}/members")
+	public ResponseEntity<StatusResponse> getJoinedMembers(@PathVariable Long postId) {
+		return postjoinService.getJoinedMembers(postId);
 	}
 }
