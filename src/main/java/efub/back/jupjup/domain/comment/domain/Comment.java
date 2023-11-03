@@ -1,37 +1,51 @@
 package efub.back.jupjup.domain.comment.domain;
 
+import efub.back.jupjup.domain.member.domain.Member;
+import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.global.BaseTimeEntity;
 
 import javax.persistence.*;
+
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Comment extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long commentId;
-
-	@Column(name = "member_id", nullable = false)
-	private Long memberId;
-
-	@Column(nullable = false)
-	private Boolean anonymous;
+	@Column(name = "comment_id",updatable = false)
+	private Long id;
 
 	@Column(nullable = false)
 	private String content;
 
-	@Column(name = "post_id", nullable = false)
-	private Long postId;
+	private boolean isRemoved;
 
-	public Comment(Long memberId, Boolean anonymous, String content, Long postId){
-		this.memberId = memberId;
-		this.anonymous = anonymous;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "writer_id", updatable = false)
+	private Member writer;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "post_id", updatable = false)
+	private Post post;
+
+	// 댓글 삭제 (표시 삭제)
+	public void remove() {
+		this.isRemoved = true;
+	}
+
+	@Builder
+	public Comment(String content, Member writer, Post post) {
 		this.content = content;
-		this.postId = postId;
+		this.isRemoved = false;
+		this.writer = writer;
+		this.post = post;
 	}
 }
