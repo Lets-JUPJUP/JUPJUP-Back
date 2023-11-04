@@ -7,6 +7,7 @@ import efub.back.jupjup.global.BaseTimeEntity;
 import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,20 +16,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "postjoin")
 @Getter
-public class Postjoin extends BaseTimeEntity {
+public class Postjoin {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long joinedId;
+	@Column(name = "post_join_id")
+	private Long Id;
 
-	@Column(name = "member_id", nullable = false)
-	private Long memberId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
 
-	@Column(name = "post_id", nullable = false)
-	private Long postId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "post_id", nullable = false)
+	private Post post;
 
-	public Postjoin(Long memberId, Long postId){
-		this.memberId = memberId;
-		this.postId = postId;
+	@Column(name = "is_joined", nullable = false)
+	private boolean isJoined;
+
+	@Builder
+	public Postjoin(Member member, Post post, boolean isJoined){
+		this.member = member;
+		this.post = post;
+		this.isJoined = isJoined;
 	}
 }

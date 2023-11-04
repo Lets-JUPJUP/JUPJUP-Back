@@ -1,7 +1,6 @@
 package efub.back.jupjup.domain.post.domain;
 
 import efub.back.jupjup.domain.member.domain.Member;
-import efub.back.jupjup.domain.member.domain.AgeRange;
 import efub.back.jupjup.global.BaseTimeEntity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -53,6 +52,9 @@ public class Post extends BaseTimeEntity {
 	@Column(name = "due_date", nullable = false)
 	private LocalDateTime dueDate;
 
+	@Column(name = "with_pet", nullable = false)
+	private boolean withPet;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member author;
@@ -60,7 +62,7 @@ public class Post extends BaseTimeEntity {
 	@Builder
 	public Post(String title, String content, String startPlace,
 		LocalDateTime startDate, int minMember, int maxMember, PostGender postGender, List<PostAgeRange> postAgeRanges, LocalDateTime dueDate,
-		Member author) {
+		boolean withPet, Member author) {
 		this.title = title;
 		this.content = content;
 		this.startPlace = startPlace;
@@ -70,6 +72,7 @@ public class Post extends BaseTimeEntity {
 		this.postGender = postGender;
 		this.postAgeRanges = postAgeRanges;
 		this.dueDate = dueDate;
+		this.withPet = withPet;
 		this.author = author;
 	}
 }
