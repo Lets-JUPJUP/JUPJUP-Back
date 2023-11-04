@@ -31,7 +31,7 @@ public class PostjoinController {
 	}
 
 	// 게시글 참여 취소
-	@DeleteMapping("/{postId}/unjoin")
+	@DeleteMapping("/{postId}/join")
 	public ResponseEntity<StatusResponse> unjoinPost(@PathVariable Long postId, @AuthUser Member member) {
 		return postjoinService.unjoinPost(member, postId);
 	}
