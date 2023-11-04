@@ -19,11 +19,11 @@ public class PostRequestDto {
 	private String content;
 	private String startPlace;
 	private LocalDateTime startDate;
+	private LocalDateTime dueDate;
 	private int minMember;
 	private int maxMember;
 	private PostGender postGender;
 	private List<PostAgeRange> postAgeRanges;
-	private LocalDateTime dueDate;
 	private boolean withPet;
 	private List<String> images;
 
