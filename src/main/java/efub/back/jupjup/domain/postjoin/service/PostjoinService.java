@@ -74,9 +74,8 @@ public class PostjoinService {
 		List<MemberProfileResponseDto> memberDtos = joinedMembers.stream()
 			.map(member -> new MemberProfileResponseDto(
 				member.getId(),
-				member.getUsername(),
-				member.getProfileImageUrl(),
 				member.getNickname(),
+				member.getProfileImageUrl(),
 				member.getAgeRange(),
 				member.getGender()
 			))
