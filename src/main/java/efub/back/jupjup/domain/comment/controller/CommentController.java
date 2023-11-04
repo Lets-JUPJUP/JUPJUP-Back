@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import efub.back.jupjup.domain.comment.dto.CommentRequestDto;
+import efub.back.jupjup.domain.comment.dto.ReplyRequestDto;
 import efub.back.jupjup.domain.comment.service.CommentService;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.security.userInfo.AuthUser;
@@ -32,6 +33,14 @@ public class CommentController {
 		return commentService.saveComment(postId, commentReqDto, member);
 	}
 
+	// 대댓글 생성
+	@PostMapping("/reply/{postId}")
+	public ResponseEntity<StatusResponse> createReply(@PathVariable Long postId,
+		@RequestBody ReplyRequestDto replyRequestDto,
+		@AuthUser Member member) {
+		return commentService.saveReply(postId, replyRequestDto, member);
+	}
+
 	// 댓글 목록 조회
 	@GetMapping("/{postId}")
 	public ResponseEntity<StatusResponse> getComments(@PathVariable Long postId) {
@@ -46,8 +55,13 @@ public class CommentController {
 	}
 
 	// 사용자가 작성한 댓글이 달린 게시글 조회
-	@GetMapping("/my-posts")
-	public ResponseEntity<StatusResponse> getMyCommentPosts(@AuthUser Member member) {
-		return commentService.getPostsByMemberComments(member);
+	// @GetMapping("/my-comments")
+	// public ResponseEntity<StatusResponse> getMyCommentPosts(@AuthUser Member member) {
+	// 	return commentService.getMyCommentList(member);
+	// }
+
+	@GetMapping("/commented-posts")
+	public ResponseEntity<StatusResponse> getCommentedPosts(@AuthUser Member member) {
+		return commentService.getCommentedPosts(member);
 	}
 }
