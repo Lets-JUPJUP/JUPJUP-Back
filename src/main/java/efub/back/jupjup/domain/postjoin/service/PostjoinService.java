@@ -3,92 +3,88 @@ package efub.back.jupjup.domain.postjoin.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import efub.back.jupjup.domain.member.domain.Member;
-import efub.back.jupjup.domain.member.service.MemberService;
+import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.repository.PostRepository;
-import efub.back.jupjup.domain.post.service.PostService;
 import efub.back.jupjup.domain.postjoin.domain.Postjoin;
 import efub.back.jupjup.domain.postjoin.dto.MemberProfileResponseDto;
-import efub.back.jupjup.domain.postjoin.dto.PostjoinListResponseDto;
-import efub.back.jupjup.domain.postjoin.dto.PostjoinResponseDto;
 import efub.back.jupjup.domain.postjoin.repository.PostjoinRepository;
+import efub.back.jupjup.global.response.StatusEnum;
+import efub.back.jupjup.global.response.StatusResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class PostjoinService {
-	private final PostjoinRepository postjoinRepository;
 	private final PostRepository postRepository;
+	private final PostjoinRepository postjoinRepository;
 
-	private final PostService postService;
-	private final MemberService memberService;
+	// 참여 신청
+	public ResponseEntity<StatusResponse> joinPost(Member member, Long postId) {
 
-	// 플로깅 모집 신청하기
-	@Transactional
-	public void createByPostId(Member member, Long postId){
-		postRepository.findById(postId)
-			.orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-		if(postjoinRepository.existsPostjoinByMemberIdAndPostId(member.getId(), postId)){
-			throw new IllegalArgumentException("이미 참여신청한 플로깅입니다");
-		}
-		Postjoin postjoin = new Postjoin(member.getId(), postId);
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+
+		Postjoin postjoin = new Postjoin(member, post, true);
 		postjoinRepository.save(postjoin);
+
+		return ResponseEntity.ok(StatusResponse.builder()
+			.status(StatusEnum.OK.getStatusCode())
+			.message(StatusEnum.OK.getCode())
+			.data(postId + "번 게시글에 참여하였습니다.")
+			.build());
 	}
 
-	// 플로깅 모집 신청 취소하기
-	@Transactional
-	public void deleteByPostId(Member member, Long postId){
-		postRepository.findById(postId)
-			.orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-		if(!postjoinRepository.existsPostjoinByMemberIdAndPostId(member.getId(), postId)){
-			throw new IllegalArgumentException("플로깅 참여신청이 되지 않은 글입니다.");
-		}
-		Postjoin postjoin = postjoinRepository.findByMemberIdAndPostId(member.getId(), postId)
-			.orElseThrow(() -> new IllegalArgumentException("플로깅 참여신청이 되지 않은 글입니다."));
-		postjoinRepository.delete(postjoin);
+	// 참여 신청 취소
+	public ResponseEntity<StatusResponse> unjoinPost(Member member, Long postId) {
+
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+
+		Postjoin existingPostjoin = postjoinRepository.findByMemberAndPost(member, post)
+			.orElseThrow(() -> new RuntimeException("참여 정보가 없습니다."));
+
+		postjoinRepository.delete(existingPostjoin);
+
+		return ResponseEntity.ok(StatusResponse.builder()
+			.status(StatusEnum.OK.getStatusCode())
+			.message(StatusEnum.OK.getCode())
+			.data(postId + "번 게시글에 참여 신청을 취소하였습니다.")
+			.build());
 	}
 
-	@Transactional(readOnly = true)
-	public PostjoinResponseDto findExistence(Member member, Long postId){
-		postRepository.findById(postId)
-			.orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-		if(postjoinRepository.existsPostjoinByMemberIdAndPostId(member.getId(), postId)){
-			return new PostjoinResponseDto(true);
-		}
-		else{
-			return new PostjoinResponseDto(false);
-		}
-	}
+	// 참여 신청한 멤버 조회
+	public ResponseEntity<StatusResponse> getJoinedMembers(Long postId) {
 
-	@Transactional(readOnly = true)
-	public List<PostjoinListResponseDto> findAllJoinedPostsByMember(Member member) {
-		List<Postjoin> postjoins = postjoinRepository.findByMemberId(member.getId());
-		return postjoins.stream()
-			.map(postjoin -> new PostjoinListResponseDto(postjoin.getPostId(),
-				postRepository.findById(postjoin.getPostId()).get().getTitle())) // Assuming title exists
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+
+		List<Member> joinedMembers = postjoinRepository.findAllByPost(post)
+			.stream()
+			.map(Postjoin::getMember)
 			.collect(Collectors.toList());
-	}
 
-	@Transactional(readOnly = true)
-	public List<MemberProfileResponseDto> findAllMembersJoinedPost(Long postId) {
-		List<Postjoin> postjoins = postjoinRepository.findByPostId(postId);
-		return postjoins.stream()
-			.map(postjoin -> {
-				Member member = memberService.findMemberById(postjoin.getMemberId());
-				return new MemberProfileResponseDto(
-					member.getId(),
-					member.getUsername(),
-					member.getProfileImageUrl(),
-					member.getNickname(),
-					member.getAgeRange(),
-					member.getGender()
-				);
-			})
+		List<MemberProfileResponseDto> memberDtos = joinedMembers.stream()
+			.map(member -> new MemberProfileResponseDto(
+				member.getId(),
+				member.getNickname(),
+				member.getProfileImageUrl(),
+				member.getAgeRange(),
+				member.getGender()
+			))
 			.collect(Collectors.toList());
+
+		return ResponseEntity.ok(StatusResponse.builder()
+			.status(StatusEnum.OK.getStatusCode())
+			.message(StatusEnum.OK.getCode())
+			.data(memberDtos)
+			.build());
 	}
 }

@@ -9,10 +9,8 @@ import efub.back.jupjup.domain.post.domain.PostGender;
 import efub.back.jupjup.domain.post.domain.PostAgeRange;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,11 +19,12 @@ public class PostRequestDto {
 	private String content;
 	private String startPlace;
 	private LocalDateTime startDate;
+	private LocalDateTime dueDate;
 	private int minMember;
 	private int maxMember;
 	private PostGender postGender;
 	private List<PostAgeRange> postAgeRanges;
-	private LocalDateTime dueDate;
+	private boolean withPet;
 	private List<String> images;
 
 	public Post toEntity(PostRequestDto dto, Member member) {
@@ -39,7 +38,9 @@ public class PostRequestDto {
 			.postGender(dto.getPostGender())
 			.postAgeRanges(dto.getPostAgeRanges())
 			.dueDate(dto.getDueDate())
+			.withPet(dto.isWithPet())
 			.author(member)
 			.build();
 	}
+
 }

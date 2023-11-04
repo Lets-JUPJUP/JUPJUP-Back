@@ -10,9 +10,7 @@ import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.postjoin.domain.Postjoin;
 
 public interface PostjoinRepository extends JpaRepository<Postjoin, Long> {
-	Optional<Postjoin> findByMemberIdAndPostId(Long memberId, Long postId);
-	Boolean existsPostjoinByMemberIdAndPostId(Long memberId, Long postId);
-	List<Postjoin> findByMemberId(Long memberId);
-	List<Postjoin> findByPostId(Long postId);
-	Long countByPostId(Long postId);
+	Optional<Postjoin> findByMemberAndPost(Member member, Post post);
+	Boolean existsByMemberAndPost(Member member, Post post);
+	List<Postjoin> findAllByPost(Post post);
 }
