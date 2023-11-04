@@ -104,18 +104,18 @@ public class CommentService {
 			.build());
 	}
 
-	// // 내가 쓴 댓글 모아보기
-	// public ResponseEntity<StatusResponse> getMyCommentList(@AuthUser Member member) {
-	// 	List<Comment> myCommentList = commentRepository.findAllByWriterOrderByCreatedDateDesc(member);
-	// 	List<MyCommentResponseDto> resDtos = myCommentList.stream()
-	// 		.map(MyCommentResponseDto::of)
-	// 		.collect(Collectors.toList());
-	// 	return ResponseEntity.ok(StatusResponse.builder()
-	// 		.status(StatusEnum.OK.getStatusCode())
-	// 		.message(StatusEnum.OK.getCode())
-	// 		.data(resDtos)
-	// 		.build());
-	// }
+	// 내가 쓴 댓글 모아보기
+	public ResponseEntity<StatusResponse> getMyCommentList(@AuthUser Member member) {
+		List<Comment> myCommentList = commentRepository.findAllByWriterOrderByCreatedDateDesc(member);
+		List<MyCommentResponseDto> resDtos = myCommentList.stream()
+			.map(MyCommentResponseDto::of)
+			.collect(Collectors.toList());
+		return ResponseEntity.ok(StatusResponse.builder()
+			.status(StatusEnum.OK.getStatusCode())
+			.message(StatusEnum.OK.getCode())
+			.data(resDtos)
+			.build());
+	}
 
 	// 댓글 삭제하기
 	public ResponseEntity<StatusResponse> removeComment(Long commentId, Member member) {
