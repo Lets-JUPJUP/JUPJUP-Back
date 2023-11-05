@@ -3,6 +3,7 @@ package efub.back.jupjup.domain.comment.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import efub.back.jupjup.domain.comment.dto.CommentDto;
 import efub.back.jupjup.domain.comment.dto.CommentPostDto;
 import efub.back.jupjup.domain.comment.dto.CommentRequestDto;
 import efub.back.jupjup.domain.comment.dto.CommentResponseDto;
-import efub.back.jupjup.domain.comment.dto.MyCommentResponseDto;
 import efub.back.jupjup.domain.comment.dto.ReplyRequestDto;
 import efub.back.jupjup.domain.comment.dto.ReplyResponseDto;
 import efub.back.jupjup.domain.comment.exception.NoAuthorityCommentRemoveException;
@@ -22,7 +22,6 @@ import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.repository.MemberRepository;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.repository.PostRepository;
-import efub.back.jupjup.domain.security.userInfo.AuthUser;
 import efub.back.jupjup.global.response.StatusEnum;
 import efub.back.jupjup.global.response.StatusResponse;
 import efub.back.jupjup.domain.comment.exception.NoPostExistException;
@@ -104,19 +103,6 @@ public class CommentService {
 			.build());
 	}
 
-	// 내가 쓴 댓글 모아보기
-	public ResponseEntity<StatusResponse> getMyCommentList(@AuthUser Member member) {
-		List<Comment> myCommentList = commentRepository.findAllByWriterOrderByCreatedAtDesc(member);
-		List<MyCommentResponseDto> resDtos = myCommentList.stream()
-			.map(MyCommentResponseDto::of)
-			.collect(Collectors.toList());
-		return ResponseEntity.ok(StatusResponse.builder()
-			.status(StatusEnum.OK.getStatusCode())
-			.message(StatusEnum.OK.getCode())
-			.data(resDtos)
-			.build());
-	}
-
 	// 댓글 삭제하기
 	public ResponseEntity<StatusResponse> removeComment(Long commentId, Member member) {
 		Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoCommentExistsException());
@@ -141,7 +127,13 @@ public class CommentService {
 		List<Comment> comments = commentRepository.findByWriter(member);
 
 		List<CommentPostDto> commentedPosts = comments.stream()
-			.map(CommentPostDto::of)
+			.collect(Collectors.toMap(
+				comment -> comment.getPost().getId(),
+				CommentPostDto::of,
+				(existing, replacement) -> existing,
+				LinkedHashMap::new
+			))
+			.values().stream()
 			.collect(Collectors.toList());
 
 		return ResponseEntity.ok(StatusResponse.builder()
