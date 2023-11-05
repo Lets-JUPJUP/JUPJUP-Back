@@ -54,12 +54,13 @@ public class CommentController {
 		return commentService.removeComment(commentId, member);
 	}
 
-	// 사용자가 작성한 댓글이 달린 게시글 조회
+	// 사용자가 작성한 댓글 모아보기
 	@GetMapping("/my-comments")
 	public ResponseEntity<StatusResponse> getMyCommentPosts(@AuthUser Member member) {
 		return commentService.getMyCommentList(member);
 	}
 
+	// 사용자가 작성한 댓글이 달린 게시글 조회
 	@GetMapping("/commented-posts")
 	public ResponseEntity<StatusResponse> getCommentedPosts(@AuthUser Member member) {
 		return commentService.getCommentedPosts(member);

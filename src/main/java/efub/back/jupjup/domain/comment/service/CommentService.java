@@ -106,7 +106,7 @@ public class CommentService {
 
 	// 내가 쓴 댓글 모아보기
 	public ResponseEntity<StatusResponse> getMyCommentList(@AuthUser Member member) {
-		List<Comment> myCommentList = commentRepository.findAllByWriterOrderByCreatedDateDesc(member);
+		List<Comment> myCommentList = commentRepository.findAllByWriterOrderByCreatedAtDesc(member);
 		List<MyCommentResponseDto> resDtos = myCommentList.stream()
 			.map(MyCommentResponseDto::of)
 			.collect(Collectors.toList());
@@ -138,7 +138,12 @@ public class CommentService {
 
 	// 내가 쓴 댓글의 게시글 모아보기
 	public ResponseEntity<StatusResponse> getCommentedPosts(Member member) {
-		List<CommentPostDto> commentedPosts = commentRepository.findByWriter(member);
+		List<Comment> comments = commentRepository.findByWriter(member);
+
+		List<CommentPostDto> commentedPosts = comments.stream()
+			.map(CommentPostDto::of)
+			.collect(Collectors.toList());
+
 		return ResponseEntity.ok(StatusResponse.builder()
 			.status(StatusEnum.OK.getStatusCode())
 			.message(StatusEnum.OK.getCode())

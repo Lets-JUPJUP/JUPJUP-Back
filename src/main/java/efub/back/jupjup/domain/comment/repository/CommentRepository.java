@@ -11,8 +11,8 @@ import efub.back.jupjup.domain.comment.domain.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 	List<Comment> findAllByPost(Post post);
-	List<Comment> findAllByWriterOrderByCreatedDateDesc(Member writer);
+	List<Comment> findAllByWriterOrderByCreatedAtDesc(Member writer);
 	Integer countAllByPost(Post post);
-	List<CommentPostDto> findByWriter(Member writer);
+	List<Comment> findByWriter(Member writer);
 
 }
