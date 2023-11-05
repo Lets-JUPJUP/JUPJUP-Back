@@ -1,8 +1,11 @@
 package efub.back.jupjup.domain.report.domain;
 
+import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.global.BaseTimeEntity;
 
 import javax.persistence.*;
+
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,17 +15,23 @@ import lombok.NoArgsConstructor;
 public class Report extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long reportId;
+	@Column(updatable = false)
+	private Long id;
 
-	@Column
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "writer_id", nullable = false)
+	private Member writer;
+
+	@Column(nullable = false)
+	private Long targetId;
+
+	@Column(length = 999)
 	private String content;
 
-	@Column(name = "member_id", nullable = false)
-	private Long memberId;
-
-	public Report(Long memberId, String content){
-		this.memberId = memberId;
+	@Builder
+	public Report(Member writer, Long targetId, String content){
+		this.writer = writer;
+		this.targetId = targetId;
 		this.content = content;
 	}
 }
