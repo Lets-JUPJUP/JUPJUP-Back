@@ -3,6 +3,8 @@ package efub.back.jupjup.global.exception;
 import efub.back.jupjup.domain.auth.exception.AlreadyLogoutException;
 import efub.back.jupjup.domain.auth.exception.RefreshTokenNotValidException;
 import efub.back.jupjup.domain.member.exception.InvalidNicknameException;
+import efub.back.jupjup.domain.member.exception.MemberNotFoundException;
+import efub.back.jupjup.domain.review.exception.BadgeNotExistsForCodeException;
 import efub.back.jupjup.domain.security.exception.ExpiredTokenException;
 import efub.back.jupjup.global.exception.custom.ApplicationException;
 import lombok.AllArgsConstructor;
@@ -20,11 +22,15 @@ public enum ExceptionType {
 
     //회원 관련 - C1***
     INVALID_NICKNAME_EXCEPTION("C1000", "유효하지 않은 닉네임입니다.",InvalidNicknameException.class),
+    MEMBER_NOT_FOUND_EXCEPTION("C1001", "존재하지 않는 멤버입니다.", MemberNotFoundException.class),
 
     //auth 관련 - C2***
     REFRESH_TOKEN_NOT_VALID_EXCEPTION("C2000","redis의 리프레시 토큰과 일치하지 않습니다.",RefreshTokenNotValidException .class),
     ALREADY_LOGOUT_EXCEPTION("C2001", "이미 로그아웃된 회원입니다.", AlreadyLogoutException.class),
-    EXPIRED_TOKEN_EXCEPTION("C2002", "만료된 토큰입니다.",ExpiredTokenException.class);
+    EXPIRED_TOKEN_EXCEPTION("C2002", "만료된 토큰입니다.",ExpiredTokenException.class),
+
+    // review 관련 - C3***
+    BADGE_NOT_EXISTS_FOR_CODE_EXCEPTION("C3000","해당 코드와 일치하는 뱃지가 존재하지 않습니다.", BadgeNotExistsForCodeException.class);
 
     private final String errorCode;
     private final String message;
