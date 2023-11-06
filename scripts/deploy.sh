@@ -30,13 +30,6 @@ EXIST_AFTER=$(docker-compose -p ${DOCKER_APP_NAME}-${AFTER_COMPOSE_COLOR} -f doc
 
 # {EXIST_AFTER}가 있으면
 if [ -n "$EXIST_AFTER" ]; then
-  # nginx.config를 컨테이너에 맞게 변경해주고 reload 한다
-  # docker ps -q --filter ancestor=nginx_pms
-  NGINX_CONT=$(docker ps -q --filter ancestor=nginx)
-
-  # Replace .conf file & Reload
-  docker exec -it "$NGINX_CONT" bash -c "cp /etc/nginx/nginx.${AFTER_COMPOSE_COLOR}.conf /etc/nginx/nginx.conf;nginx -s reload"
-
   # 이전 컨테이너 종료
   docker-compose -f docker-compose.${BEFORE_COMPOSE_COLOR}.yml down
   docker rm $(docker ps -q -a -f "name=${BEFORE_COMPOSE_COLOR}")
