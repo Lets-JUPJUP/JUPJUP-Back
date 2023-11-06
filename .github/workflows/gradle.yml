@@ -39,15 +39,17 @@ jobs:
         shell: bash
         
       - name : make applicaiton.yml
-      - run: |
+        run: |
           mkdir ./src/main/resources
           touch ./src/main/resources/application.yml
           echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
-          
+        shell: bash
+        
       - name: make application-prod.yml
-      - run: |
+        run: |
           touch ./src/main/resources/application-prod.yml
           echo "${{ secrets.APPLICATION_PROD_YML }}" > ./src/main/resources/application-prod.yml
+        shell: bash
 
       - name: Build with Gradle # 프로젝트 build
         run: ./gradlew clean build -x test
