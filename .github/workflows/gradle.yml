@@ -38,11 +38,11 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
         
-      - name: Make application.yml
+      - uses: actions/checkout@v2
       - run: touch ./src/main/resources/application.yml
       - run: echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
           
-      - name: Make application-prod.yml
+      - uses: actions/checkout@v2
       - run: touch ./src/main/resources/application-prod.yml
       - run: echo "${{ secrets.APPLICATION_PROD_YML }}" > ./src/main/resources/application-prod.yml
 
