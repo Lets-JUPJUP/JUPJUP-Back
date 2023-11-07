@@ -39,10 +39,22 @@ public class PostController {
 		return postService.getAllPosts(member);
 	}
 
+	// 전체 게시글 리스트 조회 - (로그인 없이)
+	@GetMapping("/list/unauth")
+	public ResponseEntity<StatusResponse> getPosts() {
+		return postService.getAllPostsUnAuth();
+	}
+
 	// 성별 필터링 게시글 리스트 조회
 	@GetMapping("/listByGender")
 	public ResponseEntity<StatusResponse> getPostsByGender(@RequestParam String postGender, @AuthUser Member member) {
 		return postService.getPostsByGender(postGender, member);
+	}
+
+	// 성별 필터링 게시글 리스트 조회 - 로그인 없이
+	@GetMapping("/listByGender/unauth")
+	public ResponseEntity<StatusResponse> getPostsByGender(@RequestParam String postGender) {
+		return postService.getPostsByGenderUnAuth(postGender);
 	}
 
 	// 나이대 필터링 게시글 리스트 조회
@@ -52,10 +64,23 @@ public class PostController {
 		return postService.getPostsByAgeRange(postAgeRange, member);
 	}
 
+	// 나이대 필터링 게시글 리스트 조회 - 로그인 없이
+	@GetMapping("/listByAgeRange/unauth")
+	public ResponseEntity<StatusResponse> getPostsByAgeRange(@RequestParam String postAgeRangeStr) {
+		PostAgeRange postAgeRange = PostAgeRange.fromString(postAgeRangeStr);
+		return postService.getPostsByAgeRangeUnAuth(postAgeRange);
+	}
+
 	// 반려동물 여부 필터링 게시글 리스트 조회
 	@GetMapping("/listByPet")
 	public ResponseEntity<StatusResponse> getPostsByWithPet(@RequestParam boolean withPet, @AuthUser Member member) {
 		return postService.getPostsByWithPet(withPet, member);
+	}
+
+	// 반려동물 여부 필터링 게시글 리스트 조회 - 로그인 없이
+	@GetMapping("/listByPet/unauth")
+	public ResponseEntity<StatusResponse> getPostsByWithPet(@RequestParam boolean withPet) {
+		return postService.getPostsByWithPetUnAuth(withPet);
 	}
 
 	// 게시글 삭제
