@@ -31,12 +31,9 @@ EXIST_AFTER=$(docker-compose -p ${DOCKER_APP_NAME}-${AFTER_COMPOSE_COLOR} -f doc
 # {EXIST_AFTER}가 있으면
 if [ -n "$EXIST_AFTER" ]; then
   # 이전 컨테이너 종료
-  docker-compose -f docker-compose.${BEFORE_COMPOSE_COLOR}.yml down
-  docker rm $(docker ps -q -a -f "name=${BEFORE_COMPOSE_COLOR}")
   echo "$BEFORE_COMPOSE_COLOR down"
+  docker-compose -p ${DOCKER_APP_NAME}-${BEFORE_COMPOSE_COLOR} -f docker-compose.${BEFORE_COMPOSE_COLOR}.yml down
+else
+    echo "> The new container did not run properly."
+    exit 1  
 fi
-
-
-echo "Start 기존 이미지 삭제"
-docker rmi $(docker images -f "dangling=true" -q)
-echo "End 기존 이미지 삭제"
