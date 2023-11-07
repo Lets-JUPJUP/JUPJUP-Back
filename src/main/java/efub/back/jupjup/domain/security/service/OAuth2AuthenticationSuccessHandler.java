@@ -80,9 +80,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private String makeRedirectUrl(String email, String redirectUrl) {
 
-        if (redirectUrl.equals(getDefaultTargetUrl())) {
-            redirectUrl = "http://localhost:3000";
-        }
+        redirectUrl = "http://localhost:3000";
         log.info(redirectUrl);
 
         String accessToken = jwtProvider.generateAccessToken(email);
