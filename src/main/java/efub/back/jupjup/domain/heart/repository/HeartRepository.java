@@ -11,6 +11,6 @@ import efub.back.jupjup.domain.post.domain.Post;
 
 public interface HeartRepository extends JpaRepository<Heart, Long> {
 	Optional<Heart> findByMemberAndPost(Member member, Post post);
-	Boolean existsByMemberAndPost(Member member, Post post);
-	List<Heart> findAllByPost(Post post);
+	List<Heart> findAllByMemberOrderByIdDesc(Member member);
+	Long countByMember(Member member);
 }

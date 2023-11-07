@@ -15,4 +15,5 @@ import lombok.NoArgsConstructor;
 public class HeartResponseDto {
 	private List<PostResponseDto> posts;
 	private Long memberId;
+	private Long count;
 }

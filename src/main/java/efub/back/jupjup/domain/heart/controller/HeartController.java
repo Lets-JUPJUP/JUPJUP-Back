@@ -1,6 +1,7 @@
 package efub.back.jupjup.domain.heart.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,5 +34,11 @@ public class HeartController {
 	@DeleteMapping("/{postId}")
 	public ResponseEntity<StatusResponse> unheartPost(@PathVariable Long postId, @AuthUser Member member) {
 		return heartService.unheartPost(member, postId);
+	}
+
+	// 찜한 글 모아보기
+	@GetMapping("/lists")
+	public ResponseEntity<StatusResponse> findHeartPostList(@AuthUser Member member) {
+		return heartService.findHeartPostList(member);
 	}
 }
