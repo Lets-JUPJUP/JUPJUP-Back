@@ -1,0 +1,7 @@
+version: '3'
+services:
+  bageasy-api:
+    build: .
+    ports:
+      - "8082:8080"
+    container_name: jupjup-green

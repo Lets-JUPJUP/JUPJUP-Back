@@ -2,7 +2,10 @@ package efub.back.jupjup.domain.post.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.domain.PostAgeRange;
@@ -52,7 +55,7 @@ public class PostService {
 		boolean isJoined = false;
 		boolean isEnded = false;
 
-		PostResponseDto postResponseDto = PostResponseDto.of(post,imageUrls, isJoined, isEnded);
+		PostResponseDto postResponseDto = PostResponseDto.of(post,imageUrls, Optional.of(isJoined), isEnded);
 
 		return ResponseEntity.ok(createStatusResponse(postResponseDto));
 	}
@@ -70,7 +73,7 @@ public class PostService {
 		boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
 		boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-		PostResponseDto responseDto = PostResponseDto.of(post, urlList, isJoined, isEnded);
+		PostResponseDto responseDto = PostResponseDto.of(post, urlList, Optional.of(isJoined), isEnded);
 		return ResponseEntity.ok(createStatusResponse(responseDto));
 	}
 
@@ -88,7 +91,26 @@ public class PostService {
 			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, isJoined, isEnded);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), isEnded);
+		}).collect(Collectors.toList());
+
+		return ResponseEntity.ok(createStatusResponse(responseDtos));
+	}
+
+	// 플로깅 게시글 리스트 보기 - (로그인 없이)
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getAllPostsUnAuth(){
+		List<Post> posts = postRepository.findAll();
+
+		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
+			List<String> urlList = postImageRepository.findAllByPost(post)
+				.stream()
+				.map(PostImage::getFileUrl)
+				.collect(Collectors.toList());
+
+			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
+
+			return PostResponseDto.of(post, urlList, Optional.empty(), isEnded);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -110,7 +132,28 @@ public class PostService {
 			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, isJoined, isEnded);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), isEnded);
+		}).collect(Collectors.toList());
+
+		return ResponseEntity.ok(createStatusResponse(responseDtos));
+	}
+
+	// 성별을 기준으로 게시글 필터링 하는 기능 - (로그인 없이)
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getPostsByGenderUnAuth(String postGenderStr) {
+
+		PostGender postGender = PostGender.valueOf(postGenderStr.toUpperCase());
+		List<Post> posts = postRepository.findAllByPostGender(postGender);
+
+		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
+			List<String> urlList = postImageRepository.findAllByPost(post)
+				.stream()
+				.map(PostImage::getFileUrl)
+				.collect(Collectors.toList());
+
+			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
+
+			return PostResponseDto.of(post, urlList, Optional.empty(), isEnded);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -131,7 +174,27 @@ public class PostService {
 			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, isJoined, isEnded);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), isEnded);
+		}).collect(Collectors.toList());
+
+		return ResponseEntity.ok(createStatusResponse(responseDtos));
+	}
+
+	// 나이를 기준으로 게시글 필터링 하는 기능 - (로그인 없이)
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getPostsByAgeRangeUnAuth(PostAgeRange postAge) {
+
+		List<Post> posts = postRepository.findAllByPostAgeRangesContaining(postAge);
+
+		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
+			List<String> urlList = postImageRepository.findAllByPost(post)
+				.stream()
+				.map(PostImage::getFileUrl)
+				.collect(Collectors.toList());
+
+			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
+
+			return PostResponseDto.of(post, urlList, Optional.empty(), isEnded);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -152,7 +215,27 @@ public class PostService {
 			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, isJoined, isEnded);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), isEnded);
+		}).collect(Collectors.toList());
+
+		return ResponseEntity.ok(createStatusResponse(responseDtos));
+	}
+
+	// 반려동물 여부 기준으로 게시글 필터링 하는 기능 - (로그인 없이)
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getPostsByWithPetUnAuth(boolean withPetValue) {
+
+		List<Post> posts = postRepository.findAllByWithPet(withPetValue);
+
+		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
+			List<String> urlList = postImageRepository.findAllByPost(post)
+				.stream()
+				.map(PostImage::getFileUrl)
+				.collect(Collectors.toList());
+
+			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
+
+			return PostResponseDto.of(post, urlList, Optional.empty(), isEnded);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
