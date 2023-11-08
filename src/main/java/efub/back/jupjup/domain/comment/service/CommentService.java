@@ -78,7 +78,7 @@ public class CommentService {
 	// 댓글 조회 기능
 	public ResponseEntity<StatusResponse> getCommentList(Long postId) {
 		Post findPost = postRepository.findById(postId).orElseThrow(NoPostExistException::new);
-		List<Comment> commentList = commentRepository.findAllByPost(findPost);
+		List<Comment> commentList = commentRepository.findAllByPostAndParentIsNull(findPost);
 		Integer commentNo = commentRepository.countAllByPost(findPost);
 		List<CommentDto> commentDtoList = new ArrayList<>();
 		for (Comment comment : commentList) {
