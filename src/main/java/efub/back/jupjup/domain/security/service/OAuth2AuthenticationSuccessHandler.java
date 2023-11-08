@@ -80,22 +80,19 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private String makeRedirectUrl(String email, String redirectUrl) {
 
-        if (redirectUrl.equals(getDefaultTargetUrl())) {
-            redirectUrl = "http://localhost:3000";
-        }
+        redirectUrl = "http://localhost:3000";
         log.info(redirectUrl);
 
         String accessToken = jwtProvider.generateAccessToken(email);
         log.info(accessToken);
 
         return UriComponentsBuilder.fromHttpUrl(redirectUrl)
-                .path("/oauth2/redirect")
+                .path("/kakao-login")
                 .queryParam("accessToken", accessToken)
                 .queryParam("redirectUrl", redirectUrl)
                 .build()
                 .encode()
                 .toUriString();
-
 
     }
 
@@ -120,7 +117,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.info("refresh:" + refreshToken);
         return ResponseCookie.from("refreshToken", refreshToken)
                 .path("/") // 해당 경로 하위의 페이지에서만 쿠키 접근 허용. 모든 경로에서 접근 허용한다.
-                .domain("localhost")
+                .domain(".lets-jupjup.com")
 //                .domain(".lets-jupjup.com") //TODO : 배포시 도메인 변경
                 .maxAge(TimeUnit.MILLISECONDS.toSeconds(refreshTokenValidationMs)) // 쿠키 만료 시기(초). 없으면 브라우저 닫힐 때 제거
                 .secure(true) // HTTPS 프로토콜 상에서 암호화된 요청을 위한 옵션
