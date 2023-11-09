@@ -5,6 +5,7 @@ import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.dto.request.MemberReqDto;
 import efub.back.jupjup.domain.member.dto.request.NicknameCheckReqDto;
 import efub.back.jupjup.domain.member.dto.response.MemberResDto;
+import efub.back.jupjup.domain.member.dto.response.MyProfileResDto;
 import efub.back.jupjup.domain.member.dto.response.NicknameCheckResDto;
 import efub.back.jupjup.domain.member.exception.MemberNotFoundException;
 import efub.back.jupjup.domain.member.repository.MemberRepository;
@@ -43,6 +44,11 @@ public class MemberService {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
         MemberResDto memberResDto = MemberResDto.from(member);
         return make200Response(memberResDto);
+    }
+
+    public ResponseEntity<StatusResponse> getMyProfile(Member member) {
+        MyProfileResDto myProfileResDto = MyProfileResDto.from(member);
+        return make200Response(myProfileResDto);
     }
 
     public ResponseEntity<StatusResponse> checkDuplicateNickname(NicknameCheckReqDto reqDto){
