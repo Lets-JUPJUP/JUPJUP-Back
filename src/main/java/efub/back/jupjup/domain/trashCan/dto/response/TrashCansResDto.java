@@ -1,4 +1,4 @@
-package efub.back.jupjup.domain.trashCan.dto;
+package efub.back.jupjup.domain.trashCan.dto.response;
 
 import efub.back.jupjup.domain.trashCan.domain.TrashCan;
 import java.util.List;
