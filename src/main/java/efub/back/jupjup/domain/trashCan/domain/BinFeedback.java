@@ -1,6 +1,5 @@
-package efub.back.jupjup.domain.binFeedback.domain;
+package efub.back.jupjup.domain.trashCan.domain;
 
-import efub.back.jupjup.domain.trashCan.domain.TrashCan;
 import efub.back.jupjup.global.BaseTimeEntity;
 
 

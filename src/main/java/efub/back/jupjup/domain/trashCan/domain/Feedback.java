@@ -1,4 +1,4 @@
-package efub.back.jupjup.domain.binFeedback.domain;
+package efub.back.jupjup.domain.trashCan.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
