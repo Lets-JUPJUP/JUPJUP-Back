@@ -16,7 +16,7 @@ public class TrashCanController {
     private final TrashCanService trashCanService;
 
     @GetMapping
-    public List<TrashCan> findNearbyTrashCan(@RequestParam(value = "mapX") String mapX, @RequestParam(value = "mapY") String mapY){
+    public List<TrashCan> findNearbyTrashCan(@RequestParam(value = "mapX") Double mapX, @RequestParam(value = "mapY") Double mapY){
         return trashCanService.findNearbyTrashCan(mapX, mapY);
     }
 }
