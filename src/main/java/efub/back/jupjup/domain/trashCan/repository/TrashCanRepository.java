@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface TrashCanRepository extends JpaRepository<TrashCan, Long> {
-    @Query(value = "SELECT * FROM trash_can WHERE CAST(latitude AS DOUBLE) BETWEEN ?1 AND ?2 AND CAST(longitude AS DOUBLE) BETWEEN ?3 AND ?4", nativeQuery = true)
+    @Query(value = "SELECT * FROM trash_can WHERE latitude BETWEEN ?1 AND ?2 AND longitude BETWEEN ?3 AND ?4", nativeQuery = true)
     List<TrashCan> findWithinMap(Double startX, Double endX, Double startY, Double endY);
 }
