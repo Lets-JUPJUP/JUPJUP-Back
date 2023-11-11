@@ -1,5 +1,6 @@
 package efub.back.jupjup.domain.trashCan.domain;
 
+import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.global.BaseTimeEntity;
 
 
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Table(indexes = @Index(name = "idx_trash_can_id", columnList = "trash_can_id"))
 public class BinFeedback extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +24,18 @@ public class BinFeedback extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private Feedback feedback;
 
+	@Column(name = "trash_can_id")
+	private Long trashCanId;
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trash_can_id", nullable = false)
-	private TrashCan trashCan;
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
+
 
 	@Builder
-	public BinFeedback(Feedback feedback, TrashCan trashCan) {
+	public BinFeedback(Feedback feedback, Long trashCanId, Member member) {
 		this.feedback = feedback;
-		this.trashCan = trashCan;
+		this.trashCanId = trashCanId;
+		this.member = member;
 	}
 }

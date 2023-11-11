@@ -1,14 +1,20 @@
 package efub.back.jupjup.domain.trashCan.service;
 
+import efub.back.jupjup.domain.member.domain.Member;
+import efub.back.jupjup.domain.trashCan.domain.BinFeedback;
 import efub.back.jupjup.domain.trashCan.domain.Direction;
+import efub.back.jupjup.domain.trashCan.domain.Feedback;
 import efub.back.jupjup.domain.trashCan.domain.TrashCan;
 import efub.back.jupjup.domain.trashCan.dto.Location;
-import efub.back.jupjup.domain.trashCan.dto.TrashCansResDto;
+import efub.back.jupjup.domain.trashCan.dto.request.FeedbackReqDto;
+import efub.back.jupjup.domain.trashCan.dto.response.FeedbackResDto;
+import efub.back.jupjup.domain.trashCan.dto.response.TrashCansResDto;
+import efub.back.jupjup.domain.trashCan.exception.TrashCanNotFoundException;
+import efub.back.jupjup.domain.trashCan.repository.BinFeedbackRepository;
 import efub.back.jupjup.domain.trashCan.repository.TrashCanRepository;
 import efub.back.jupjup.global.response.StatusEnum;
 import efub.back.jupjup.global.response.StatusResponse;
 import efub.back.jupjup.global.util.GeometryUtil;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -27,6 +33,7 @@ public class TrashCanService {
     private static final Double distance1km = 1.0;
 
     private final TrashCanRepository trashCanRepository;
+    private final BinFeedbackRepository binFeedbackRepository;
     private final EntityManager em;
 
     public ResponseEntity<StatusResponse> findNearbyTrashCan(Double mapX, Double mapY) {
@@ -57,6 +64,20 @@ public class TrashCanService {
                 , TrashCan.class);
         List<TrashCan> trashCans = query.getResultList();
         return trashCans;
+    }
+
+    public ResponseEntity<StatusResponse> writeFeedback(Member member, FeedbackReqDto feedbackReqDto){
+        if(!trashCanRepository.existsById(feedbackReqDto.getTrashCanId())){
+            throw new TrashCanNotFoundException();
+        }
+        Feedback feedback = Feedback.getFeedbackByCode(feedbackReqDto.getFeedbackCode());
+        BinFeedback savedFeedback = binFeedbackRepository.save(BinFeedback.builder()
+                        .trashCanId(feedbackReqDto.getTrashCanId())
+                        .feedback(feedback)
+                        .member(member)
+                        .build());
+        FeedbackResDto resDto = FeedbackResDto.from(savedFeedback);
+        return make200Response(resDto);
     }
 
     private ResponseEntity<StatusResponse> make200Response(Object obj){
