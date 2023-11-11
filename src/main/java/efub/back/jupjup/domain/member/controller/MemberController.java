@@ -28,6 +28,11 @@ public class MemberController {
         return memberService.readProfile(memberId);
     }
 
+    @GetMapping()
+    public ResponseEntity<StatusResponse> getMyProfile(@AuthUser Member member){
+        return memberService.getMyProfile(member);
+    }
+
     @PutMapping("")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<StatusResponse> updateProfile(@AuthUser Member member, @RequestBody MemberReqDto memberReqDto){

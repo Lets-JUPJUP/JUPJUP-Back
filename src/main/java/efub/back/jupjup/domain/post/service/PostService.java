@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import efub.back.jupjup.domain.image.S3Upload;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.domain.PostAgeRange;
@@ -20,11 +19,10 @@ import efub.back.jupjup.domain.post.dto.ImageUploadRequestDto;
 import efub.back.jupjup.domain.post.dto.ImageUploadResponseDto;
 import efub.back.jupjup.domain.post.dto.PostRequestDto;
 import efub.back.jupjup.domain.post.dto.PostResponseDto;
-import efub.back.jupjup.domain.post.exception.EmptyInputFilenameException;
-import efub.back.jupjup.domain.post.exception.WrongImageFormatException;
 import efub.back.jupjup.domain.post.repository.PostImageRepository;
 import efub.back.jupjup.domain.post.repository.PostRepository;
 import efub.back.jupjup.domain.postjoin.repository.PostjoinRepository;
+import efub.back.jupjup.domain.image.service.ImageService;
 import efub.back.jupjup.global.response.StatusEnum;
 import efub.back.jupjup.global.response.StatusResponse;
 import lombok.RequiredArgsConstructor;
@@ -39,10 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class PostService {
-	private final S3Upload s3Upload;
 	private final PostRepository postRepository;
 	private final PostImageRepository postImageRepository;
 	private final PostjoinRepository postjoinRepository;
+	private final ImageService imageService;
 
 	private StatusResponse createStatusResponse(Object data) {
 		return StatusResponse.builder()
@@ -57,7 +55,7 @@ public class PostService {
 		Post post = requestDto.toEntity(requestDto, member);
 		postRepository.save(post);
 
-		List<String> imageUrls = saveImageUrls(requestDto.getImages(), post);
+		List<String> imageUrls = imageService.saveImageUrlsPost(requestDto.getImages(), post);
 		boolean isJoined = false;
 		boolean isEnded = false;
 
@@ -258,49 +256,9 @@ public class PostService {
 
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getPresignedUrls(Member member, ImageUploadRequestDto imageUploadRequestDto) {
-		List<String> fileNameList = imageUploadRequestDto.getImageList();
-		log.info(String.valueOf(fileNameList.size()));
 
-		List<ImageUploadResponseDto> urls = fileNameList.stream().map(raw -> {
-			//이미지 파일이 유효한 확장자인지 검사
-			isValidFileExtension(raw);
-			String fileName = createRandomFileName(raw);
-			String presignedUrl = s3Upload.getPresignedUrl(fileName);
-
-			return ImageUploadResponseDto.builder()
-				.rawFile(raw)
-				.fileName(fileName)
-				.presignedUrl(presignedUrl)
-				.build();
-		}).collect(Collectors.toList());
-
+		List<ImageUploadResponseDto> urls = imageService.getPresignedUrls(imageUploadRequestDto.getImageList());
 		return ResponseEntity.ok(createStatusResponse(urls));
-	}
-
-	private List<String> saveImageUrls(List<String> images, Post post) {
-		List<String> imageUrls = new ArrayList<>();
-		for (String fileUrl : images) {
-			PostImage postImage = postImageRepository.save(new PostImage(fileUrl, post));
-			imageUrls.add(postImage.getFileUrl());
-		}
-
-		return imageUrls;
-	}
-
-	private String createRandomFileName(String rawFile) {
-		return UUID.randomUUID() + rawFile;
-	}
-
-	private void isValidFileExtension(String fileName) {
-		if (fileName.length() == 0) {
-			throw new EmptyInputFilenameException();
-		}
-
-		String[] validExtensions = {".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG"};
-		String idxFileName = fileName.substring(fileName.lastIndexOf("."));
-		if (!Arrays.asList(validExtensions).contains(idxFileName)) {
-			throw new WrongImageFormatException();
-		}
 	}
 
 	private void checkValidMember(Long memberId, Long authorId) {
