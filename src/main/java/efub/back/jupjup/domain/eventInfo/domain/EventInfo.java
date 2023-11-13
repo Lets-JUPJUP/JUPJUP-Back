@@ -12,7 +12,7 @@ public class EventInfo extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "eventinfo_id", updatable = false)
-	private Long Id;
+	private Long id;
 
 	@Column(nullable = false)
 	private String title;
