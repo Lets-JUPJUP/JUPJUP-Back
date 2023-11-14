@@ -89,6 +89,12 @@ public class PostController {
 		return postService.deletePost(member, postId);
 	}
 
+	// 전체 게시글 개수와 참여한 게시글 개수 조회
+	@GetMapping("/counts")
+	public ResponseEntity<StatusResponse> getPostCounts(@AuthUser Member member) {
+		return postService.getPostCounts(member);
+	}
+
 	@PostMapping("/images")
 	public ResponseEntity<StatusResponse> getPresignedUrls(@AuthUser Member member,
 		@RequestBody ImageUploadRequestDto imageUploadRequestDto) {
