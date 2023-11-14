@@ -29,7 +29,7 @@ public class Eventcomment extends BaseTimeEntity {
 	private Member writer;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "eventInfo_id", updatable = false)
+	@JoinColumn(name = "event_info_id", updatable = false)
 	private EventInfo eventInfo;
 
 	@Builder
