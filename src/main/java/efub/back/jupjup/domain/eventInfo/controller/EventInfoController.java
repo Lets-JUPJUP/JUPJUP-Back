@@ -23,4 +23,11 @@ public class EventInfoController {
 	public ResponseEntity<StatusResponse> getEventInfo(@PathVariable Long eventInfoId){
 		return eventInfoService.getEventInfo(eventInfoId);
 	}
+
+	// 공식행사 게시글 리스트 조회
+	@GetMapping("/lists")
+	public ResponseEntity<StatusResponse> getAllEventInfos() {
+		return eventInfoService.getAllEventInfos();
+	}
+
 }

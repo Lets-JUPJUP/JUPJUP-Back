@@ -1,5 +1,8 @@
 package efub.back.jupjup.domain.eventInfo.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +36,16 @@ public class EventInfoService {
 		EventInfo eventInfo = eventInfoRepository.findById(eventInfoId).orElseThrow();
 		EventInfoResponseDto responseDto = EventInfoResponseDto.of(eventInfo);
 		return ResponseEntity.ok(createStatusResponse(responseDto));
+	}
+
+	// 공식 행사 리스트 보기
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getAllEventInfos() {
+		List<EventInfo> eventInfos = eventInfoRepository.findAll();
+		List<EventInfoResponseDto> responseDtos = eventInfos.stream()
+			.map(EventInfoResponseDto::of)
+			.collect(Collectors.toList());
+		return ResponseEntity.ok(createStatusResponse(responseDtos));
 	}
 
 }
