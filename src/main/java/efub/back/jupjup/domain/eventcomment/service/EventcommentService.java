@@ -3,9 +3,11 @@ package efub.back.jupjup.domain.eventcomment.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import efub.back.jupjup.domain.eventInfo.domain.EventInfo;
 import efub.back.jupjup.domain.eventInfo.repository.EventInfoRepository;
@@ -59,5 +61,14 @@ public class EventcommentService {
 			.collect(Collectors.toList());
 		EventcommentResponseDto responseDto = new EventcommentResponseDto(eventcommentDtos, eventcommentDtos.size());
 		return ResponseEntity.ok(createStatusResponse(responseDto));
+	}
+
+	// 공식행사 댓글 삭제 기능
+	public ResponseEntity<StatusResponse> deleteEventcomment(Long eventInfoId, Long eventCommentId, Member writer) {
+		Eventcomment eventcomment = eventcommentRepository.findByIdAndEventInfoIdAndWriterId(eventCommentId, eventInfoId, writer.getId())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "댓글을 삭제할 권한이 없습니다."));
+
+		eventcommentRepository.delete(eventcomment);
+		return ResponseEntity.ok(createStatusResponse("댓글이 성공적으로 삭제되었습니다."));
 	}
 }
