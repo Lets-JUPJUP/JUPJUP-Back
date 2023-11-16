@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -82,7 +81,6 @@ public class NotificationService {
 			.forEach(entry -> sendNotification(emitter, entry.getKey(), emitterId, entry.getValue()));
 	}
 
-	@Async
 	public void send(Member receiver, NotificationType notificationType, String content, Long contentId) {
 		Notification notification = notificationRepository.save(
 			createNotification(receiver, notificationType, content, contentId));
@@ -117,7 +115,8 @@ public class NotificationService {
 		List<NotificationResDto> notificationResDtos = notifications.stream()
 			.map(NotificationResDto::create)
 			.collect(Collectors.toList());
-		NotificationPageResDto resDto = new NotificationPageResDto(notificationResDtos, createPageInfo(notifications));
+		NotificationPageResDto resDto = new NotificationPageResDto(notificationResDtos,
+			createPageInfo(notifications, page, size));
 
 		return ResponseEntity.ok(createStatusResponse(resDto));
 	}
@@ -156,9 +155,12 @@ public class NotificationService {
 			.build());
 	}
 
-	private PageInfo createPageInfo(Page<?> page) {
-		return new PageInfo(page.getNumber(), page.getNumberOfElements(), (int)page.getTotalElements(),
-			page.getTotalPages());
+	private PageInfo createPageInfo(Page<?> notiPage, int page, int size) {
+		if (notiPage.getTotalPages() == 1) {
+			size = (int)notiPage.getTotalElements();
+		}
+
+		return new PageInfo(page, size, (int)notiPage.getTotalElements(), notiPage.getTotalPages());
 	}
 
 	private StatusResponse createStatusResponse(Object data) {
