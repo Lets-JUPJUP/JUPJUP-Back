@@ -1,9 +1,9 @@
 package efub.back.jupjup.domain.comment.service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.LinkedHashMap;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,17 +17,21 @@ import efub.back.jupjup.domain.comment.dto.CommentResponseDto;
 import efub.back.jupjup.domain.comment.dto.ReplyRequestDto;
 import efub.back.jupjup.domain.comment.dto.ReplyResponseDto;
 import efub.back.jupjup.domain.comment.exception.NoAuthorityCommentRemoveException;
+import efub.back.jupjup.domain.comment.exception.NoCommentExistsException;
+import efub.back.jupjup.domain.comment.exception.NoPostExistException;
 import efub.back.jupjup.domain.comment.repository.CommentRepository;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.repository.MemberRepository;
+import efub.back.jupjup.domain.notification.comment.domain.NotificationType;
+import efub.back.jupjup.domain.notification.service.NotificationService;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.repository.PostRepository;
 import efub.back.jupjup.global.response.StatusEnum;
 import efub.back.jupjup.global.response.StatusResponse;
-import efub.back.jupjup.domain.comment.exception.NoPostExistException;
-import efub.back.jupjup.domain.comment.exception.NoCommentExistsException;;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+;
 
 @Service
 @Transactional
@@ -37,6 +41,7 @@ public class CommentService {
 	private final CommentRepository commentRepository;
 	private final PostRepository postRepository;
 	private final MemberRepository memberRepository;
+	private final NotificationService notificationService;
 
 	// 댓글 생성 기능
 	public ResponseEntity<StatusResponse> saveComment(Long postId, CommentRequestDto commentReqDto, Member member) {
@@ -47,6 +52,11 @@ public class CommentService {
 			.post(post)
 			.build();
 		commentRepository.save(comment);
+
+		if (!post.getAuthor().getId().equals(member.getId())) {
+			notificationService.send(post.getAuthor(), NotificationType.COMMENT, comment.getContent(),
+				comment.getPost().getId());
+		}
 
 		return ResponseEntity.ok(StatusResponse.builder()
 			.status(StatusEnum.OK.getStatusCode())
@@ -67,6 +77,11 @@ public class CommentService {
 			.build();
 		comment.setParent(parent);
 		commentRepository.save(comment);
+
+		if (!parent.getWriter().getId().equals(member.getId())) {
+			notificationService.send(parent.getWriter(), NotificationType.REPLY, replyReqDto.getContent(),
+				comment.getPost().getId());
+		}
 
 		return ResponseEntity.ok(StatusResponse.builder()
 			.status(StatusEnum.OK.getStatusCode())
