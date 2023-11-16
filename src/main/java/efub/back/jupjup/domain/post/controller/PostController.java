@@ -94,10 +94,4 @@ public class PostController {
 	public ResponseEntity<StatusResponse> getPostCounts(@AuthUser Member member) {
 		return postService.getPostCounts(member);
 	}
-
-	@PostMapping("/images")
-	public ResponseEntity<StatusResponse> getPresignedUrls(@AuthUser Member member,
-		@RequestBody ImageUploadRequestDto imageUploadRequestDto) {
-		return postService.getPresignedUrls(member, imageUploadRequestDto);
-	}
 }

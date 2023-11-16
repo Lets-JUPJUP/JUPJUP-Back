@@ -45,11 +45,4 @@ public class ReportService {
 
 		return ResponseEntity.ok(createStatusResponse(reportResponseDto));
 	}
-
-	@Transactional(readOnly = true)
-	public ResponseEntity<StatusResponse> getPresignedUrls(Member member, ImageUploadRequestDto imageUploadRequestDto) {
-
-		List<ImageUploadResponseDto> urls = imageService.getPresignedUrls(imageUploadRequestDto.getImageList());
-		return ResponseEntity.ok(createStatusResponse(urls));
-	}
 }
