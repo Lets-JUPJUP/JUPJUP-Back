@@ -29,7 +29,7 @@ public enum Badge {
                 return badge;
             }
         }
-        throw new IllegalArgumentException("No Badge found for this code: " + code);
+        return null;
     }
 
     public static Badge getBadgeByTitle(String title) {

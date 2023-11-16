@@ -1,7 +1,11 @@
 package efub.back.jupjup.domain.post.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -261,5 +265,18 @@ public class PostService {
 		if (!memberId.equals(authorId)) {
 			throw new IllegalArgumentException();
 		}
+	}
+
+	// 전체 플로깅 게시글 개수와 사용자가 참여한 플로깅 게시글 개수 반환
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getPostCounts(Member member) {
+		long totalPostsCount = postRepository.count(); // 전체 플로깅 게시글의 개수
+		long joinedPostsCount = postjoinRepository.countByMember(member); // 사용자가 참여한 플로깅 게시글의 개수
+
+		Map<String, Long> counts = new HashMap<>();
+		counts.put("totalPostsCount", totalPostsCount);
+		counts.put("joinedPostsCount", joinedPostsCount);
+
+		return ResponseEntity.ok(createStatusResponse(counts));
 	}
 }
