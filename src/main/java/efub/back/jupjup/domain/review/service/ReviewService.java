@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.exception.MemberNotFoundException;
 import efub.back.jupjup.domain.member.repository.MemberRepository;
+import efub.back.jupjup.domain.post.domain.Post;
+import efub.back.jupjup.domain.post.exception.PostNotFoundException;
 import efub.back.jupjup.domain.post.repository.PostRepository;
 import efub.back.jupjup.domain.postjoin.repository.PostjoinRepository;
 import efub.back.jupjup.domain.review.domain.Badge;
@@ -38,7 +40,13 @@ public class ReviewService {
 	private final PostRepository postRepository;
 
 	public ResponseEntity<StatusResponse> writeReview(Member member, ReviewReqDto reviewReqDto) {
-		// 플로깅 참여 멤버인지 확인
+		// 존재하는 게시글인지 확인
+		checkPostExists(reviewReqDto.getPostId());
+
+		// 리뷰 대상이 존재하는 멤버인지 확인
+		checkReviewSubjectExists(reviewReqDto.getMemberId());
+
+		// 리뷰 작성자가 플로깅 참여 멤버인지 확인
 		checkMemberJoined(member.getId(), reviewReqDto.getPostId());
 
 		List<Integer> badgeList = reviewReqDto.getBadgeList();
@@ -98,5 +106,13 @@ public class ReviewService {
 		if (!joinedMemberIds.contains(memberId)) {
 			throw new ReviewNotAllowedException();
 		}
+	}
+
+	private void checkReviewSubjectExists(Long memberId) {
+		Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+	}
+
+	private void checkPostExists(Long postId) {
+		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 	}
 }

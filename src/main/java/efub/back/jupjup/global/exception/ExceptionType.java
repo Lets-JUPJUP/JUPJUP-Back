@@ -8,6 +8,7 @@ import efub.back.jupjup.domain.auth.exception.RefreshTokenNotValidException;
 import efub.back.jupjup.domain.member.exception.InvalidNicknameException;
 import efub.back.jupjup.domain.member.exception.MemberNotFoundException;
 import efub.back.jupjup.domain.notification.exception.NotificationNotFoundException;
+import efub.back.jupjup.domain.post.exception.PostNotFoundException;
 import efub.back.jupjup.domain.review.exception.BadgeNotExistsForCodeException;
 import efub.back.jupjup.domain.review.exception.ReviewNotAllowedException;
 import efub.back.jupjup.domain.security.exception.ExpiredTokenException;
@@ -44,7 +45,10 @@ public enum ExceptionType {
 	TRASHCAN_NOT_FOUND_EXCEPTION("C4001", "존재하지 않는 쓰레기통입니다.", TrashCanNotFoundException.class),
 
 	// 알림 관련 - C5***
-	NOTIFICATION_NOT_FOUND_EXCEPTION("C5000", "해당 알림을 찾을 수 없습니다.", NotificationNotFoundException.class);
+	NOTIFICATION_NOT_FOUND_EXCEPTION("C5000", "해당 알림을 찾을 수 없습니다.", NotificationNotFoundException.class),
+
+	// 게시글 관련 - C6***
+	POST_NOT_FOUND_EXCEPTION("C6000", "존재하지 않는 게시글입니다.", PostNotFoundException.class);
 
 	private final String errorCode;
 	private final String message;
