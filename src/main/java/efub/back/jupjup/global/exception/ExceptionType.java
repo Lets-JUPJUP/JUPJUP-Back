@@ -1,9 +1,13 @@
 package efub.back.jupjup.global.exception;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 import efub.back.jupjup.domain.auth.exception.AlreadyLogoutException;
 import efub.back.jupjup.domain.auth.exception.RefreshTokenNotValidException;
 import efub.back.jupjup.domain.member.exception.InvalidNicknameException;
 import efub.back.jupjup.domain.member.exception.MemberNotFoundException;
+import efub.back.jupjup.domain.notification.exception.NotificationNotFoundException;
 import efub.back.jupjup.domain.review.exception.BadgeNotExistsForCodeException;
 import efub.back.jupjup.domain.security.exception.ExpiredTokenException;
 import efub.back.jupjup.domain.trashCan.domain.Feedback;
@@ -13,12 +17,10 @@ import efub.back.jupjup.global.exception.custom.ApplicationException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 @AllArgsConstructor
 @Getter
 public enum ExceptionType {
+  
     // 서버 자체 관련 - C0***
     UNHANDLED_EXCEPTION("C0000", "알 수 없는 서버 에러가 발생했습니다."),
     METHOD_ARGUMENT_NOT_VALID_EXCEPTION("C0001", "요청 데이터가 잘못되었습니다."),
@@ -37,7 +39,10 @@ public enum ExceptionType {
 
     // trashCan 관련 - C4***
     FEEDBACK_NOT_EXISTS_FOR_CODE_EXCEPTION("C4000", "해당 코드와 일치하는 쓰레기통 피드백이 존재하지 않습니다.", FeedbackNotExistsForCodeException.class),
-    TRASHCAN_NOT_FOUND_EXCEPTION("C4001", "존재하지 않는 쓰레기통입니다.",TrashCanNotFoundException.class);
+    TRASHCAN_NOT_FOUND_EXCEPTION("C4001", "존재하지 않는 쓰레기통입니다.",TrashCanNotFoundException.class),
+  
+    // 알림 관련 - C5***
+	  NOTIFICATION_NOT_FOUND_EXCEPTION("C5000", "해당 알림을 찾을 수 없습니다.", NotificationNotFoundException.class);
 
     private final String errorCode;
     private final String message;
