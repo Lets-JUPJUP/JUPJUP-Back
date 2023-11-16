@@ -28,12 +28,13 @@ public class PostResponseDto {
 	private Boolean withPet;
 	private Long authorId;
 	private Optional<Boolean> isJoined; // 참여 여부를 표시하는 필드
+	private Optional<Boolean> isHearted; // 찜하기 여부를 표시하는 필드
 	private Boolean isEnded;  // 모집 마감 여부를 표시하는 필드
 	private String authorNickname;           // 글쓴이의 닉네임 필드
 	private String authorProfileImageUrl;    // 글쓴이의 프로필 이미지 URL 필드
 	private Boolean isRecruitmentSuccessful;
 
-	public static PostResponseDto of(Post post, List<String> imgUrlList, Optional<Boolean> isJoined, Boolean isEnded) {
+	public static PostResponseDto of(Post post, List<String> imgUrlList, Optional<Boolean> isJoined, Optional<Boolean> isHearted, Boolean isEnded) {
 
 		return PostResponseDto.builder()
 			.id(post.getId())
@@ -50,6 +51,7 @@ public class PostResponseDto {
 			.fileUrls(imgUrlList)
 			.withPet(post.isWithPet())
 			.authorId(post.getAuthor().getId())
+			.isHearted(isHearted)
 			.isJoined(isJoined)
 			.isEnded(isEnded)
 			.authorNickname(post.getAuthor().getNickname())

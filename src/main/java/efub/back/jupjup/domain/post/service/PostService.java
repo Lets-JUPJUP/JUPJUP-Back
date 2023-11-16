@@ -1,8 +1,6 @@
 package efub.back.jupjup.domain.post.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import efub.back.jupjup.domain.heart.repository.HeartRepository;
 import efub.back.jupjup.domain.image.service.ImageService;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.post.domain.Post;
@@ -39,6 +38,7 @@ public class PostService {
 	private final PostRepository postRepository;
 	private final PostImageRepository postImageRepository;
 	private final PostjoinRepository postjoinRepository;
+	private final HeartRepository heartRepository;
 	private final ImageService imageService;
 
 	private StatusResponse createStatusResponse(Object data) {
@@ -58,8 +58,9 @@ public class PostService {
 		List<String> imageUrls = imageService.saveImageUrlsPost(requestDto.getImages(), post);
 		boolean isJoined = false;
 		boolean isEnded = false;
+		boolean isHearted = false;
 
-		PostResponseDto postResponseDto = PostResponseDto.of(post, imageUrls, Optional.of(isJoined), isEnded);
+		PostResponseDto postResponseDto = PostResponseDto.of(post, imageUrls, Optional.of(isJoined), Optional.of(isHearted), isEnded);
 
 		return ResponseEntity.ok(createStatusResponse(postResponseDto));
 	}
@@ -75,9 +76,10 @@ public class PostService {
 			.collect(Collectors.toList());
 
 		boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+		boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 		boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-		PostResponseDto responseDto = PostResponseDto.of(post, urlList, Optional.of(isJoined), isEnded);
+		PostResponseDto responseDto = PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded);
 		return ResponseEntity.ok(createStatusResponse(responseDto));
 	}
 
@@ -93,9 +95,10 @@ public class PostService {
 				.collect(Collectors.toList());
 
 			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, Optional.of(isJoined), isEnded);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -114,7 +117,7 @@ public class PostService {
 
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, Optional.empty(), isEnded);
+			return PostResponseDto.of(post, urlList, Optional.empty(), Optional.empty(), isEnded);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -134,9 +137,10 @@ public class PostService {
 				.collect(Collectors.toList());
 
 			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, Optional.of(isJoined), isEnded);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -157,7 +161,7 @@ public class PostService {
 
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, Optional.empty(), isEnded);
+			return PostResponseDto.of(post, urlList, Optional.empty(), Optional.empty(), isEnded);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -176,9 +180,10 @@ public class PostService {
 				.collect(Collectors.toList());
 
 			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, Optional.of(isJoined), isEnded);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted),isEnded);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -198,7 +203,7 @@ public class PostService {
 
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, Optional.empty(), isEnded);
+			return PostResponseDto.of(post, urlList, Optional.empty(), Optional.empty(), isEnded);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -217,9 +222,10 @@ public class PostService {
 				.collect(Collectors.toList());
 
 			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, Optional.of(isJoined), isEnded);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -239,7 +245,7 @@ public class PostService {
 
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, Optional.empty(), isEnded);
+			return PostResponseDto.of(post, urlList, Optional.empty(), Optional.empty(), isEnded);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
