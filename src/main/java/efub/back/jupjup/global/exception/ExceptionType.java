@@ -6,6 +6,9 @@ import efub.back.jupjup.domain.member.exception.InvalidNicknameException;
 import efub.back.jupjup.domain.member.exception.MemberNotFoundException;
 import efub.back.jupjup.domain.review.exception.BadgeNotExistsForCodeException;
 import efub.back.jupjup.domain.security.exception.ExpiredTokenException;
+import efub.back.jupjup.domain.trashCan.domain.Feedback;
+import efub.back.jupjup.domain.trashCan.exception.FeedbackNotExistsForCodeException;
+import efub.back.jupjup.domain.trashCan.exception.TrashCanNotFoundException;
 import efub.back.jupjup.global.exception.custom.ApplicationException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +33,11 @@ public enum ExceptionType {
     EXPIRED_TOKEN_EXCEPTION("C2002", "만료된 토큰입니다.",ExpiredTokenException.class),
 
     // review 관련 - C3***
-    BADGE_NOT_EXISTS_FOR_CODE_EXCEPTION("C3000","해당 코드와 일치하는 뱃지가 존재하지 않습니다.", BadgeNotExistsForCodeException.class);
+    BADGE_NOT_EXISTS_FOR_CODE_EXCEPTION("C3000","해당 코드와 일치하는 뱃지가 존재하지 않습니다.", BadgeNotExistsForCodeException.class),
+
+    // trashCan 관련 - C4***
+    FEEDBACK_NOT_EXISTS_FOR_CODE_EXCEPTION("C4000", "해당 코드와 일치하는 쓰레기통 피드백이 존재하지 않습니다.", FeedbackNotExistsForCodeException.class),
+    TRASHCAN_NOT_FOUND_EXCEPTION("C4001", "존재하지 않는 쓰레기통입니다.",TrashCanNotFoundException.class);
 
     private final String errorCode;
     private final String message;
