@@ -1,15 +1,14 @@
 package efub.back.jupjup.domain.post.dto;
 
-import efub.back.jupjup.domain.post.domain.PostGender;
-import efub.back.jupjup.domain.post.domain.PostAgeRange;
-import efub.back.jupjup.domain.post.domain.Post;
-
-import lombok.Builder;
-import lombok.Getter;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import efub.back.jupjup.domain.post.domain.Post;
+import efub.back.jupjup.domain.post.domain.PostAgeRange;
+import efub.back.jupjup.domain.post.domain.PostGender;
+import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 @Builder
@@ -32,7 +31,7 @@ public class PostResponseDto {
 	private Boolean isEnded;  // 모집 마감 여부를 표시하는 필드
 	private String authorNickname;           // 글쓴이의 닉네임 필드
 	private String authorProfileImageUrl;    // 글쓴이의 프로필 이미지 URL 필드
-
+	private Boolean isRecruitmentSuccessful;
 
 	public static PostResponseDto of(Post post, List<String> imgUrlList, Optional<Boolean> isJoined, Boolean isEnded) {
 
@@ -55,6 +54,7 @@ public class PostResponseDto {
 			.isEnded(isEnded)
 			.authorNickname(post.getAuthor().getNickname())
 			.authorProfileImageUrl(post.getAuthor().getProfileImageUrl())
+			.isRecruitmentSuccessful(post.getIsRecruitmentSuccessful())
 			.build();
 	}
 }

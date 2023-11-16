@@ -1,11 +1,19 @@
 package efub.back.jupjup.domain.post.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import efub.back.jupjup.domain.image.service.ImageService;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.domain.PostAgeRange;
@@ -18,15 +26,10 @@ import efub.back.jupjup.domain.post.dto.PostResponseDto;
 import efub.back.jupjup.domain.post.repository.PostImageRepository;
 import efub.back.jupjup.domain.post.repository.PostRepository;
 import efub.back.jupjup.domain.postjoin.repository.PostjoinRepository;
-import efub.back.jupjup.domain.image.service.ImageService;
 import efub.back.jupjup.global.response.StatusEnum;
 import efub.back.jupjup.global.response.StatusResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -49,20 +52,21 @@ public class PostService {
 	// 플로깅 게시글 작성
 	public ResponseEntity<StatusResponse> savePost(PostRequestDto requestDto, Member member) {
 		Post post = requestDto.toEntity(requestDto, member);
+		post.updateIsRecruitmentSuccessful(1L);
 		postRepository.save(post);
 
 		List<String> imageUrls = imageService.saveImageUrlsPost(requestDto.getImages(), post);
 		boolean isJoined = false;
 		boolean isEnded = false;
 
-		PostResponseDto postResponseDto = PostResponseDto.of(post,imageUrls, Optional.of(isJoined), isEnded);
+		PostResponseDto postResponseDto = PostResponseDto.of(post, imageUrls, Optional.of(isJoined), isEnded);
 
 		return ResponseEntity.ok(createStatusResponse(postResponseDto));
 	}
 
 	// 플로깅 게시글 상세 보기 : 1개
 	@Transactional(readOnly = true)
-	public ResponseEntity<StatusResponse> getPost(Long postId, Member member){
+	public ResponseEntity<StatusResponse> getPost(Long postId, Member member) {
 		Post post = postRepository.findById(postId).orElseThrow();
 
 		List<String> urlList = postImageRepository.findAllByPost(post)
@@ -79,7 +83,7 @@ public class PostService {
 
 	// 플로깅 게시글 리스트 보기
 	@Transactional(readOnly = true)
-	public ResponseEntity<StatusResponse> getAllPosts(Member member){
+	public ResponseEntity<StatusResponse> getAllPosts(Member member) {
 		List<Post> posts = postRepository.findAll();
 
 		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
@@ -99,7 +103,7 @@ public class PostService {
 
 	// 플로깅 게시글 리스트 보기 - (로그인 없이)
 	@Transactional(readOnly = true)
-	public ResponseEntity<StatusResponse> getAllPostsUnAuth(){
+	public ResponseEntity<StatusResponse> getAllPostsUnAuth() {
 		List<Post> posts = postRepository.findAll();
 
 		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
@@ -261,5 +265,18 @@ public class PostService {
 		if (!memberId.equals(authorId)) {
 			throw new IllegalArgumentException();
 		}
+	}
+
+	// 전체 플로깅 게시글 개수와 사용자가 참여한 플로깅 게시글 개수 반환
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getPostCounts(Member member) {
+		long totalPostsCount = postRepository.count(); // 전체 플로깅 게시글의 개수
+		long joinedPostsCount = postjoinRepository.countByMember(member); // 사용자가 참여한 플로깅 게시글의 개수
+
+		Map<String, Long> counts = new HashMap<>();
+		counts.put("totalPostsCount", totalPostsCount);
+		counts.put("joinedPostsCount", joinedPostsCount);
+
+		return ResponseEntity.ok(createStatusResponse(counts));
 	}
 }
