@@ -11,6 +11,10 @@ import efub.back.jupjup.domain.postjoin.domain.Postjoin;
 
 public interface PostjoinRepository extends JpaRepository<Postjoin, Long> {
 	Optional<Postjoin> findByMemberAndPost(Member member, Post post);
+
 	Boolean existsByMemberAndPost(Member member, Post post);
+
 	List<Postjoin> findAllByPost(Post post);
+
+	Long countByPost(Post post);
 }

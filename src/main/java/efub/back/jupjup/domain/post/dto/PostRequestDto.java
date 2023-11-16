@@ -5,9 +5,8 @@ import java.util.List;
 
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.post.domain.Post;
-import efub.back.jupjup.domain.post.domain.PostGender;
 import efub.back.jupjup.domain.post.domain.PostAgeRange;
-
+import efub.back.jupjup.domain.post.domain.PostGender;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,6 +39,7 @@ public class PostRequestDto {
 			.dueDate(dto.getDueDate())
 			.withPet(dto.isWithPet())
 			.author(member)
+			.isRecruitmentSuccessful(false)
 			.build();
 	}
 
