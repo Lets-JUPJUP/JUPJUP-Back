@@ -26,10 +26,4 @@ public class ReportController {
 		@AuthUser Member member) {
 		return reportService.createReport(reportRequestDto, member);
 	}
-
-	@PostMapping("/images")
-	public ResponseEntity<StatusResponse> getPresignedUrls(@AuthUser Member member,
-		@RequestBody ImageUploadRequestDto imageUploadRequestDto) {
-		return reportService.getPresignedUrls(member, imageUploadRequestDto);
-	}
 }

@@ -1,8 +1,6 @@
 package efub.back.jupjup.domain.post.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +17,6 @@ import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.domain.PostAgeRange;
 import efub.back.jupjup.domain.post.domain.PostGender;
 import efub.back.jupjup.domain.post.domain.PostImage;
-import efub.back.jupjup.domain.post.dto.ImageUploadRequestDto;
-import efub.back.jupjup.domain.post.dto.ImageUploadResponseDto;
 import efub.back.jupjup.domain.post.dto.PostRequestDto;
 import efub.back.jupjup.domain.post.dto.PostResponseDto;
 import efub.back.jupjup.domain.post.repository.PostImageRepository;
@@ -252,13 +248,6 @@ public class PostService {
 		postImageRepository.deleteAllByPost(post);
 		postRepository.delete(post);
 		return ResponseEntity.ok(createStatusResponse("post deleted"));
-	}
-
-	@Transactional(readOnly = true)
-	public ResponseEntity<StatusResponse> getPresignedUrls(Member member, ImageUploadRequestDto imageUploadRequestDto) {
-
-		List<ImageUploadResponseDto> urls = imageService.getPresignedUrls(imageUploadRequestDto.getImageList());
-		return ResponseEntity.ok(createStatusResponse(urls));
 	}
 
 	private void checkValidMember(Long memberId, Long authorId) {

@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import efub.back.jupjup.domain.image.S3Upload;
+import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.domain.PostImage;
+import efub.back.jupjup.domain.post.dto.ImageUploadRequestDto;
 import efub.back.jupjup.domain.post.dto.ImageUploadResponseDto;
 import efub.back.jupjup.domain.post.exception.EmptyInputFilenameException;
 import efub.back.jupjup.domain.post.exception.WrongImageFormatException;
@@ -19,6 +22,8 @@ import efub.back.jupjup.domain.post.repository.PostImageRepository;
 import efub.back.jupjup.domain.report.domain.Report;
 import efub.back.jupjup.domain.report.domain.ReportImage;
 import efub.back.jupjup.domain.report.repository.ReportImageRepository;
+import efub.back.jupjup.global.response.StatusEnum;
+import efub.back.jupjup.global.response.StatusResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +35,14 @@ public class ImageService {
 	private final S3Upload s3Upload;
 	private final PostImageRepository postImageRepository;
 	private final ReportImageRepository reportImageRepository;
+
+	public StatusResponse createStatusResponse(Object data) {
+		return StatusResponse.builder()
+			.status(StatusEnum.OK.getStatusCode())
+			.message(StatusEnum.OK.getCode())
+			.data(data)
+			.build();
+	}
 
 	public List<ImageUploadResponseDto> getPresignedUrls(List<String> fileNameList) {
 		return fileNameList.stream().map(raw -> {
