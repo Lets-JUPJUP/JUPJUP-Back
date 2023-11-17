@@ -1,4 +1,4 @@
-package efub.back.jupjup.domain.EventInfo.domain;
+package efub.back.jupjup.domain.eventInfo.domain;
 
 import efub.back.jupjup.global.BaseTimeEntity;
 import javax.persistence.*;
@@ -11,20 +11,21 @@ import lombok.NoArgsConstructor;
 public class EventInfo extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long eventinfoId;
+	@Column(name = "eventinfo_id", updatable = false)
+	private Long id;
 
 	@Column(nullable = false)
 	private String title;
 
 	@Column(name = "info_url", nullable = false)
-	private String info_url;
+	private String infoUrl;
 
 	@Column(name = "image_url", nullable = false)
-	private String image_url;
+	private String imageUrl;
 
-	public EventInfo(String title, String info_url, String image_url){
+	public EventInfo(String title, String infoUrl, String imageUrl){
 		this.title = title;
-		this.info_url = info_url;
-		this.image_url = image_url;
+		this.infoUrl = infoUrl;
+		this.imageUrl = imageUrl;
 	}
 }
