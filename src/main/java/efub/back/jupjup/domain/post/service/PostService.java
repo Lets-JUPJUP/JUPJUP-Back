@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import efub.back.jupjup.domain.heart.repository.HeartRepository;
 import efub.back.jupjup.domain.image.service.ImageService;
 import efub.back.jupjup.domain.member.domain.Member;
+import efub.back.jupjup.domain.member.repository.MemberRepository;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.domain.PostAgeRange;
 import efub.back.jupjup.domain.post.domain.PostGender;
@@ -38,6 +39,7 @@ public class PostService {
 	private final PostjoinRepository postjoinRepository;
 	private final HeartRepository heartRepository;
 	private final ImageService imageService;
+	private final MemberRepository memberRepository;
 
 	private StatusResponse createStatusResponse(Object data) {
 		return StatusResponse.builder()
@@ -273,6 +275,20 @@ public class PostService {
 		Map<String, Long> counts = new HashMap<>();
 		counts.put("totalPostsCount", totalPostsCount);
 		counts.put("joinedPostsCount", joinedPostsCount);
+
+		return ResponseEntity.ok(createStatusResponse(counts));
+	}
+
+	// 특정 사용자의 주최한 플로깅 개수와 참여한 플로깅 개수 조회
+	public ResponseEntity<StatusResponse> getUserPostCounts(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+		long hostedPostCount = postRepository.countByAuthor(member); // 주최한 플로깅 개수
+		long joinedPostCount = postjoinRepository.countByMember(member); // 참여한 플로깅 개수
+
+		Map<String, Long> counts = new HashMap<>();
+		counts.put("hostedPostCount", hostedPostCount);
+		counts.put("joinedPostCount", joinedPostCount);
 
 		return ResponseEntity.ok(createStatusResponse(counts));
 	}

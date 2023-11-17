@@ -94,4 +94,10 @@ public class PostController {
 	public ResponseEntity<StatusResponse> getPostCounts(@AuthUser Member member) {
 		return postService.getPostCounts(member);
 	}
+
+	// 특정 사용자의 주최한 플로깅 개수와 참여한 플로깅 개수 조회
+	@GetMapping("/{memberId}/counts")
+	public ResponseEntity<StatusResponse> getUserPostCounts(@PathVariable Long memberId) {
+		return postService.getUserPostCounts(memberId);
+	}
 }
