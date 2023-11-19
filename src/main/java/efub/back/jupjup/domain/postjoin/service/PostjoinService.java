@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PostjoinService {
 	private static final String RECRUITMENT_SUCCESS_MSG = "신청한 플로깅 모임이 인원을 충족하여 성사되었습니다.";
-	private static final String RECRUITMENT_FAILURE_MSG = "신청한 플로깅 모임이 인원을 불총족하여 취소되었습니다.";
+	private static final String RECRUITMENT_FAILURE_MSG = "신청한 플로깅 모임이 인원을 불충족하여 취소되었습니다.";
 	private final PostRepository postRepository;
 	private final PostjoinRepository postjoinRepository;
 	private final NotificationService notificationService;
