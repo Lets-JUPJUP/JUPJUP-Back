@@ -56,7 +56,7 @@ public class PostService {
 		postRepository.save(post);
 
 		List<String> imageUrls = imageService.saveImageUrlsPost(requestDto.getImages(), post);
-		boolean isJoined = false;
+		boolean isJoined = true;
 		boolean isEnded = false;
 		boolean isHearted = false;
 
@@ -75,7 +75,9 @@ public class PostService {
 			.map(PostImage::getFileUrl)
 			.collect(Collectors.toList());
 
-		boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+		boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+		boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+		boolean isJoined = isAuthor || hasJoined;
 		boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 		boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
@@ -94,7 +96,9 @@ public class PostService {
 				.map(PostImage::getFileUrl)
 				.collect(Collectors.toList());
 
-			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+			boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isJoined = isAuthor || hasJoined;
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
@@ -136,7 +140,9 @@ public class PostService {
 				.map(PostImage::getFileUrl)
 				.collect(Collectors.toList());
 
-			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+			boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isJoined = isAuthor || hasJoined;
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
@@ -179,7 +185,9 @@ public class PostService {
 				.map(PostImage::getFileUrl)
 				.collect(Collectors.toList());
 
-			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+			boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isJoined = isAuthor || hasJoined;
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
@@ -221,7 +229,9 @@ public class PostService {
 				.map(PostImage::getFileUrl)
 				.collect(Collectors.toList());
 
-			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+			boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isJoined = isAuthor || hasJoined;
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
