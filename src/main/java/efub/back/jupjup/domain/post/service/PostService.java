@@ -314,8 +314,9 @@ public class PostService {
 					.map(PostImage::getFileUrl)
 					.collect(Collectors.toList());
 
-				boolean isAuthor = post.getAuthor().equals(member);
-				boolean isJoined = isAuthor || postjoinRepository.existsByMemberAndPost(member, post);
+				boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+				boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+				boolean isJoined = isAuthor || hasJoined;
 				boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 				boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
