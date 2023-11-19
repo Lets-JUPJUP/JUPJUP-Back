@@ -56,7 +56,7 @@ public class PostService {
 		postRepository.save(post);
 
 		List<String> imageUrls = imageService.saveImageUrlsPost(requestDto.getImages(), post);
-		boolean isJoined = false;
+		boolean isJoined = true;
 		boolean isEnded = false;
 		boolean isHearted = false;
 
@@ -75,7 +75,9 @@ public class PostService {
 			.map(PostImage::getFileUrl)
 			.collect(Collectors.toList());
 
-		boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+		boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+		boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+		boolean isJoined = isAuthor || hasJoined;
 		boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 		boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
@@ -94,7 +96,9 @@ public class PostService {
 				.map(PostImage::getFileUrl)
 				.collect(Collectors.toList());
 
-			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+			boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isJoined = isAuthor || hasJoined;
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
@@ -136,7 +140,9 @@ public class PostService {
 				.map(PostImage::getFileUrl)
 				.collect(Collectors.toList());
 
-			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+			boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isJoined = isAuthor || hasJoined;
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
@@ -179,7 +185,9 @@ public class PostService {
 				.map(PostImage::getFileUrl)
 				.collect(Collectors.toList());
 
-			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+			boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isJoined = isAuthor || hasJoined;
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
@@ -221,7 +229,9 @@ public class PostService {
 				.map(PostImage::getFileUrl)
 				.collect(Collectors.toList());
 
-			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+			boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isJoined = isAuthor || hasJoined;
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
@@ -291,5 +301,28 @@ public class PostService {
 		counts.put("joinedPostCount", joinedPostCount);
 
 		return ResponseEntity.ok(createStatusResponse(counts));
+	}
+
+	// 로그인한 사용자가 주최한 플로깅 게시글을 조회하는 메소드
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getHostedPosts(Member member) {
+		List<Post> hostedPosts = postRepository.findAllByAuthor(member);
+		List<PostResponseDto> hostedPostsDtos = hostedPosts.stream()
+			.map(post -> {
+				List<String> urlList = postImageRepository.findAllByPost(post)
+					.stream()
+					.map(PostImage::getFileUrl)
+					.collect(Collectors.toList());
+
+				boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+				boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+				boolean isJoined = isAuthor || hasJoined;
+				boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
+				boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
+
+				return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded);
+			}).collect(Collectors.toList());
+
+		return ResponseEntity.ok(createStatusResponse(hostedPostsDtos));
 	}
 }

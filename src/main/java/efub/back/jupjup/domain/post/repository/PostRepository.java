@@ -20,5 +20,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	long countByAuthor(Member author);
 
+	List<Post> findAllByAuthor(Member author);
+
 	List<Post> findByDueDateBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
 }

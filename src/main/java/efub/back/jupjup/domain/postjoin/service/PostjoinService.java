@@ -14,6 +14,7 @@ import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.notification.comment.domain.NotificationType;
 import efub.back.jupjup.domain.notification.service.NotificationService;
 import efub.back.jupjup.domain.post.domain.Post;
+import efub.back.jupjup.domain.post.exception.MaxMemberLimitException;
 import efub.back.jupjup.domain.post.repository.PostRepository;
 import efub.back.jupjup.domain.postjoin.domain.Postjoin;
 import efub.back.jupjup.domain.postjoin.dto.MemberProfileResponseDto;
@@ -29,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PostjoinService {
 	private static final String RECRUITMENT_SUCCESS_MSG = "신청한 플로깅 모임이 인원을 충족하여 성사되었습니다.";
-	private static final String RECRUITMENT_FAILURE_MSG = "신청한 플로깅 모임이 인원을 불총족하여 취소되었습니다.";
+	private static final String RECRUITMENT_FAILURE_MSG = "신청한 플로깅 모임이 인원을 불충족하여 취소되었습니다.";
 	private final PostRepository postRepository;
 	private final PostjoinRepository postjoinRepository;
 	private final NotificationService notificationService;
@@ -41,7 +42,11 @@ public class PostjoinService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
 		Long memberCount = postjoinRepository.countByPost(post);
 
-		// TODO : 최대 인원을 초과할 경우 예외 발생시키는 로직 추가 (memberCount 이용)
+		// 최대 인원을 초과할 경우 예외 발생
+		Long maxMember = new Long(post.getMaxMember());
+		if (memberCount >= maxMember - 1) {
+			throw new MaxMemberLimitException();
+		}
 
 		Postjoin postjoin = new Postjoin(member, post, true);
 		postjoinRepository.save(postjoin);

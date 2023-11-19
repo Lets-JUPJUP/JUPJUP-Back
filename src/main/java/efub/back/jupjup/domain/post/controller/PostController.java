@@ -2,7 +2,6 @@ package efub.back.jupjup.domain.post.controller;
 
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.post.domain.PostAgeRange;
-import efub.back.jupjup.domain.post.dto.ImageUploadRequestDto;
 import efub.back.jupjup.domain.post.dto.PostRequestDto;
 import efub.back.jupjup.domain.post.service.PostService;
 import efub.back.jupjup.domain.security.userInfo.AuthUser;
@@ -99,5 +98,11 @@ public class PostController {
 	@GetMapping("/{memberId}/counts")
 	public ResponseEntity<StatusResponse> getUserPostCounts(@PathVariable Long memberId) {
 		return postService.getUserPostCounts(memberId);
+	}
+
+	// 로그인한 사용자가 주최한 게시글 리스트 조회
+	@GetMapping("/hosted")
+	public ResponseEntity<StatusResponse> getHostedPosts(@AuthUser Member member) {
+		return postService.getHostedPosts(member);
 	}
 }
