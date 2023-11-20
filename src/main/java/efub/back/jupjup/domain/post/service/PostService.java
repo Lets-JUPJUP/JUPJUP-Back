@@ -1,6 +1,7 @@
 package efub.back.jupjup.domain.post.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -327,13 +328,17 @@ public class PostService {
 		return ResponseEntity.ok(createStatusResponse(hostedPostsDtos));
 	}
 
-	// 로그인한 사용자가 참여한 플로깅 게시글을 조회하는 메소드
+	// 로그인한 사용자가 참여한 플로깅 게시글을 조회하는 메소드 (모집 마감 여부에 따라 분리)
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getJoinedPosts(Member member) {
 
 		List<Postjoin> joinedPostjoins = postjoinRepository.findByMember(member);
 
-		List<PostResponseDto> joinedPostsDtos = joinedPostjoins.stream().map(postjoin -> {
+		LocalDateTime now = LocalDateTime.now();
+		List<PostResponseDto> activePosts = new ArrayList<>();
+		List<PostResponseDto> endedPosts = new ArrayList<>();
+
+		joinedPostjoins.forEach(postjoin -> {
 			Post post = postjoin.getPost();
 			List<String> urlList = postImageRepository.findAllByPost(post)
 				.stream()
@@ -341,13 +346,22 @@ public class PostService {
 				.collect(Collectors.toList());
 
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
-			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
+			boolean isEnded = now.isAfter(post.getStartDate());
 
-			// 사용자가 참여한 게시글이므로 isJoined는 항상 true
-			return PostResponseDto.of(post, urlList, Optional.of(true),
+			PostResponseDto dto = PostResponseDto.of(post, urlList, Optional.of(true),
 				Optional.of(isHearted), isEnded);
-		}).collect(Collectors.toList());
 
-		return ResponseEntity.ok(createStatusResponse(joinedPostsDtos));
+			if (isEnded) {
+				endedPosts.add(dto);
+			} else {
+				activePosts.add(dto);
+			}
+		});
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("activePosts", activePosts);
+		response.put("endedPosts", endedPosts);
+
+		return ResponseEntity.ok(createStatusResponse(response));
 	}
 }
