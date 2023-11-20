@@ -23,6 +23,7 @@ import efub.back.jupjup.domain.post.dto.PostRequestDto;
 import efub.back.jupjup.domain.post.dto.PostResponseDto;
 import efub.back.jupjup.domain.post.repository.PostImageRepository;
 import efub.back.jupjup.domain.post.repository.PostRepository;
+import efub.back.jupjup.domain.postjoin.domain.Postjoin;
 import efub.back.jupjup.domain.postjoin.repository.PostjoinRepository;
 import efub.back.jupjup.global.response.StatusEnum;
 import efub.back.jupjup.global.response.StatusResponse;
@@ -324,5 +325,29 @@ public class PostService {
 			}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(hostedPostsDtos));
+	}
+
+	// 로그인한 사용자가 참여한 플로깅 게시글을 조회하는 메소드
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getJoinedPosts(Member member) {
+
+		List<Postjoin> joinedPostjoins = postjoinRepository.findByMember(member);
+
+		List<PostResponseDto> joinedPostsDtos = joinedPostjoins.stream().map(postjoin -> {
+			Post post = postjoin.getPost();
+			List<String> urlList = postImageRepository.findAllByPost(post)
+				.stream()
+				.map(PostImage::getFileUrl)
+				.collect(Collectors.toList());
+
+			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
+			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
+
+			// 사용자가 참여한 게시글이므로 isJoined는 항상 true
+			return PostResponseDto.of(post, urlList, Optional.of(true),
+				Optional.of(isHearted), isEnded);
+		}).collect(Collectors.toList());
+
+		return ResponseEntity.ok(createStatusResponse(joinedPostsDtos));
 	}
 }
