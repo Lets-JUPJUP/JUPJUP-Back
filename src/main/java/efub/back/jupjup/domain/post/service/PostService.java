@@ -328,7 +328,7 @@ public class PostService {
 		return ResponseEntity.ok(createStatusResponse(hostedPostsDtos));
 	}
 
-	// 로그인한 사용자가 참여한 플로깅 게시글을 조회하는 메소드 (모집 마감 여부에 따라 분리)
+	// 로그인한 사용자가 참여한 플로깅 게시글을 조회하는 메소드 (플로깅 시작 시간 이전, 이후 여부에 따라 분리)
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getJoinedPosts(Member member) {
 
