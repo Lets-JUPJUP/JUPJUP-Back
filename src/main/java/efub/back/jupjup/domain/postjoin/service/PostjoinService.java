@@ -120,9 +120,9 @@ public class PostjoinService {
 		LocalDateTime end = now.minusHours(1).withMinute(59).withSecond(59).withNano(999999999);
 		log.info(start + " ~ " + end + "사이에 모집 마감된 플로깅 성사 여부 알림 전송");
 
-		List<Post> recentClosedFloggings = postRepository.findByDueDateBetween(start, end);
-		log.info("해당하는 포스트 개수 : " + recentClosedFloggings.size());
-		for (Post post : recentClosedFloggings) {
+		List<Post> recentClosedPloggings = postRepository.findByDueDateBetween(start, end);
+		log.info("해당하는 포스트 개수 : " + recentClosedPloggings.size());
+		for (Post post : recentClosedPloggings) {
 			notifyRecruitmentResult(post);
 		}
 	}
@@ -132,10 +132,11 @@ public class PostjoinService {
 		if (post.getIsRecruitmentSuccessful()) {
 			result = RECRUITMENT_SUCCESS_MSG;
 		}
+		// TODO : 주최자 알림 추가
 		List<Postjoin> postjoins = postjoinRepository.findAllByPost(post);
 		for (Postjoin postjoin : postjoins) {
 			Member member = postjoin.getMember();
-			notificationService.send(member, NotificationType.FLOGGING, result, post.getId());
+			notificationService.send(member, NotificationType.PLOGGING, result, post.getId());
 		}
 	}
 
