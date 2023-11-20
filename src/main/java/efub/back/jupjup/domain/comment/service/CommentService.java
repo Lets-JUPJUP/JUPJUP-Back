@@ -22,7 +22,7 @@ import efub.back.jupjup.domain.comment.exception.NoPostExistException;
 import efub.back.jupjup.domain.comment.repository.CommentRepository;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.repository.MemberRepository;
-import efub.back.jupjup.domain.notification.comment.domain.NotificationType;
+import efub.back.jupjup.domain.notification.domain.NotificationType;
 import efub.back.jupjup.domain.notification.service.NotificationService;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.repository.PostRepository;

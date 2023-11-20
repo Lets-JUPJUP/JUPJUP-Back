@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import efub.back.jupjup.domain.member.domain.Member;
-import efub.back.jupjup.domain.notification.comment.domain.NotificationType;
+import efub.back.jupjup.domain.notification.domain.NotificationType;
 import efub.back.jupjup.domain.notification.service.NotificationService;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.exception.MaxMemberLimitException;
@@ -29,8 +29,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class PostjoinService {
-	private static final String RECRUITMENT_SUCCESS_MSG = "신청한 플로깅 모임이 인원을 충족하여 성사되었습니다.";
-	private static final String RECRUITMENT_FAILURE_MSG = "신청한 플로깅 모임이 인원을 불충족하여 취소되었습니다.";
+	private static final String RECRUITMENT_SUCCESS_MSG_MEMBER = "신청한 플로깅 모임이 인원을 충족하여 성사되었습니다.";
+	private static final String RECRUITMENT_SUCCESS_MSG_HOST = "주최한 플로깅 모임이 인원을 충족하여 성사되었습니다.";
+	private static final String RECRUITMENT_FAILURE_MSG_MEMBER = "신청한 플로깅 모임이 인원을 불충족하여 취소되었습니다.";
+	private static final String RECRUITMENT_FAILURE_MSG_HOST = "주최한 플로깅 모임이 인원을 불충족하여 취소되었습니다.";
+
 	private final PostRepository postRepository;
 	private final PostjoinRepository postjoinRepository;
 	private final NotificationService notificationService;
@@ -120,22 +123,54 @@ public class PostjoinService {
 		LocalDateTime end = now.minusHours(1).withMinute(59).withSecond(59).withNano(999999999);
 		log.info(start + " ~ " + end + "사이에 모집 마감된 플로깅 성사 여부 알림 전송");
 
-		List<Post> recentClosedFloggings = postRepository.findByDueDateBetween(start, end);
-		log.info("해당하는 포스트 개수 : " + recentClosedFloggings.size());
-		for (Post post : recentClosedFloggings) {
+		List<Post> recentClosedPloggings = postRepository.findByDueDateBetween(start, end);
+		log.info("해당하는 포스트 개수 : " + recentClosedPloggings.size());
+		for (Post post : recentClosedPloggings) {
 			notifyRecruitmentResult(post);
 		}
 	}
 
 	private void notifyRecruitmentResult(Post post) {
-		String result = RECRUITMENT_FAILURE_MSG;
-		if (post.getIsRecruitmentSuccessful()) {
-			result = RECRUITMENT_SUCCESS_MSG;
+		Boolean isRecruitmentSuccessful = post.getIsRecruitmentSuccessful();
+		if (isRecruitmentSuccessful) {
+			notifyRecruitmentSuccess(post);
+		} else {
+			notifyRecruitmentFailure(post);
 		}
+	}
+
+	private void notifyRecruitmentSuccess(Post post) {
+		String result = null;
 		List<Postjoin> postjoins = postjoinRepository.findAllByPost(post);
+
+		// 주최자 알림 전송
+		Member host = post.getAuthor();
+		result = RECRUITMENT_SUCCESS_MSG_HOST;
+		notificationService.send(host, NotificationType.PLOGGING, result, post.getId());
+
+		// 멤버 알림 전송
 		for (Postjoin postjoin : postjoins) {
 			Member member = postjoin.getMember();
-			notificationService.send(member, NotificationType.FLOGGING, result, post.getId());
+			result = RECRUITMENT_SUCCESS_MSG_MEMBER;
+			notificationService.send(member, NotificationType.PLOGGING, result, post.getId());
+		}
+
+	}
+
+	private void notifyRecruitmentFailure(Post post) {
+		String result = null;
+		List<Postjoin> postjoins = postjoinRepository.findAllByPost(post);
+
+		// 주최자 알림 전송
+		Member host = post.getAuthor();
+		result = RECRUITMENT_FAILURE_MSG_HOST;
+		notificationService.send(host, NotificationType.PLOGGING, result, post.getId());
+
+		// 멤버 알림 전송
+		for (Postjoin postjoin : postjoins) {
+			Member member = postjoin.getMember();
+			result = RECRUITMENT_FAILURE_MSG_MEMBER;
+			notificationService.send(member, NotificationType.PLOGGING, result, post.getId());
 		}
 	}
 

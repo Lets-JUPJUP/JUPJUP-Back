@@ -2,8 +2,8 @@ package efub.back.jupjup.domain.notification.dto;
 
 import java.time.LocalDateTime;
 
-import efub.back.jupjup.domain.notification.comment.domain.Notification;
-import efub.back.jupjup.domain.notification.comment.domain.NotificationType;
+import efub.back.jupjup.domain.notification.domain.Notification;
+import efub.back.jupjup.domain.notification.domain.NotificationType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
