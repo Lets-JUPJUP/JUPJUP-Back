@@ -44,7 +44,7 @@ public class PostjoinService {
 
 		// 최대 인원을 초과할 경우 예외 발생
 		Long maxMember = new Long(post.getMaxMember());
-		if (memberCount >= maxMember - 1) {
+		if (memberCount >= maxMember - 2) { // maxMember에는 주최자가 포함되어있음
 			throw new MaxMemberLimitException();
 		}
 
