@@ -107,7 +107,7 @@ public class NotificationService {
 
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> findAllNotification(Long memberId, int page, int size) {
-		List<NotificationType> types = Arrays.asList(NotificationType.FLOGGING, NotificationType.REPLY,
+		List<NotificationType> types = Arrays.asList(NotificationType.PLOGGING, NotificationType.REPLY,
 			NotificationType.COMMENT);
 		PageRequest pageRequest = PageRequest.of(page, size);
 		Page<Notification> notifications = notificationRepository.findAllByReceiverIdAndNotificationTypeIn(memberId,
@@ -123,7 +123,7 @@ public class NotificationService {
 
 	@Transactional
 	public ResponseEntity<StatusResponse> readAllNotification(Member member) {
-		List<NotificationType> types = Arrays.asList(NotificationType.FLOGGING, NotificationType.REPLY,
+		List<NotificationType> types = Arrays.asList(NotificationType.PLOGGING, NotificationType.REPLY,
 			NotificationType.COMMENT);
 
 		List<Notification> notifications = notificationRepository.findAllByReceiverIdAndNotificationTypeIn(
@@ -145,7 +145,7 @@ public class NotificationService {
 
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> countUnreadCommentNotifications(Member member) {
-		List<NotificationType> types = Arrays.asList(NotificationType.FLOGGING, NotificationType.REPLY,
+		List<NotificationType> types = Arrays.asList(NotificationType.PLOGGING, NotificationType.REPLY,
 			NotificationType.COMMENT);
 		long unreadCount = notificationRepository.countByIsReadFalseAndReceiverAndNotificationTypeIn(member, types);
 		return ResponseEntity.ok(StatusResponse.builder()
