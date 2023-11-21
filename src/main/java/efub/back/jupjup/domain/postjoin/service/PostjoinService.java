@@ -119,8 +119,22 @@ public class PostjoinService {
 	@Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")  // 매 시간 정각에 실행
 	public void checkRecruitmentDeadlines() {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime start = now.minusHours(1).withMinute(0).withSecond(0).withNano(0);
-		LocalDateTime end = now.minusHours(1).withMinute(59).withSecond(59).withNano(999999999);
+		LocalDateTime start;
+		LocalDateTime end;
+
+		int hour = now.getHour();
+
+		if (hour == 1) {
+			start = now.withHour(0);
+		} else if (hour == 0) {
+			start = now.withHour(23);
+		} else {
+			start = now.minusHours(1);
+		}
+
+		start = start.withMinute(0).withSecond(0).withNano(0);
+		end = start.withMinute(59).withSecond(59).withNano(999999999);
+
 		log.info(start + " ~ " + end + "사이에 모집 마감된 플로깅 성사 여부 알림 전송");
 
 		List<Post> recentClosedPloggings = postRepository.findByDueDateBetween(start, end);
