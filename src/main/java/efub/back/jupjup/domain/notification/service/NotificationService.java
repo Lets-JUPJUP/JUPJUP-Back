@@ -15,8 +15,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.notification.EmitterRepositoryImpl;
-import efub.back.jupjup.domain.notification.comment.domain.Notification;
-import efub.back.jupjup.domain.notification.comment.domain.NotificationType;
+import efub.back.jupjup.domain.notification.domain.Notification;
+import efub.back.jupjup.domain.notification.domain.NotificationType;
 import efub.back.jupjup.domain.notification.dto.NotificationPageResDto;
 import efub.back.jupjup.domain.notification.dto.NotificationResDto;
 import efub.back.jupjup.domain.notification.exception.NotificationNotFoundException;
