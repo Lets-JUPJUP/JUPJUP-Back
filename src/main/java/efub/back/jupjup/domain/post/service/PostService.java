@@ -1,6 +1,7 @@
 package efub.back.jupjup.domain.post.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import efub.back.jupjup.domain.post.dto.PostRequestDto;
 import efub.back.jupjup.domain.post.dto.PostResponseDto;
 import efub.back.jupjup.domain.post.repository.PostImageRepository;
 import efub.back.jupjup.domain.post.repository.PostRepository;
+import efub.back.jupjup.domain.postjoin.domain.Postjoin;
 import efub.back.jupjup.domain.postjoin.repository.PostjoinRepository;
 import efub.back.jupjup.global.response.StatusEnum;
 import efub.back.jupjup.global.response.StatusResponse;
@@ -324,5 +326,42 @@ public class PostService {
 			}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(hostedPostsDtos));
+	}
+
+	// 로그인한 사용자가 참여한 플로깅 게시글을 조회하는 메소드 (플로깅 시작 시간 이전, 이후 여부에 따라 분리)
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getJoinedPosts(Member member) {
+
+		List<Postjoin> joinedPostjoins = postjoinRepository.findByMember(member);
+
+		LocalDateTime now = LocalDateTime.now();
+		List<PostResponseDto> activePosts = new ArrayList<>();
+		List<PostResponseDto> endedPosts = new ArrayList<>();
+
+		joinedPostjoins.forEach(postjoin -> {
+			Post post = postjoin.getPost();
+			List<String> urlList = postImageRepository.findAllByPost(post)
+				.stream()
+				.map(PostImage::getFileUrl)
+				.collect(Collectors.toList());
+
+			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
+			boolean isEnded = now.isAfter(post.getStartDate());
+
+			PostResponseDto dto = PostResponseDto.of(post, urlList, Optional.of(true),
+				Optional.of(isHearted), isEnded);
+
+			if (isEnded) {
+				endedPosts.add(dto);
+			} else {
+				activePosts.add(dto);
+			}
+		});
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("activePosts", activePosts);
+		response.put("endedPosts", endedPosts);
+
+		return ResponseEntity.ok(createStatusResponse(response));
 	}
 }

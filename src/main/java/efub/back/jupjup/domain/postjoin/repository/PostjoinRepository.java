@@ -17,6 +17,7 @@ public interface PostjoinRepository extends JpaRepository<Postjoin, Long> {
 	Boolean existsByMemberAndPost(Member member, Post post);
 
 	List<Postjoin> findAllByPost(Post post);
+	List<Postjoin> findByMember(Member member);
 
 	Long countByPost(Post post);
 

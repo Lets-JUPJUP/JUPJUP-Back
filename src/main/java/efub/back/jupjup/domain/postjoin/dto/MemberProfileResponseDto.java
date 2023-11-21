@@ -9,8 +9,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class MemberProfileResponseDto {
 	private Long memberId;
-	private String profileImageUrl;
 	private String nickname;
+	private String profileImageUrl;
 	private AgeRange ageRange;
 	private Gender gender;
 }
