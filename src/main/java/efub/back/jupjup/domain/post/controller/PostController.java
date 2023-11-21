@@ -105,4 +105,10 @@ public class PostController {
 	public ResponseEntity<StatusResponse> getHostedPosts(@AuthUser Member member) {
 		return postService.getHostedPosts(member);
 	}
+
+	// 로그인한 사용자가 참여한 게시글 리스트 조회
+	@GetMapping("/joined")
+	public ResponseEntity<StatusResponse> getJoinedPosts(@AuthUser Member member) {
+		return postService.getJoinedPosts(member);
+	}
 }
