@@ -45,8 +45,12 @@ public class NotificationController {
 
 	// 전체 알림 조회
 	@GetMapping("/list")
-	public ResponseEntity<StatusResponse> getNotifications(@AuthUser Member member, @RequestParam int page,
-		@RequestParam int size) {
+	public ResponseEntity<StatusResponse> getNotifications(@AuthUser Member member,
+		@RequestParam(value = "page", required = false) Integer page,
+		@RequestParam(value = "size", required = false) Integer size) {
+		if (page == null || size == null) {
+			return notificationService.findAllNotification(member.getId());
+		}
 		return notificationService.findAllNotification(member.getId(), page, size);
 	}
 

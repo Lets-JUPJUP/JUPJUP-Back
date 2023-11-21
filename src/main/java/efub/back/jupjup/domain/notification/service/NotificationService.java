@@ -121,6 +121,19 @@ public class NotificationService {
 		return ResponseEntity.ok(createStatusResponse(resDto));
 	}
 
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> findAllNotification(Long memberId) {
+		List<NotificationType> types = Arrays.asList(NotificationType.PLOGGING, NotificationType.REPLY,
+			NotificationType.COMMENT);
+		List<Notification> notifications = notificationRepository.findAllByReceiverIdAndNotificationTypeIn(memberId,
+			types);
+		List<NotificationResDto> notificationResDtos = notifications.stream()
+			.map(NotificationResDto::create)
+			.collect(Collectors.toList());
+
+		return ResponseEntity.ok(createStatusResponse(notificationResDtos));
+	}
+
 	@Transactional
 	public ResponseEntity<StatusResponse> readAllNotification(Member member) {
 		List<NotificationType> types = Arrays.asList(NotificationType.PLOGGING, NotificationType.REPLY,
