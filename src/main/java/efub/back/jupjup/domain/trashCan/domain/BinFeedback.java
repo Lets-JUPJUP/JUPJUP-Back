@@ -1,10 +1,20 @@
 package efub.back.jupjup.domain.trashCan.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.global.BaseTimeEntity;
-
-
-import javax.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +30,7 @@ public class BinFeedback extends BaseTimeEntity {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(length = 10)
+	@Column(length = 50)
 	@Enumerated(EnumType.STRING)
 	private Feedback feedback;
 
@@ -30,7 +40,6 @@ public class BinFeedback extends BaseTimeEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
-
 
 	@Builder
 	public BinFeedback(Feedback feedback, Long trashCanId, Member member) {
