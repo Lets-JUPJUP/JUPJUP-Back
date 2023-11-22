@@ -15,8 +15,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.notification.EmitterRepositoryImpl;
-import efub.back.jupjup.domain.notification.comment.domain.Notification;
-import efub.back.jupjup.domain.notification.comment.domain.NotificationType;
+import efub.back.jupjup.domain.notification.domain.Notification;
+import efub.back.jupjup.domain.notification.domain.NotificationType;
 import efub.back.jupjup.domain.notification.dto.NotificationPageResDto;
 import efub.back.jupjup.domain.notification.dto.NotificationResDto;
 import efub.back.jupjup.domain.notification.exception.NotificationNotFoundException;
@@ -119,6 +119,19 @@ public class NotificationService {
 			createPageInfo(notifications, page, size));
 
 		return ResponseEntity.ok(createStatusResponse(resDto));
+	}
+
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> findAllNotification(Long memberId) {
+		List<NotificationType> types = Arrays.asList(NotificationType.PLOGGING, NotificationType.REPLY,
+			NotificationType.COMMENT);
+		List<Notification> notifications = notificationRepository.findAllByReceiverIdAndNotificationTypeIn(memberId,
+			types);
+		List<NotificationResDto> notificationResDtos = notifications.stream()
+			.map(NotificationResDto::create)
+			.collect(Collectors.toList());
+
+		return ResponseEntity.ok(createStatusResponse(notificationResDtos));
 	}
 
 	@Transactional
