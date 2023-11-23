@@ -14,4 +14,5 @@ public interface HeartRepository extends JpaRepository<Heart, Long> {
 	List<Heart> findAllByMemberOrderByIdDesc(Member member);
 	Long countByMember(Member member);
 	boolean existsByMemberAndPost(Member member, Post post);
+	void deleteByPost(Post post);
 }

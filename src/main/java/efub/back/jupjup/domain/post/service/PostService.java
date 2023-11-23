@@ -268,8 +268,11 @@ public class PostService {
 	public ResponseEntity<StatusResponse> deletePost(Member member, Long postId) {
 		Post post = postRepository.findById(postId).orElseThrow();
 		checkValidMember(member.getId(), post.getAuthor().getId());
+
+		heartRepository.deleteByPost(post); // 게시글에 대한 모든 찜하기 삭제
 		postImageRepository.deleteAllByPost(post);
 		postRepository.delete(post);
+
 		return ResponseEntity.ok(createStatusResponse("post deleted"));
 	}
 
