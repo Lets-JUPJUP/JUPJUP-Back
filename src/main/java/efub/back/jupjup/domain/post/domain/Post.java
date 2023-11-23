@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -16,7 +17,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
+import efub.back.jupjup.domain.comment.domain.Comment;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.global.BaseTimeEntity;
 import lombok.AccessLevel;
@@ -80,6 +83,9 @@ public class Post extends BaseTimeEntity {
 		}
 		this.isRecruitmentSuccessful = true;
 	}
+
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Comment> commentList = new ArrayList<>();
 
 	@Builder
 	public Post(String title, String content, String startPlace,
