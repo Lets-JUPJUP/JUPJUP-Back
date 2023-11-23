@@ -56,7 +56,7 @@ public class AuthController {
 				.build());
 	}
 
-	@DeleteMapping
+	@PostMapping("/withdraw")
 	public ResponseEntity<StatusResponse> withdraw(@RequestBody AccessTokenDto accessTokenDto) {
 		Authentication authentication = memberService.withdraw(accessTokenDto);
 		authService.withdrawInRedis(authentication, accessTokenDto.getAccessToken());
