@@ -54,6 +54,13 @@ public class CommentController {
 		return commentService.removeComment(commentId, member);
 	}
 
+	// 대댓글 삭제
+	@DeleteMapping("/reply/{replyId}")
+	public ResponseEntity<StatusResponse> deleteReply(@PathVariable Long replyId,
+		@AuthUser Member member) {
+		return commentService.removeReply(replyId, member);
+	}
+
 	// 사용자가 작성한 댓글이 달린 게시글 조회
 	@GetMapping("/commented-posts")
 	public ResponseEntity<StatusResponse> getCommentedPosts(@AuthUser Member member) {
