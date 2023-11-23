@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,7 +91,7 @@ public class PostService {
 	// 플로깅 게시글 리스트 보기
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getAllPosts(Member member) {
-		List<Post> posts = postRepository.findAll();
+		List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
 
 		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
 			List<String> urlList = postImageRepository.findAllByPost(post)
@@ -113,7 +114,7 @@ public class PostService {
 	// 플로깅 게시글 리스트 보기 - (로그인 없이)
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getAllPostsUnAuth() {
-		List<Post> posts = postRepository.findAll();
+		List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
 
 		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
 			List<String> urlList = postImageRepository.findAllByPost(post)
@@ -134,7 +135,7 @@ public class PostService {
 	public ResponseEntity<StatusResponse> getPostsByGender(String postGenderStr, Member member) {
 
 		PostGender postGender = PostGender.valueOf(postGenderStr.toUpperCase());
-		List<Post> posts = postRepository.findAllByPostGender(postGender);
+		List<Post> posts = postRepository.findAllByPostGender(postGender, Sort.by(Sort.Direction.DESC, "createdAt"));
 
 		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
 			List<String> urlList = postImageRepository.findAllByPost(post)
@@ -159,7 +160,7 @@ public class PostService {
 	public ResponseEntity<StatusResponse> getPostsByGenderUnAuth(String postGenderStr) {
 
 		PostGender postGender = PostGender.valueOf(postGenderStr.toUpperCase());
-		List<Post> posts = postRepository.findAllByPostGender(postGender);
+		List<Post> posts = postRepository.findAllByPostGender(postGender, Sort.by(Sort.Direction.DESC, "createdAt"));
 
 		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
 			List<String> urlList = postImageRepository.findAllByPost(post)
@@ -179,7 +180,7 @@ public class PostService {
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getPostsByAgeRange(PostAgeRange postAge, Member member) {
 
-		List<Post> posts = postRepository.findAllByPostAgeRangesContaining(postAge);
+		List<Post> posts = postRepository.findAllByPostAgeRangesContaining(postAge, Sort.by(Sort.Direction.DESC, "createdAt"));
 
 		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
 			List<String> urlList = postImageRepository.findAllByPost(post)
@@ -203,7 +204,7 @@ public class PostService {
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getPostsByAgeRangeUnAuth(PostAgeRange postAge) {
 
-		List<Post> posts = postRepository.findAllByPostAgeRangesContaining(postAge);
+		List<Post> posts = postRepository.findAllByPostAgeRangesContaining(postAge, Sort.by(Sort.Direction.DESC, "createdAt"));
 
 		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
 			List<String> urlList = postImageRepository.findAllByPost(post)
@@ -223,7 +224,7 @@ public class PostService {
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getPostsByWithPet(boolean withPetValue, Member member) {
 
-		List<Post> posts = postRepository.findAllByWithPet(withPetValue);
+		List<Post> posts = postRepository.findAllByWithPet(withPetValue, Sort.by(Sort.Direction.DESC, "createdAt"));
 
 		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
 			List<String> urlList = postImageRepository.findAllByPost(post)
@@ -247,7 +248,7 @@ public class PostService {
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getPostsByWithPetUnAuth(boolean withPetValue) {
 
-		List<Post> posts = postRepository.findAllByWithPet(withPetValue);
+		List<Post> posts = postRepository.findAllByWithPet(withPetValue, Sort.by(Sort.Direction.DESC, "createdAt"));
 
 		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
 			List<String> urlList = postImageRepository.findAllByPost(post)
@@ -308,7 +309,7 @@ public class PostService {
 	// 로그인한 사용자가 주최한 플로깅 게시글을 조회하는 메소드
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getHostedPosts(Member member) {
-		List<Post> hostedPosts = postRepository.findAllByAuthor(member);
+		List<Post> hostedPosts = postRepository.findAllByAuthor(member, Sort.by(Sort.Direction.DESC, "createdAt"));
 		List<PostResponseDto> hostedPostsDtos = hostedPosts.stream()
 			.map(post -> {
 				List<String> urlList = postImageRepository.findAllByPost(post)
@@ -332,7 +333,7 @@ public class PostService {
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getJoinedPosts(Member member) {
 
-		List<Postjoin> joinedPostjoins = postjoinRepository.findByMember(member);
+		List<Postjoin> joinedPostjoins = postjoinRepository.findByMemberOrderByPostCreatedAtDesc(member);
 
 		LocalDateTime now = LocalDateTime.now();
 		List<PostResponseDto> activePosts = new ArrayList<>();
