@@ -62,7 +62,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 						nickname = String.valueOf(System.currentTimeMillis());
 					}
 					Gender gender = null;
-					if (oAuth2UserInfo.getGender() == null) {
+					log.info("has_gender :" + oAuth2UserInfo.getHasGender());
+					if (oAuth2UserInfo.getHasGender().equals("false")) {
 						gender = Gender.NOT_DEFINED;
 					} else {
 						gender = Gender.valueOf(oAuth2UserInfo.getGender().toUpperCase().trim());

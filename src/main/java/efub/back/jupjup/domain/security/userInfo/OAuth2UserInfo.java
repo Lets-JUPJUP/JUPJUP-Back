@@ -3,20 +3,25 @@ package efub.back.jupjup.domain.security.userInfo;
 import java.util.Map;
 
 public interface OAuth2UserInfo {
-    String getProviderId();
+	String getProviderId();
 
-    String getRegistrationId();
+	String getRegistrationId();
 
-    Map<String, Object> getAttributes();
+	Map<String, Object> getAttributes();
 
-    ProviderType getProvider();
-    String getEmail();
-    String getNickname();
-    String getProfileImageUrl();
+	ProviderType getProvider();
 
-    String getName();
+	String getEmail();
 
-    String getGender();
+	String getNickname();
 
-    String getAgeRange();
+	String getProfileImageUrl();
+
+	String getName();
+
+	String getGender();
+
+	String getAgeRange();
+
+	String getHasGender();
 }
