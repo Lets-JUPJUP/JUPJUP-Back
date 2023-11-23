@@ -21,6 +21,7 @@ public class ReportImage {
 	@Column(name = "id", updatable = false)
 	private Long id;
 
+	@Column(length = 9999)
 	private String fileUrl;
 
 	@ManyToOne
