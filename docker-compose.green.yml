@@ -5,3 +5,5 @@ services:
     ports:
       - "8082:8080"
     container_name: jupjup-green
+    environment:
+      TZ: "Asia/Seoul"
