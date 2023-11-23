@@ -25,4 +25,6 @@ public interface PostjoinRepository extends JpaRepository<Postjoin, Long> {
 
 	@Query("SELECT p.member.id FROM Postjoin p WHERE p.post.Id = :postId")
 	List<Long> findMemberIdsByPostId(@Param("postId") Long postId);
+
+	List<Postjoin> findByMemberOrderByPostCreatedAtDesc(Member member);
 }
