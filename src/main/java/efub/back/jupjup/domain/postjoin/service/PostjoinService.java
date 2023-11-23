@@ -14,7 +14,11 @@ import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.notification.domain.NotificationType;
 import efub.back.jupjup.domain.notification.service.NotificationService;
 import efub.back.jupjup.domain.post.domain.Post;
+import efub.back.jupjup.domain.post.domain.PostAgeRange;
+import efub.back.jupjup.domain.post.domain.PostGender;
 import efub.back.jupjup.domain.post.exception.MaxMemberLimitException;
+import efub.back.jupjup.domain.post.exception.MismatchPostAgeRangeException;
+import efub.back.jupjup.domain.post.exception.MismatchPostGenderException;
 import efub.back.jupjup.domain.post.repository.PostRepository;
 import efub.back.jupjup.domain.postjoin.domain.Postjoin;
 import efub.back.jupjup.domain.postjoin.dto.MemberProfileResponseDto;
@@ -49,6 +53,17 @@ public class PostjoinService {
 		Long maxMember = new Long(post.getMaxMember());
 		if (memberCount >= maxMember - 1) {
 			throw new MaxMemberLimitException();
+		}
+
+		// 성별 제한이 있는 경우, 성별이 맞는지 확인
+		if (!post.getPostGender().equals(PostGender.ANY) && !member.getGender().name().equalsIgnoreCase(post.getPostGender().name())) {
+			throw new MismatchPostGenderException();
+		}
+
+		// 나이 제한이 있는 경우, 나이 범위가 맞는지 확인
+		if (!post.getPostAgeRanges().contains(PostAgeRange.AGE_ANY) &&
+			post.getPostAgeRanges().stream().noneMatch(ageRange -> ageRange.includes(member.getAgeRange()))) {
+			throw new MismatchPostAgeRangeException();
 		}
 
 		Postjoin postjoin = new Postjoin(member, post, true);

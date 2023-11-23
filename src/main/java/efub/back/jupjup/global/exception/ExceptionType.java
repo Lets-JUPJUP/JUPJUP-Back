@@ -9,6 +9,8 @@ import efub.back.jupjup.domain.member.exception.InvalidNicknameException;
 import efub.back.jupjup.domain.member.exception.MemberNotFoundException;
 import efub.back.jupjup.domain.notification.exception.NotificationNotFoundException;
 import efub.back.jupjup.domain.post.exception.MaxMemberLimitException;
+import efub.back.jupjup.domain.post.exception.MismatchPostAgeRangeException;
+import efub.back.jupjup.domain.post.exception.MismatchPostGenderException;
 import efub.back.jupjup.domain.post.exception.PostNotFoundException;
 import efub.back.jupjup.domain.review.exception.BadgeNotExistsForCodeException;
 import efub.back.jupjup.domain.review.exception.ReviewNotAllowedException;
@@ -50,7 +52,9 @@ public enum ExceptionType {
 
 	// 게시글 관련 - C6***
 	POST_NOT_FOUND_EXCEPTION("C6000", "존재하지 않는 게시글입니다.", PostNotFoundException.class),
-	MAX_MEMBER_LIMIT_EXCEPTION("C6001", "최대 인원을 초과하여 참여할 수 없습니다.", MaxMemberLimitException.class);
+	MAX_MEMBER_LIMIT_EXCEPTION("C6001", "최대 인원을 초과하여 참여할 수 없습니다.", MaxMemberLimitException.class),
+	MISMATCH_POST_GENDER_EXCEPTION("C6002","성별이 해당 플로깅의 조건과 맞지 않습니다.",MismatchPostGenderException.class),
+	MISMATCH_POST_AGE_RANGE_EXCEPTION("C6003", "나이가 해당 플로깅의 조건과 맞지 않습니다.", MismatchPostAgeRangeException.class);
 
 	private final String errorCode;
 	private final String message;
