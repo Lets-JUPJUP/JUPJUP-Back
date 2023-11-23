@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import efub.back.jupjup.domain.eventInfo.service.EventInfoService;
+import efub.back.jupjup.domain.member.domain.Member;
+import efub.back.jupjup.domain.security.userInfo.AuthUser;
 import efub.back.jupjup.global.response.StatusResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +22,8 @@ public class EventInfoController {
 
 	// 공식행사 게시글 상세 조회
 	@GetMapping("/{eventInfoId}")
-	public ResponseEntity<StatusResponse> getEventInfo(@PathVariable Long eventInfoId){
-		return eventInfoService.getEventInfo(eventInfoId);
+	public ResponseEntity<StatusResponse> getEventInfo(@PathVariable Long eventInfoId, @AuthUser Member member){
+		return eventInfoService.getEventInfo(eventInfoId, member);
 	}
 
 	// 공식행사 게시글 리스트 조회
