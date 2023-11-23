@@ -3,8 +3,10 @@ package efub.back.jupjup.domain.member.service;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import efub.back.jupjup.domain.auth.dto.AccessTokenDto;
 import efub.back.jupjup.domain.member.domain.Gender;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.dto.request.MemberReqDto;
@@ -14,6 +16,7 @@ import efub.back.jupjup.domain.member.dto.response.MyProfileResDto;
 import efub.back.jupjup.domain.member.dto.response.NicknameCheckResDto;
 import efub.back.jupjup.domain.member.exception.MemberNotFoundException;
 import efub.back.jupjup.domain.member.repository.MemberRepository;
+import efub.back.jupjup.global.jwt.JwtProvider;
 import efub.back.jupjup.global.response.StatusEnum;
 import efub.back.jupjup.global.response.StatusResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberService {
 
 	private final MemberRepository memberRepository;
+	private final JwtProvider jwtProvider;
 
 	public Member findMemberById(Long memberId) {
 		return memberRepository.findById(memberId)
@@ -60,6 +64,16 @@ public class MemberService {
 		}
 		NicknameCheckResDto resDto = new NicknameCheckResDto(isExistingNickname);
 		return make200Response(resDto);
+	}
+
+	public Authentication withdraw(AccessTokenDto accessTokenDto) {
+		String accessToken = accessTokenDto.getAccessToken();
+		Authentication authentication = jwtProvider.getAuthentication(accessToken);
+		String email = jwtProvider.tokenToEmail(accessToken);
+
+		Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+		member.withdrawInfoProcess();
+		return authentication;
 	}
 
 	private ResponseEntity<StatusResponse> make200Response(Object obj) {
