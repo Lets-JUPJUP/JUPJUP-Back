@@ -19,6 +19,8 @@ import efub.back.jupjup.domain.post.domain.PostGender;
 import efub.back.jupjup.domain.post.exception.MaxMemberLimitException;
 import efub.back.jupjup.domain.post.exception.MismatchPostAgeRangeException;
 import efub.back.jupjup.domain.post.exception.MismatchPostGenderException;
+import efub.back.jupjup.domain.post.exception.PostNotFoundException;
+import efub.back.jupjup.domain.post.exception.PostjoinNotFoundException;
 import efub.back.jupjup.domain.post.repository.PostRepository;
 import efub.back.jupjup.domain.postjoin.domain.Postjoin;
 import efub.back.jupjup.domain.postjoin.dto.MemberProfileResponseDto;
@@ -46,7 +48,7 @@ public class PostjoinService {
 	public ResponseEntity<StatusResponse> joinPost(Member member, Long postId) {
 
 		Post post = postRepository.findById(postId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+			.orElseThrow(() -> new PostNotFoundException(postId));
 		Long memberCount = postjoinRepository.countByPost(post);
 
 		// 최대 인원을 초과할 경우 예외 발생
@@ -84,10 +86,10 @@ public class PostjoinService {
 	public ResponseEntity<StatusResponse> unjoinPost(Member member, Long postId) {
 
 		Post post = postRepository.findById(postId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+			.orElseThrow(() -> new PostNotFoundException(postId));
 
 		Postjoin existingPostjoin = postjoinRepository.findByMemberAndPost(member, post)
-			.orElseThrow(() -> new RuntimeException("참여 정보가 없습니다."));
+			.orElseThrow(() -> new PostjoinNotFoundException());
 
 		postjoinRepository.delete(existingPostjoin);
 
@@ -107,7 +109,7 @@ public class PostjoinService {
 	public ResponseEntity<StatusResponse> getJoinedMembers(Long postId) {
 
 		Post post = postRepository.findById(postId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+			.orElseThrow(() -> new PostNotFoundException(postId));
 
 		List<Member> joinedMembers = postjoinRepository.findAllByPost(post)
 			.stream()
