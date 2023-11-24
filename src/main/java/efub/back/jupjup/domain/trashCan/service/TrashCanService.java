@@ -1,5 +1,6 @@
 package efub.back.jupjup.domain.trashCan.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -10,12 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import efub.back.jupjup.domain.member.domain.Member;
+import efub.back.jupjup.domain.security.userInfo.AuthUser;
 import efub.back.jupjup.domain.trashCan.domain.BinFeedback;
 import efub.back.jupjup.domain.trashCan.domain.Direction;
 import efub.back.jupjup.domain.trashCan.domain.Feedback;
 import efub.back.jupjup.domain.trashCan.domain.TrashCan;
 import efub.back.jupjup.domain.trashCan.dto.Location;
 import efub.back.jupjup.domain.trashCan.dto.request.FeedbackReqDto;
+import efub.back.jupjup.domain.trashCan.dto.response.FeedbackListResDto;
 import efub.back.jupjup.domain.trashCan.dto.response.FeedbackResDto;
 import efub.back.jupjup.domain.trashCan.dto.response.TrashCansResDto;
 import efub.back.jupjup.domain.trashCan.exception.TrashCanNotFoundException;
@@ -81,6 +84,19 @@ public class TrashCanService {
 		return make200Response(resDto);
 	}
 
+	public ResponseEntity<StatusResponse> findFeedbacks(@AuthUser Member member) {
+		List<BinFeedback> binFeedbacks = binFeedbackRepository.findAllByMember(member);
+		List<FeedbackResDto> feedbackResDtos = new ArrayList<>();
+		for (BinFeedback binFeedback : binFeedbacks) {
+			FeedbackResDto feedbackResDto = FeedbackResDto.from(binFeedback);
+			feedbackResDtos.add(feedbackResDto);
+		}
+
+		Integer size = binFeedbacks.size();
+		FeedbackListResDto resDto = new FeedbackListResDto(size, feedbackResDtos);
+		return make200Response(resDto);
+	}
+
 	private ResponseEntity<StatusResponse> make200Response(Object obj) {
 		return ResponseEntity.ok()
 			.body(StatusResponse.builder()
@@ -89,4 +105,5 @@ public class TrashCanService {
 				.data(obj)
 				.build());
 	}
+
 }
