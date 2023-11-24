@@ -137,6 +137,24 @@ public class CommentService {
 
 	}
 
+	// 대댓글 삭제하기
+	public ResponseEntity<StatusResponse> removeReply(Long replyId, Member member) {
+		Comment reply = commentRepository.findById(replyId)
+			.orElseThrow(() -> new NoCommentExistsException());
+
+		Long writerId = reply.getWriter().getId();
+		if (!writerId.equals(member.getId())) {
+			throw new NoAuthorityCommentRemoveException();
+		}
+
+		commentRepository.delete(reply);
+		return ResponseEntity.ok(StatusResponse.builder()
+			.status(StatusEnum.OK.getStatusCode())
+			.message(StatusEnum.OK.getCode())
+			.data("대댓글이 삭제되었습니다.")
+			.build());
+	}
+
 	// 내가 쓴 댓글의 게시글 모아보기
 	public ResponseEntity<StatusResponse> getCommentedPosts(Member member) {
 		List<Comment> comments = commentRepository.findByWriter(member);
