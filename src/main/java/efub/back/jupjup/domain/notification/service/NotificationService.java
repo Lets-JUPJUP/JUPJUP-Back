@@ -110,7 +110,8 @@ public class NotificationService {
 		List<NotificationType> types = Arrays.asList(NotificationType.PLOGGING, NotificationType.REPLY,
 			NotificationType.COMMENT);
 		PageRequest pageRequest = PageRequest.of(page, size);
-		Page<Notification> notifications = notificationRepository.findAllByReceiverIdAndNotificationTypeIn(memberId,
+		Page<Notification> notifications = notificationRepository.findAllByReceiverIdAndNotificationTypeInOrderByCreatedAtDesc(
+			memberId,
 			types, pageRequest);
 		List<NotificationResDto> notificationResDtos = notifications.stream()
 			.map(NotificationResDto::create)
@@ -125,7 +126,8 @@ public class NotificationService {
 	public ResponseEntity<StatusResponse> findAllNotification(Long memberId) {
 		List<NotificationType> types = Arrays.asList(NotificationType.PLOGGING, NotificationType.REPLY,
 			NotificationType.COMMENT);
-		List<Notification> notifications = notificationRepository.findAllByReceiverIdAndNotificationTypeIn(memberId,
+		List<Notification> notifications = notificationRepository.findAllByReceiverIdAndNotificationTypeInOrderByCreatedAtDesc(
+			memberId,
 			types);
 		List<NotificationResDto> notificationResDtos = notifications.stream()
 			.map(NotificationResDto::create)
@@ -139,7 +141,7 @@ public class NotificationService {
 		List<NotificationType> types = Arrays.asList(NotificationType.PLOGGING, NotificationType.REPLY,
 			NotificationType.COMMENT);
 
-		List<Notification> notifications = notificationRepository.findAllByReceiverIdAndNotificationTypeIn(
+		List<Notification> notifications = notificationRepository.findAllByReceiverIdAndNotificationTypeInOrderByCreatedAtDesc(
 			member.getId(), types);
 		for (Notification notification : notifications) {
 			notification.read();
