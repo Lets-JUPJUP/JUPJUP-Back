@@ -11,10 +11,12 @@ import efub.back.jupjup.domain.notification.domain.Notification;
 import efub.back.jupjup.domain.notification.domain.NotificationType;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-	Page<Notification> findAllByReceiverIdAndNotificationTypeIn(Long receiverId, List<NotificationType> types,
+	Page<Notification> findAllByReceiverIdAndNotificationTypeInOrderByCreatedAtDesc(Long receiverId,
+		List<NotificationType> types,
 		Pageable pageable);
 
-	List<Notification> findAllByReceiverIdAndNotificationTypeIn(Long receiverId, List<NotificationType> types);
+	List<Notification> findAllByReceiverIdAndNotificationTypeInOrderByCreatedAtDesc(Long receiverId,
+		List<NotificationType> types);
 
 	long countByIsReadFalseAndReceiverAndNotificationTypeIn(Member receiver, List<NotificationType> types);
 }
