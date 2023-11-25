@@ -1,5 +1,6 @@
 package efub.back.jupjup.domain.report.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -8,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import efub.back.jupjup.domain.image.service.ImageService;
 import efub.back.jupjup.domain.member.domain.Member;
-import efub.back.jupjup.domain.post.dto.ImageUploadRequestDto;
-import efub.back.jupjup.domain.post.dto.ImageUploadResponseDto;
 import efub.back.jupjup.domain.report.domain.Report;
 import efub.back.jupjup.domain.report.dto.ReportRequestDto;
 import efub.back.jupjup.domain.report.dto.ReportResponseDto;
@@ -40,8 +39,11 @@ public class ReportService {
 		Report report = reportRequestDto.toEntity(reportRequestDto, member);
 		reportRepository.save(report);
 
-		List<String> imageUrls = imageService.saveImageUrlsReport(reportRequestDto.getImages(), report);
-		ReportResponseDto reportResponseDto = ReportResponseDto.of(report,imageUrls);
+		List<String> imageUrls = new ArrayList<>();
+		if (reportRequestDto.getImages() != null && !reportRequestDto.getImages().isEmpty()) {
+			imageUrls = imageService.saveImageUrlsReport(reportRequestDto.getImages(), report);
+		}
+		ReportResponseDto reportResponseDto = ReportResponseDto.of(report, imageUrls);
 
 		return ResponseEntity.ok(createStatusResponse(reportResponseDto));
 	}
