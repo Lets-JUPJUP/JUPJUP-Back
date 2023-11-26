@@ -36,11 +36,12 @@ public class NotificationService {
 
 	public SseEmitter subscribe(Long memberId, String lastEventId) {
 		String emitterId = makeUniqueEmitterId(memberId);
-		Long timeout = 60L * 1000L * 60L; // 1시간
+		Long timeout = 60L * 1000L * 60L * 24L;
 		SseEmitter sseEmitter = emitterRepository.save(emitterId, new SseEmitter(timeout));
 
 		sseEmitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
 		sseEmitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
+		sseEmitter.onError((e) -> emitterRepository.deleteById(emitterId));
 
 		String eventId = makeUniqueEmitterId(memberId);
 		sendNotification(sseEmitter, eventId, emitterId, "EventStream Created. [memberId=" + memberId + "]");

@@ -1,5 +1,7 @@
 package efub.back.jupjup.domain.notification.controller;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +29,11 @@ public class NotificationController {
 	//알림 구독 (SSE)
 	@GetMapping(value = "/subscribe", produces = "text/event-stream")
 	public SseEmitter subscribe(@AuthUser Member member,
-		@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
+		@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,
+		final HttpServletResponse response) {
+		response.setHeader("Connection", "keep-alive");
+		response.setHeader("Cache-Control", "no-cache");
+		response.setHeader("X-Accel-Buffering", "no");
 		return notificationService.subscribe(member.getId(), lastEventId);
 	}
 
