@@ -72,7 +72,8 @@ public class PostjoinService {
 		postjoinRepository.save(postjoin);
 
 		// 모집 성사 여부 업데이트
-		post.updateIsRecruitmentSuccessful(memberCount + 1);
+		log.info("memberCount : " + memberCount);
+		post.updateIsRecruitmentSuccessful(memberCount + 2);
 		postRepository.save(post);
 
 		return ResponseEntity.ok(StatusResponse.builder()
