@@ -62,19 +62,27 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 						nickname = String.valueOf(System.currentTimeMillis());
 					}
 					Gender gender = null;
-					log.info("has_gender :" + oAuth2UserInfo.getHasGender());
-					if (oAuth2UserInfo.getHasGender().equals("false")) {
+					AgeRange ageRange = null;
+					
+					if (!oAuth2UserInfo.getAttributes().containsKey("gender")) {
 						gender = Gender.NOT_DEFINED;
 					} else {
 						gender = Gender.valueOf(oAuth2UserInfo.getGender().toUpperCase().trim());
 					}
+
+					if (!oAuth2UserInfo.getAttributes().containsKey("age_range")) {
+						ageRange = AgeRange.NOT_DEFINED;
+					} else {
+						ageRange = AgeRange.fromString(oAuth2UserInfo.getAgeRange());
+					}
+
 					return Member.builder()
 						.nickname(nickname)
 						.email(oAuth2UserInfo.getEmail())
 						.profileImageUrl(oAuth2UserInfo.getProfileImageUrl())
 						.username(oAuth2UserInfo.getName())
 						.providerType(oAuth2UserInfo.getProvider())
-						.ageRange(AgeRange.fromString(oAuth2UserInfo.getAgeRange()))
+						.ageRange(ageRange)
 						.gender(gender)
 						.roleType(RoleType.MEMBER)
 						.status(MemberStatus.ACTIVE)
