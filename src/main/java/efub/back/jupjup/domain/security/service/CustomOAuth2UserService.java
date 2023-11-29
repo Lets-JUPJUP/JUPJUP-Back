@@ -2,6 +2,7 @@ package efub.back.jupjup.domain.security.service;
 
 import static efub.back.jupjup.domain.member.domain.Member.*;
 
+import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -63,14 +64,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 					}
 					Gender gender = null;
 					AgeRange ageRange = null;
-					
-					if (!oAuth2UserInfo.getAttributes().containsKey("gender")) {
+
+					Map<String, Object> kakaoAccount = (Map<String, Object>)oAuth2UserInfo.getAttributes()
+						.get("kakao_account");
+					log.info("getAttributes :" + kakaoAccount.containsKey("age_range"));
+
+					if (!kakaoAccount.containsKey("gender")) {
 						gender = Gender.NOT_DEFINED;
 					} else {
 						gender = Gender.valueOf(oAuth2UserInfo.getGender().toUpperCase().trim());
 					}
 
-					if (!oAuth2UserInfo.getAttributes().containsKey("age_range")) {
+					if (!kakaoAccount.containsKey("age_range")) {
 						ageRange = AgeRange.NOT_DEFINED;
 					} else {
 						ageRange = AgeRange.fromString(oAuth2UserInfo.getAgeRange());
