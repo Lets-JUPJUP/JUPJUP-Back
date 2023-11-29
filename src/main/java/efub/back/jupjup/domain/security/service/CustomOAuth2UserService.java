@@ -59,6 +59,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 				if (!memberRepository.existsByEmail(oAuth2UserInfo.getEmail())) {
 					String nickname = oAuth2UserInfo.getNickname();
 					log.info("카카오 닉네임 : " + nickname);
+
+					// 카카오에서 최초로 설정되는 닉네임이 유효하지 않은 경우 랜덤값으로 저장
 					if (invalidateNickname(nickname)) {
 						nickname = String.valueOf(System.currentTimeMillis());
 					}
@@ -108,7 +110,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 	public boolean invalidateNickname(String nickname) {
 		if (Objects.isNull(nickname) || nickname.isBlank() || nickname.length() > 15 || !nickname.matches(
-			"[ㄱ-ㅎ가-힣a-zA-Z0-9_]+") || nickname.equalsIgnoreCase(INFO_UNKNOWN)) {
+			"[ㄱ-ㅎ가-힣a-zA-Z0-9_]+") || nickname.equals(WITHDRAWN_NICKNAME)) {
 			return true;
 		}
 

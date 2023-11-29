@@ -23,6 +23,8 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Member extends BaseTimeEntity {
 	public static final String INFO_UNKNOWN = "unknown";
+	public static final String WITHDRAWN_NICKNAME = "(탈퇴한 회원)";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "member_id", updatable = false)
@@ -75,7 +77,7 @@ public class Member extends BaseTimeEntity {
 
 	public boolean validateNickName(String nickname) {
 		if (Objects.isNull(nickname) || nickname.isBlank() || nickname.length() > 15 || !nickname.matches(
-			"[ㄱ-ㅎ가-힣a-zA-Z0-9_]+") || nickname.equalsIgnoreCase(INFO_UNKNOWN)) {
+			"[ㄱ-ㅎ가-힣a-zA-Z0-9_]+") || nickname.equals(WITHDRAWN_NICKNAME)) {
 			throw new InvalidNicknameException();
 		} else {
 			return true;
@@ -127,7 +129,7 @@ public class Member extends BaseTimeEntity {
 	}
 
 	public void withdrawInfoProcess() {
-		this.nickname = INFO_UNKNOWN;
+		this.nickname = WITHDRAWN_NICKNAME;
 		this.email = INFO_UNKNOWN;
 		this.username = INFO_UNKNOWN;
 		this.providerType = null;
