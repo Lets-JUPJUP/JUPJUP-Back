@@ -3,6 +3,7 @@ package efub.back.jupjup.global.exception;
 import java.util.Arrays;
 import java.util.Objects;
 
+import efub.back.jupjup.domain.admin.exception.AdminAccessDeniedException;
 import efub.back.jupjup.domain.auth.exception.AlreadyLogoutException;
 import efub.back.jupjup.domain.auth.exception.RefreshTokenNotValidException;
 import efub.back.jupjup.domain.member.exception.InvalidNicknameException;
@@ -54,9 +55,12 @@ public enum ExceptionType {
 	// 게시글 관련 - C6***
 	POST_NOT_FOUND_EXCEPTION("C6000", "존재하지 않는 게시글입니다.", PostNotFoundException.class),
 	MAX_MEMBER_LIMIT_EXCEPTION("C6001", "최대 인원을 초과하여 참여할 수 없습니다.", MaxMemberLimitException.class),
-	MISMATCH_POST_GENDER_EXCEPTION("C6002","성별이 해당 플로깅의 조건과 맞지 않습니다.",MismatchPostGenderException.class),
+	MISMATCH_POST_GENDER_EXCEPTION("C6002", "성별이 해당 플로깅의 조건과 맞지 않습니다.", MismatchPostGenderException.class),
 	MISMATCH_POST_AGE_RANGE_EXCEPTION("C6003", "나이가 해당 플로깅의 조건과 맞지 않습니다.", MismatchPostAgeRangeException.class),
-	POST_JOIN_NOT_FOUND_EXCEPTION("C6004", "게시글 참여 정보가 없습니다.", PostjoinNotFoundException.class),;
+	POST_JOIN_NOT_FOUND_EXCEPTION("C6004", "게시글 참여 정보가 없습니다.", PostjoinNotFoundException.class),
+
+	// 관리자 관련 - C7***
+	ADMIN_ACCESS_DENIED_EXCEPTION("C7000", "관리자가 아닌 계정은 접근할 수 없습니다.", AdminAccessDeniedException.class);
 
 	private final String errorCode;
 	private final String message;
