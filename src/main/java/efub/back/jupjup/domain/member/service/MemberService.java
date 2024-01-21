@@ -60,10 +60,17 @@ public class MemberService {
 
 	public ResponseEntity<StatusResponse> checkDuplicateNickname(NicknameCheckReqDto reqDto, Member member) {
 		Boolean isExistingNickname = null;
-		isExistingNickname = memberRepository.existsByNickname(reqDto.getNickname());
-		if (reqDto.getNickname().equals(member.getNickname())) {
+		String nickname = reqDto.getNickname();
+		isExistingNickname = memberRepository.existsByNickname(nickname);
+
+		// 자신의 기존 닉네임과 같은 닉네임인 경우
+		if (nickname.equals(member.getNickname())) {
 			isExistingNickname = false;
 		}
+		if (nickname.equals(Member.WITHDRAWN_NICKNAME)) {
+			isExistingNickname = true;
+		}
+		
 		NicknameCheckResDto resDto = new NicknameCheckResDto(isExistingNickname);
 		return make200Response(resDto);
 	}
