@@ -1,7 +1,8 @@
 package efub.back.jupjup.domain.trashCan.service;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -11,14 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import efub.back.jupjup.domain.member.domain.Member;
-import efub.back.jupjup.domain.security.userInfo.AuthUser;
 import efub.back.jupjup.domain.trashCan.domain.BinFeedback;
 import efub.back.jupjup.domain.trashCan.domain.Direction;
 import efub.back.jupjup.domain.trashCan.domain.Feedback;
 import efub.back.jupjup.domain.trashCan.domain.TrashCan;
 import efub.back.jupjup.domain.trashCan.dto.Location;
 import efub.back.jupjup.domain.trashCan.dto.request.FeedbackReqDto;
-import efub.back.jupjup.domain.trashCan.dto.response.FeedbackListResDto;
 import efub.back.jupjup.domain.trashCan.dto.response.FeedbackResDto;
 import efub.back.jupjup.domain.trashCan.dto.response.TrashCansResDto;
 import efub.back.jupjup.domain.trashCan.exception.TrashCanNotFoundException;
@@ -84,17 +83,18 @@ public class TrashCanService {
 		return make200Response(resDto);
 	}
 
-	public ResponseEntity<StatusResponse> findFeedbacks(@AuthUser Member member) {
+	public ResponseEntity<StatusResponse> findFeedbacks(Member member, Long trashcanId) {
 		List<BinFeedback> binFeedbacks = binFeedbackRepository.findAllByMember(member);
-		List<FeedbackResDto> feedbackResDtos = new ArrayList<>();
-		for (BinFeedback binFeedback : binFeedbacks) {
-			FeedbackResDto feedbackResDto = FeedbackResDto.from(binFeedback);
-			feedbackResDtos.add(feedbackResDto);
+
+		Map<Integer, Boolean> feedbackExistsMap = new HashMap<>();
+		for (Feedback feedback : Feedback.values()) {
+			boolean feedbackExists = binFeedbacks.stream()
+				.anyMatch(binFeedback -> binFeedback.getFeedback() == feedback);
+			feedbackExistsMap.put(feedback.getCode(), feedbackExists);
+
 		}
 
-		Integer size = binFeedbacks.size();
-		FeedbackListResDto resDto = new FeedbackListResDto(size, feedbackResDtos);
-		return make200Response(resDto);
+		return make200Response(feedbackExistsMap);
 	}
 
 	private ResponseEntity<StatusResponse> make200Response(Object obj) {
