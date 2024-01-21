@@ -34,8 +34,8 @@ public class TrashCanController {
 		return trashCanService.writeFeedback(member, feedbackReqDto);
 	}
 
-	@GetMapping("/feedbacks/{trashcanId}")
-	public ResponseEntity<StatusResponse> findFeedbacks(@AuthUser Member member, @PathVariable Long trashcanId) {
-		return trashCanService.findFeedbacks(member, trashcanId);
+	@GetMapping("/feedbacks/{trashCanId}")
+	public ResponseEntity<StatusResponse> findFeedbacks(@AuthUser Member member, @PathVariable Long trashCanId) {
+		return trashCanService.findFeedbacks(member, trashCanId);
 	}
 }

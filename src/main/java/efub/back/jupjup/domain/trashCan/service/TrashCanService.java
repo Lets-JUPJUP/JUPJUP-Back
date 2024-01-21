@@ -84,8 +84,11 @@ public class TrashCanService {
 	}
 
 	public ResponseEntity<StatusResponse> findFeedbacks(Member member, Long trashcanId) {
-		List<BinFeedback> binFeedbacks = binFeedbackRepository.findAllByMember(member);
+		if (!trashCanRepository.existsById(trashcanId)) {
+			throw new TrashCanNotFoundException();
+		}
 
+		List<BinFeedback> binFeedbacks = binFeedbackRepository.findAllByMemberAndTrashCanId(member, trashcanId);
 		Map<Integer, Boolean> feedbackExistsMap = new HashMap<>();
 		for (Feedback feedback : Feedback.values()) {
 			boolean feedbackExists = binFeedbacks.stream()

@@ -8,5 +8,5 @@ import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.trashCan.domain.BinFeedback;
 
 public interface BinFeedbackRepository extends JpaRepository<BinFeedback, Long> {
-	List<BinFeedback> findAllByMember(Member member);
+	List<BinFeedback> findAllByMemberAndTrashCanId(Member member, Long trashCanId);
 }
