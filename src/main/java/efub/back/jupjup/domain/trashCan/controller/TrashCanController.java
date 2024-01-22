@@ -2,6 +2,7 @@ package efub.back.jupjup.domain.trashCan.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,8 +34,8 @@ public class TrashCanController {
 		return trashCanService.writeFeedback(member, feedbackReqDto);
 	}
 
-	@GetMapping("/feedbacks")
-	public ResponseEntity<StatusResponse> findFeedbacks(@AuthUser Member member) {
-		return trashCanService.findFeedbacks(member);
+	@GetMapping("/feedbacks/{trashCanId}")
+	public ResponseEntity<StatusResponse> findFeedbacks(@AuthUser Member member, @PathVariable Long trashCanId) {
+		return trashCanService.findFeedbacks(member, trashCanId);
 	}
 }
