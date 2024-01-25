@@ -17,6 +17,11 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import efub.back.jupjup.domain.member.domain.Member;
+import efub.back.jupjup.domain.member.domain.MemberStatus;
+import efub.back.jupjup.domain.member.repository.MemberRepository;
+import efub.back.jupjup.domain.security.exception.AuthExceptionHandler;
+import efub.back.jupjup.domain.security.exception.BlockedAccountException;
 import efub.back.jupjup.domain.security.repository.CookieAuthorizationRequestRepository;
 import efub.back.jupjup.domain.security.userInfo.KakaoUserInfo;
 import efub.back.jupjup.domain.security.userInfo.ProviderType;
@@ -33,6 +38,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 	private final JwtProvider jwtProvider;
 	private final RedisService redisService;
 	private final CookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
+	private final MemberRepository memberRepository;
+	private final AuthExceptionHandler authExceptionHandler;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -56,6 +63,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 			} else {
 				// Handle the case where providerData is null
 			}
+		}
+
+		// 활성 상태의 유저인지 확인
+		if (!isUserActive(email)) {
+			authExceptionHandler.handleException(response, new BlockedAccountException());
+			return;
 		}
 
 		String targetUrl = determineTargetUrl(request, response, authentication);
@@ -123,5 +136,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 			.sameSite("None") // Same Site 요청을 물론 Cross Site으 요청에도 모두 전송 허용
 			.httpOnly(true) // XSS 공격을 방어하기 위한 옵션
 			.build();
+	}
+
+	private boolean isUserActive(String email) {
+		Member member = memberRepository.findByEmail(email).orElseThrow();
+		if (member.getMemberStatus() != MemberStatus.ACTIVE) {
+			return false;
+		}
+		return true;
 	}
 }
