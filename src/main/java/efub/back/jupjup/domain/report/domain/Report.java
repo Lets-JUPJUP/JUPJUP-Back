@@ -25,7 +25,7 @@ public class Report extends BaseTimeEntity {
 	@Column(nullable = false)
 	private Long targetId;
 
-	@Column(length = 999)
+	@Column(length = 500, nullable = false)
 	private String content;
 
 	@Builder
