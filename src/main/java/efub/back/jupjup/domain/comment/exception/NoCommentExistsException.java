@@ -1,6 +1,6 @@
 package efub.back.jupjup.domain.comment.exception;
 
-import efub.back.jupjup.global.exception.custom.BadRequestException;
+import efub.back.jupjup.global.exception.custom.NotFoundException;
 
-public class NoCommentExistsException extends BadRequestException {
+public class NoCommentExistsException extends NotFoundException {
 }
