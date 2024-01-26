@@ -11,4 +11,11 @@ public class MemberReqDto {
 	private String gender;
 	private String ageRange;
 	private String profileImage;
+
+	public MemberReqDto(String nickname, String gender, String ageRange, String profileImage) {
+		this.nickname = nickname;
+		this.gender = gender;
+		this.ageRange = ageRange;
+		this.profileImage = profileImage;
+	}
 }

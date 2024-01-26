@@ -75,6 +75,19 @@ public class Member extends BaseTimeEntity {
 		this.gender = gender;
 	}
 
+	@Builder(builderMethodName = "testerBuilder")
+	public Member(Long id, String email, String nickname,
+		ProviderType providerType, AgeRange ageRange, Gender gender, RoleType roleType, MemberStatus memberStatus) {
+		this.id = id;
+		this.email = email;
+		this.nickname = nickname;
+		this.providerType = providerType;
+		this.ageRange = ageRange;
+		this.gender = gender;
+		this.roleType = roleType;
+		this.memberStatus = memberStatus;
+	}
+
 	public boolean validateNickName(String nickname) {
 		if (Objects.isNull(nickname) || nickname.isBlank() || nickname.length() > 15 || !nickname.matches(
 			"[ㄱ-ㅎ가-힣a-zA-Z0-9_]+") || nickname.equals(WITHDRAWN_NICKNAME)) {
