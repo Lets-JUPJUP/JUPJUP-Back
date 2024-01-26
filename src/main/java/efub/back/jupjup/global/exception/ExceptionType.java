@@ -3,7 +3,7 @@ package efub.back.jupjup.global.exception;
 import java.util.Arrays;
 import java.util.Objects;
 
-import efub.back.jupjup.domain.admin.exception.AdminAccessDeniedException;
+import efub.back.jupjup.domain.admin.member.exception.AdminAccessDeniedException;
 import efub.back.jupjup.domain.auth.exception.AlreadyLogoutException;
 import efub.back.jupjup.domain.auth.exception.RefreshTokenNotValidException;
 import efub.back.jupjup.domain.member.exception.InvalidNicknameException;
