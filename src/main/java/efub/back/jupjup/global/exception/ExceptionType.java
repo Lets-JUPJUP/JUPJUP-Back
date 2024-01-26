@@ -6,14 +6,19 @@ import java.util.Objects;
 import efub.back.jupjup.domain.admin.member.exception.AdminAccessDeniedException;
 import efub.back.jupjup.domain.auth.exception.AlreadyLogoutException;
 import efub.back.jupjup.domain.auth.exception.RefreshTokenNotValidException;
+import efub.back.jupjup.domain.comment.exception.NoAuthorityCommentRemoveException;
+import efub.back.jupjup.domain.comment.exception.NoCommentExistsException;
+import efub.back.jupjup.domain.eventcomment.exception.NoEventInfoException;
 import efub.back.jupjup.domain.member.exception.InvalidNicknameException;
 import efub.back.jupjup.domain.member.exception.MemberNotFoundException;
 import efub.back.jupjup.domain.notification.exception.NotificationNotFoundException;
+import efub.back.jupjup.domain.post.exception.EmptyInputFilenameException;
 import efub.back.jupjup.domain.post.exception.MaxMemberLimitException;
 import efub.back.jupjup.domain.post.exception.MismatchPostAgeRangeException;
 import efub.back.jupjup.domain.post.exception.MismatchPostGenderException;
 import efub.back.jupjup.domain.post.exception.PostNotFoundException;
 import efub.back.jupjup.domain.post.exception.PostjoinNotFoundException;
+import efub.back.jupjup.domain.post.exception.WrongImageFormatException;
 import efub.back.jupjup.domain.review.exception.BadgeNotExistsForCodeException;
 import efub.back.jupjup.domain.review.exception.ReviewNotAllowedException;
 import efub.back.jupjup.domain.security.exception.BlockedAccountException;
@@ -62,7 +67,19 @@ public enum ExceptionType {
 	POST_JOIN_NOT_FOUND_EXCEPTION("C6004", "게시글 참여 정보가 없습니다.", PostjoinNotFoundException.class),
 
 	// 관리자 관련 - C7***
-	ADMIN_ACCESS_DENIED_EXCEPTION("C7000", "관리자가 아닌 계정은 접근할 수 없습니다.", AdminAccessDeniedException.class);
+	ADMIN_ACCESS_DENIED_EXCEPTION("C7000", "관리자가 아닌 계정은 접근할 수 없습니다.", AdminAccessDeniedException.class),
+
+	// 이미지 관련 - C8***
+	EMPTY_INPUT_FILENAME_EXCEPTION("C8000", "파일명이 비어있습니다.", EmptyInputFilenameException.class),
+	WRONG_IMAGE_FORMAT_EXCEPTION("C8001", "옳지 않은 파일 형식입니다.", WrongImageFormatException.class),
+
+	// 댓글 관련 - C9***
+	NO_AUTHORITY_COMMENT_REMOVE_EXCEPTION("C9000", "댓글을 삭제할 권한이 없습니다", NoAuthorityCommentRemoveException.class),
+	NO_COMMENT_EXISTS_EXCEPTION("C9001", "존재하지 않는 댓글입니다.", NoCommentExistsException.class),
+
+	// 공식행사 관련 - C10***
+	NO_EVENT_INFO_EXCEPTION("C10000", "존재하지 않는 공식행사입니다.", NoEventInfoException.class);
+
 
 	private final String errorCode;
 	private final String message;
