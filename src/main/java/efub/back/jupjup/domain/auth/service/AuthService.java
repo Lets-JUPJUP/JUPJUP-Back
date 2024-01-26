@@ -62,6 +62,11 @@ public class AuthService {
 
 	}
 
+	public void blockInRedis(String email) {
+		// redis 리프레시 토큰 삭제 (발행된 액세스 토큰을 이용한 블랙리스트 추가는 불가능)
+		redisService.deleteData("RefreshToken:" + email);
+	}
+
 	public ResponseEntity<StatusResponse> refreshAccessToken(String refreshToken) {
 		Boolean isValidRefreshToken = jwtProvider.validateToken(refreshToken);
 		if (!isValidRefreshToken) {
