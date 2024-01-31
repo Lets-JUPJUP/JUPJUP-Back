@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import efub.back.jupjup.domain.admin.report.dto.AdminReportResponseDto;
 import efub.back.jupjup.domain.report.domain.Report;
-import efub.back.jupjup.domain.report.domain.ReportImage;
-import efub.back.jupjup.domain.report.repository.ReportImageRepository;
 import efub.back.jupjup.domain.report.repository.ReportRepository;
 import efub.back.jupjup.global.response.StatusEnum;
 import efub.back.jupjup.global.response.StatusResponse;
@@ -23,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AdminReportService {
 	private final ReportRepository reportRepository;
-	private final ReportImageRepository reportImageRepository;
 
 	private StatusResponse createStatusResponse(Object data) {
 		return StatusResponse.builder()
