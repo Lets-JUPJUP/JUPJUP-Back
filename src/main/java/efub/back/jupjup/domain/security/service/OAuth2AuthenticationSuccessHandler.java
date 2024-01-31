@@ -9,6 +9,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -40,6 +41,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 	private final CookieAuthorizationRequestRepository cookieAuthorizationRequestRepository;
 	private final MemberRepository memberRepository;
 	private final AuthExceptionHandler authExceptionHandler;
+
+	@Value("${admin.email}")
+	private String adminEmail;
+
+	@Value("${admin.redirect-url}")
+	private String adminRedirectUrl;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -91,6 +98,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 	private String makeRedirectUrl(String email, String redirectUrl) {
 
 		redirectUrl = "https://lets-jupjup.com";
+		if (email.equals(adminEmail)) {
+			redirectUrl = adminRedirectUrl;
+		}
 		log.info(redirectUrl);
 
 		String accessToken = jwtProvider.generateAccessToken(email);
