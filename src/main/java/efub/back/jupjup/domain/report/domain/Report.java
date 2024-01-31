@@ -1,5 +1,7 @@
 package efub.back.jupjup.domain.report.domain;
 
+import java.util.List;
+
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.global.BaseTimeEntity;
 
@@ -27,6 +29,9 @@ public class Report extends BaseTimeEntity {
 
 	@Column(length = 500, nullable = false)
 	private String content;
+
+	@OneToMany(mappedBy = "report", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<ReportImage> reportImages;
 
 	@Builder
 	public Report(Member writer, Long targetId, String content){

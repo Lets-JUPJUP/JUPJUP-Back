@@ -40,13 +40,7 @@ public class AdminReportService {
 		int reportCount = reports.size();
 
 		List<AdminReportResponseDto> responseDtos = reports.stream()
-			.map(report -> {
-				List<String> imageUrls = reportImageRepository.findAllByReport(report)
-					.stream()
-					.map(ReportImage::getFileUrl)
-					.collect(Collectors.toList());
-				return AdminReportResponseDto.of(report, imageUrls, reportCount);
-			})
+			.map(report -> AdminReportResponseDto.of(report, reportCount))
 			.collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));

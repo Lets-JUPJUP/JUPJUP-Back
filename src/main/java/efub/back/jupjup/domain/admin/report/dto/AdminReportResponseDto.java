@@ -1,11 +1,14 @@
 package efub.back.jupjup.domain.admin.report.dto;
 
 import efub.back.jupjup.domain.report.domain.Report;
+import efub.back.jupjup.domain.report.domain.ReportImage;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 @Builder
 public class AdminReportResponseDto {
@@ -17,13 +20,16 @@ public class AdminReportResponseDto {
 	private LocalDateTime createdDate;
 	private int reportCount;
 
-	public static AdminReportResponseDto of(Report report, List<String> imgUrlList, int reportCount) {
+	public static AdminReportResponseDto of(Report report, int reportCount) {
+		List<String> fileUrls = report.getReportImages().stream()
+			.map(ReportImage::getFileUrl)
+			.collect(Collectors.toList());
 		return AdminReportResponseDto.builder()
 			.id(report.getId())
 			.writerId(report.getWriter().getId())
 			.targetId(report.getTargetId())
 			.content(report.getContent())
-			.fileUrls(imgUrlList)
+			.fileUrls(fileUrls)
 			.createdDate(report.getCreatedAt())
 			.reportCount(reportCount)
 			.build();
