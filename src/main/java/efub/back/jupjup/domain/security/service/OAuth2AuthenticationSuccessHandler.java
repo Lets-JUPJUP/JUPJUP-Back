@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -17,6 +18,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.domain.MemberStatus;
@@ -26,6 +29,8 @@ import efub.back.jupjup.domain.security.exception.BlockedAccountException;
 import efub.back.jupjup.domain.security.repository.CookieAuthorizationRequestRepository;
 import efub.back.jupjup.domain.security.userInfo.KakaoUserInfo;
 import efub.back.jupjup.domain.security.userInfo.ProviderType;
+import efub.back.jupjup.global.exception.ExceptionType;
+import efub.back.jupjup.global.exception.dto.ErrorResponse;
 import efub.back.jupjup.global.jwt.JwtProvider;
 import efub.back.jupjup.global.redis.RedisService;
 import efub.back.jupjup.global.util.CookieUtils;
@@ -72,18 +77,34 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 			}
 		}
 
-		// 활성 상태의 유저인지 확인
-		if (!isUserActive(email)) {
-			authExceptionHandler.handleException(response, new BlockedAccountException());
-			return;
-		}
-
 		String targetUrl = determineTargetUrl(request, response, authentication);
 		log.info("targetUrl = " + targetUrl);
 		String oldUrl = request.getHeader("Referer");
 		log.info("oldUrl :" + oldUrl);
 
 		String url = makeRedirectUrl(email, targetUrl);
+
+		// 활성 상태의 유저인지 확인
+		if (!isUserActive(email)) {
+			authExceptionHandler.handleException(response, new BlockedAccountException());
+			response.getWriter().write(url);
+
+			// ErrorResponse 객체 생성
+			ErrorResponse errorResponse = ErrorResponse.builder()
+				.status(HttpStatus.UNAUTHORIZED)
+				.code(ExceptionType.BLOCKED_ACCOUNT_EXCEPTION.getErrorCode())
+				.message(ExceptionType.BLOCKED_ACCOUNT_EXCEPTION.getMessage())
+				.build();
+
+			// JSON으로 변환
+			ObjectMapper objectMapper = new ObjectMapper();
+			String jsonResponse = objectMapper.writeValueAsString(errorResponse);
+			response.getWriter().write(jsonResponse);
+
+			clearAuthenticationAttributes(request, response);
+			getRedirectStrategy().sendRedirect(request, response, url);
+			return;
+		}
 
 		ResponseCookie responseCookie = generateRefreshTokenCookie(email);
 		response.setHeader("Set-Cookie", responseCookie.toString());
