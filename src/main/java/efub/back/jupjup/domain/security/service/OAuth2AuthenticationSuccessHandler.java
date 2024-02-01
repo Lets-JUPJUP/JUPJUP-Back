@@ -80,6 +80,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 		String targetUrl = determineTargetUrl(request, response, authentication);
 		log.info("targetUrl = " + targetUrl);
+		String oldUrl = request.getHeader("Referer");
+		log.info("oldUrl :" + oldUrl);
 
 		String url = makeRedirectUrl(email, targetUrl);
 
