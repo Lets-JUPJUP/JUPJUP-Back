@@ -25,7 +25,6 @@ import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.domain.MemberStatus;
 import efub.back.jupjup.domain.member.repository.MemberRepository;
 import efub.back.jupjup.domain.security.exception.AuthExceptionHandler;
-import efub.back.jupjup.domain.security.exception.BlockedAccountException;
 import efub.back.jupjup.domain.security.repository.CookieAuthorizationRequestRepository;
 import efub.back.jupjup.domain.security.userInfo.KakaoUserInfo;
 import efub.back.jupjup.domain.security.userInfo.ProviderType;
@@ -86,7 +85,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 		// 활성 상태의 유저인지 확인
 		if (!isUserActive(email)) {
-			authExceptionHandler.handleException(response, new BlockedAccountException());
 			response.getWriter().write(url);
 
 			// ErrorResponse 객체 생성
@@ -99,6 +97,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 			// JSON으로 변환
 			ObjectMapper objectMapper = new ObjectMapper();
 			String jsonResponse = objectMapper.writeValueAsString(errorResponse);
+			response.setContentType("application/json");
+			response.setCharacterEncoding("utf-8");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.getWriter().write(jsonResponse);
 
 			clearAuthenticationAttributes(request, response);
