@@ -45,8 +45,13 @@ public class AdminTrashCanService {
 
 		List<TrashCan> trashCans = trashCanPage.getContent();
 
+		// 페이징된 휴지통의 ID 추출
+		List<Long> trashCanIds = trashCans.stream()
+			.map(TrashCan::getId)
+			.collect(Collectors.toList());
+
 		// 쓰레기통별 피드백 개수 조회
-		List<Object[]> feedbackCountsByTrashCan = binFeedbackRepository.countFeedbacksByTrashCan();
+		List<Object[]> feedbackCountsByTrashCan = binFeedbackRepository.countFeedbacksByTrashCan(trashCanIds);
 		Map<Long, Long> feedbackCountMap = feedbackCountsByTrashCan.stream()
 			.collect(Collectors.toMap(
 				array -> (Long)array[0],   // trashCanId
