@@ -19,8 +19,8 @@ public interface BinFeedbackRepository extends JpaRepository<BinFeedback, Long> 
 	Long countByFeedbackAndTrashCanId(@Param("feedback") Feedback feedback, @Param("trashCanId") Long trashCanId);
 
 	// 쓰레기통별 피드백 개수 조회 메서드
-	@Query("SELECT bf.trashCanId, COUNT(bf) FROM BinFeedback bf GROUP BY bf.trashCanId")
-	List<Object[]> countFeedbacksByTrashCan();
+	@Query("SELECT bf.trashCanId, COUNT(bf) FROM BinFeedback bf WHERE bf.trashCanId IN (:trashCanIds) GROUP BY bf.trashCanId")
+	List<Object[]> countFeedbacksByTrashCan(List<Long> trashCanIds);
 
 	Long countByTrashCanId(Long trashCanId);
 }

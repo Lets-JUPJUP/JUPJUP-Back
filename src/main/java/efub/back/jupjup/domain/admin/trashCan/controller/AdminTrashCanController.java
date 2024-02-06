@@ -5,6 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import efub.back.jupjup.domain.admin.trashCan.service.AdminTrashCanService;
@@ -20,8 +21,8 @@ public class AdminTrashCanController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/list")
-	public ResponseEntity<StatusResponse> getTrashCans() {
-		return adminTrashCanService.getTrashCans();
+	public ResponseEntity<StatusResponse> getTrashCans(@RequestParam(value = "pageNo") Integer pageNo) {
+		return adminTrashCanService.getTrashCans(pageNo);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
