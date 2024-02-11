@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import efub.back.jupjup.domain.admin.member.exception.AdminAccessDeniedException;
+import efub.back.jupjup.domain.admin.member.exception.AlreadyBlockedException;
 import efub.back.jupjup.domain.auth.exception.AlreadyLogoutException;
 import efub.back.jupjup.domain.auth.exception.RefreshTokenNotValidException;
 import efub.back.jupjup.domain.comment.exception.NoAuthorityCommentRemoveException;
@@ -41,6 +42,7 @@ public enum ExceptionType {
 	INVALID_NICKNAME_EXCEPTION("C1000", "유효하지 않은 닉네임입니다.", InvalidNicknameException.class),
 	MEMBER_NOT_FOUND_EXCEPTION("C1001", "존재하지 않는 멤버입니다.", MemberNotFoundException.class),
 	BLOCKED_ACCOUNT_EXCEPTION("C1002", "관리자에 의해 탈퇴된 계정입니다.", BlockedAccountException.class),
+	ALREADY_BLOCKED_EXCEPTION("C1003", "이미 관리자에 의해 탈퇴된 계정입니다.", AlreadyBlockedException.class),
 
 	//auth 관련 - C2***
 	REFRESH_TOKEN_NOT_VALID_EXCEPTION("C2000", "redis의 리프레시 토큰과 일치하지 않습니다.", RefreshTokenNotValidException.class),
@@ -79,7 +81,6 @@ public enum ExceptionType {
 
 	// 공식행사 관련 - C10***
 	NO_EVENT_INFO_EXCEPTION("C10000", "존재하지 않는 공식행사입니다.", NoEventInfoException.class);
-
 
 	private final String errorCode;
 	private final String message;

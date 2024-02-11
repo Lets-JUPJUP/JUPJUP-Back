@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import efub.back.jupjup.domain.admin.member.exception.AlreadyBlockedException;
 import efub.back.jupjup.domain.member.exception.InvalidNicknameException;
 import efub.back.jupjup.domain.security.userInfo.ProviderType;
 import efub.back.jupjup.global.BaseTimeEntity;
@@ -107,6 +108,9 @@ public class Member extends BaseTimeEntity {
 	}
 
 	public void updateMemberStatus(MemberStatus memberStatus) {
+		if (this.memberStatus.equals(MemberStatus.BLOCKED)) {
+			throw new AlreadyBlockedException();
+		}
 		if (memberStatus != null && !this.memberStatus.equals(memberStatus)) {
 			this.memberStatus = memberStatus;
 		}

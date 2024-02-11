@@ -3,6 +3,7 @@ package efub.back.jupjup.domain.admin.member.dto;
 import efub.back.jupjup.domain.member.domain.AgeRange;
 import efub.back.jupjup.domain.member.domain.Gender;
 import efub.back.jupjup.domain.member.domain.Member;
+import efub.back.jupjup.domain.member.domain.MemberStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,6 +15,7 @@ public class AdminMemberDto {
 	private String email;
 	private AgeRange ageRange;
 	private Gender gender;
+	private MemberStatus memberStatus;
 
 	public static AdminMemberDto from(Member member) {
 		return AdminMemberDto.builder()
@@ -22,6 +24,7 @@ public class AdminMemberDto {
 			.email(member.getEmail())
 			.ageRange(member.getAgeRange())
 			.gender(member.getGender())
+			.memberStatus(member.getMemberStatus())
 			.build();
 	}
 }
