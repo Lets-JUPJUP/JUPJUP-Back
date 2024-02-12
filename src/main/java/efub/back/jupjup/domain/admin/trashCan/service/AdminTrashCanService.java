@@ -39,7 +39,7 @@ public class AdminTrashCanService {
 	private final BinFeedbackRepository binFeedbackRepository;
 
 	public ResponseEntity<StatusResponse> getTrashCans(Integer pageNo) {
-		int pageSize = 15;
+		int pageSize = 10;
 		Pageable pageable = PageRequest.of(pageNo, pageSize);
 		Page<TrashCan> trashCanPage = trashCanRepository.findAll(pageable);
 
