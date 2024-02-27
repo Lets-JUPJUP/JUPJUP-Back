@@ -50,11 +50,17 @@ jobs:
           echo "${{ secrets.APPLICATION_PROD_YML }}" > ./src/main/resources/application-prod.yml
         shell: bash
 
-      - name : make service-key-jupjup.json
+      - name : make service-key-jupjup.json directory
         run : |
            mkdir ./src/main/resources/key
-           touch ./src/main/resources/key/service-key-jupjup.json
-           echo "${{ secrets.SERVICE_KEY }}" > ./src/main/resources/key/service-key-jupjup.json
+           
+      - name: create-json
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "service-key-jupjup.json"
+          json: ${{ secrets.SERVICE_KEY }}
+          dir: './src/main/resources/key/'
 
       - name: Build with Gradle # 프로젝트 build
         run: ./gradlew clean build -x test
