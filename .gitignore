@@ -26,6 +26,7 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 application*.yml
+service-key-jupjup.json
 
 ### NetBeans ###
 /nbproject/private/

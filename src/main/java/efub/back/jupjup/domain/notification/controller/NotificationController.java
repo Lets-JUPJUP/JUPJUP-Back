@@ -1,18 +1,26 @@
 package efub.back.jupjup.domain.notification.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
+
 import efub.back.jupjup.domain.member.domain.Member;
+import efub.back.jupjup.domain.notification.dto.FcmRequestDto;
+import efub.back.jupjup.domain.notification.dto.TestTokenDto;
+import efub.back.jupjup.domain.notification.service.FirebaseService;
 import efub.back.jupjup.domain.notification.service.NotificationService;
 import efub.back.jupjup.domain.security.userInfo.AuthUser;
 import efub.back.jupjup.global.response.StatusResponse;
@@ -25,6 +33,39 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class NotificationController {
 	private final NotificationService notificationService;
+	private final FirebaseService firebaseService;
+
+	@PostMapping("/fcm")
+	public ResponseEntity pushMessageTopic(@RequestBody FcmRequestDto requestDTO) throws
+		IOException,
+		FirebaseMessagingException {
+		System.out.println(requestDTO.getTargetToken() + " "
+			+ requestDTO.getTitle() + " " + requestDTO.getBody());
+
+		firebaseService.sendMessageByTopic(
+			requestDTO.getTitle(),
+			requestDTO.getBody());
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/token")
+	public ResponseEntity pushMessageToken(@RequestBody FcmRequestDto requestDTO) throws
+		IOException,
+		FirebaseMessagingException {
+		System.out.println(requestDTO.getTargetToken() + " "
+			+ requestDTO.getTitle() + " " + requestDTO.getBody());
+
+		firebaseService.sendMessageByToken(
+			requestDTO.getTitle(),
+			requestDTO.getBody(),
+			requestDTO.getTargetToken());
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/test")
+	public void test(@RequestBody TestTokenDto dto) {
+		log.info(dto.getToken());
+	}
 
 	//알림 구독 (SSE)
 	@GetMapping(value = "/subscribe", produces = "text/event-stream")
