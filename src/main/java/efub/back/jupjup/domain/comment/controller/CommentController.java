@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
+
 import efub.back.jupjup.domain.comment.dto.CommentRequestDto;
 import efub.back.jupjup.domain.comment.dto.ReplyRequestDto;
 import efub.back.jupjup.domain.comment.service.CommentService;
@@ -29,7 +31,7 @@ public class CommentController {
 	@PostMapping("/{postId}")
 	public ResponseEntity<StatusResponse> createComment(@PathVariable Long postId,
 		@RequestBody CommentRequestDto commentReqDto,
-		@AuthUser Member member) {
+		@AuthUser Member member) throws FirebaseMessagingException {
 		return commentService.saveComment(postId, commentReqDto, member);
 	}
 
@@ -37,7 +39,7 @@ public class CommentController {
 	@PostMapping("/reply/{postId}")
 	public ResponseEntity<StatusResponse> createReply(@PathVariable Long postId,
 		@RequestBody ReplyRequestDto replyRequestDto,
-		@AuthUser Member member) {
+		@AuthUser Member member) throws FirebaseMessagingException {
 		return commentService.saveReply(postId, replyRequestDto, member);
 	}
 

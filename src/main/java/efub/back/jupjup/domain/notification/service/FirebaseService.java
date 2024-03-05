@@ -16,11 +16,16 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 
+import efub.back.jupjup.domain.member.domain.Member;
+import efub.back.jupjup.domain.notification.dto.TestTokenDto;
+import efub.back.jupjup.global.redis.RedisService;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class FirebaseService {
+	private final RedisService redisService;
+
 	@Value("${fcm.service-key}")
 	private String serviceKeyFilePath;
 
@@ -38,6 +43,10 @@ public class FirebaseService {
 			.build();
 
 		FirebaseApp.initializeApp(options);
+	}
+
+	public void saveFcmToken(Member member, TestTokenDto tokenDto) {
+		redisService.setData("FcmToken:" + member.getId(), tokenDto.getToken());
 	}
 
 	/**
@@ -72,6 +81,17 @@ public class FirebaseService {
 				.setBody(body)
 				.build())
 			.setToken(token)
+			.build());
+	}
+
+	public void sendPushMessage(Long memberId, String title, String body) throws FirebaseMessagingException {
+		String fcmToken = redisService.getData("FcmToken:" + memberId);
+		FirebaseMessaging.getInstance().send(Message.builder()
+			.setNotification(Notification.builder()
+				.setTitle(title)
+				.setBody(body)
+				.build())
+			.setToken(fcmToken)
 			.build());
 	}
 

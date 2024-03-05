@@ -63,8 +63,9 @@ public class NotificationController {
 	}
 
 	@PostMapping("/test")
-	public void test(@RequestBody TestTokenDto dto) {
-		log.info(dto.getToken());
+	public void saveFcmToken(@AuthUser Member member, @RequestBody TestTokenDto dto) {
+		log.info(String.format("유저 id : %d, firebase token: %s", member.getId(), dto.getToken()));
+		firebaseService.saveFcmToken(member, dto);
 	}
 
 	//알림 구독 (SSE)

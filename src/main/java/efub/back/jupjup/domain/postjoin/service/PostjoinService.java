@@ -10,8 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
+
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.notification.domain.NotificationType;
+import efub.back.jupjup.domain.notification.service.FirebaseService;
 import efub.back.jupjup.domain.notification.service.NotificationService;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.domain.PostAgeRange;
@@ -43,6 +46,7 @@ public class PostjoinService {
 	private final PostRepository postRepository;
 	private final PostjoinRepository postjoinRepository;
 	private final NotificationService notificationService;
+	private final FirebaseService firebaseService;
 
 	// 참여 신청
 	public ResponseEntity<StatusResponse> joinPost(Member member, Long postId) {
@@ -58,7 +62,9 @@ public class PostjoinService {
 		}
 
 		// 성별 제한이 있는 경우, 성별이 맞는지 확인
-		if (!post.getPostGender().equals(PostGender.ANY) && !member.getGender().name().equalsIgnoreCase(post.getPostGender().name())) {
+		if (!post.getPostGender().equals(PostGender.ANY) && !member.getGender()
+			.name()
+			.equalsIgnoreCase(post.getPostGender().name())) {
 			throw new MismatchPostGenderException();
 		}
 
@@ -135,7 +141,7 @@ public class PostjoinService {
 	}
 
 	@Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")  // 매 시간 정각에 실행
-	public void checkRecruitmentDeadlines() {
+	public void checkRecruitmentDeadlines() throws FirebaseMessagingException {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime start;
 		LocalDateTime end;
@@ -162,7 +168,7 @@ public class PostjoinService {
 		}
 	}
 
-	private void notifyRecruitmentResult(Post post) {
+	private void notifyRecruitmentResult(Post post) throws FirebaseMessagingException {
 		Boolean isRecruitmentSuccessful = post.getIsRecruitmentSuccessful();
 		if (isRecruitmentSuccessful) {
 			notifyRecruitmentSuccess(post);
@@ -171,7 +177,7 @@ public class PostjoinService {
 		}
 	}
 
-	private void notifyRecruitmentSuccess(Post post) {
+	private void notifyRecruitmentSuccess(Post post) throws FirebaseMessagingException {
 		String result = null;
 		List<Postjoin> postjoins = postjoinRepository.findAllByPost(post);
 
@@ -179,17 +185,19 @@ public class PostjoinService {
 		Member host = post.getAuthor();
 		result = RECRUITMENT_SUCCESS_MSG_HOST;
 		notificationService.send(host, NotificationType.PLOGGING, result, post.getId());
+		firebaseService.sendPushMessage(host.getId(), "플로깅 알림", "주최한 플로깅이 모집에 성공했습니다.");
 
 		// 멤버 알림 전송
 		for (Postjoin postjoin : postjoins) {
 			Member member = postjoin.getMember();
 			result = RECRUITMENT_SUCCESS_MSG_MEMBER;
 			notificationService.send(member, NotificationType.PLOGGING, result, post.getId());
+			firebaseService.sendPushMessage(member.getId(), "플로깅 알림", "참여한 플로깅이 모집에 성공했습니다.");
 		}
 
 	}
 
-	private void notifyRecruitmentFailure(Post post) {
+	private void notifyRecruitmentFailure(Post post) throws FirebaseMessagingException {
 		String result = null;
 		List<Postjoin> postjoins = postjoinRepository.findAllByPost(post);
 
@@ -197,12 +205,14 @@ public class PostjoinService {
 		Member host = post.getAuthor();
 		result = RECRUITMENT_FAILURE_MSG_HOST;
 		notificationService.send(host, NotificationType.PLOGGING, result, post.getId());
+		firebaseService.sendPushMessage(host.getId(), "플로깅 알림", "주최한 플로깅이 모집에 실패했습니다.");
 
 		// 멤버 알림 전송
 		for (Postjoin postjoin : postjoins) {
 			Member member = postjoin.getMember();
 			result = RECRUITMENT_FAILURE_MSG_MEMBER;
 			notificationService.send(member, NotificationType.PLOGGING, result, post.getId());
+			firebaseService.sendPushMessage(member.getId(), "플로깅 알림", "참여한 플로깅이 모집에 실패했습니다.");
 		}
 	}
 

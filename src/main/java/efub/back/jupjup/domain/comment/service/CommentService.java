@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
+
 import efub.back.jupjup.domain.comment.domain.Comment;
 import efub.back.jupjup.domain.comment.dto.CommentDto;
 import efub.back.jupjup.domain.comment.dto.CommentPostDto;
@@ -23,6 +25,7 @@ import efub.back.jupjup.domain.comment.repository.CommentRepository;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.repository.MemberRepository;
 import efub.back.jupjup.domain.notification.domain.NotificationType;
+import efub.back.jupjup.domain.notification.service.FirebaseService;
 import efub.back.jupjup.domain.notification.service.NotificationService;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.repository.PostRepository;
@@ -42,9 +45,12 @@ public class CommentService {
 	private final PostRepository postRepository;
 	private final MemberRepository memberRepository;
 	private final NotificationService notificationService;
+	private final FirebaseService firebaseService;
 
 	// 댓글 생성 기능
-	public ResponseEntity<StatusResponse> saveComment(Long postId, CommentRequestDto commentReqDto, Member member) {
+	public ResponseEntity<StatusResponse> saveComment(Long postId, CommentRequestDto commentReqDto,
+		Member member) throws
+		FirebaseMessagingException {
 		Post post = postRepository.findById(postId).orElseThrow(NoPostExistException::new);
 		Comment comment = Comment.builder()
 			.content(commentReqDto.getContent())
@@ -56,6 +62,10 @@ public class CommentService {
 		if (!post.getAuthor().getId().equals(member.getId())) {
 			notificationService.send(post.getAuthor(), NotificationType.COMMENT, comment.getContent(),
 				comment.getPost().getId());
+			firebaseService.sendPushMessage(post.getAuthor().getId(),
+				"댓글 알림",
+				String.format("%s님이 댓글을 달았습니다.", member.getNickname()));
+
 		}
 
 		return ResponseEntity.ok(StatusResponse.builder()
@@ -66,7 +76,8 @@ public class CommentService {
 	}
 
 	// 대댓글 생성 기능
-	public ResponseEntity<StatusResponse> saveReply(Long postId, ReplyRequestDto replyReqDto, Member member) {
+	public ResponseEntity<StatusResponse> saveReply(Long postId, ReplyRequestDto replyReqDto, Member member) throws
+		FirebaseMessagingException {
 		Post post = postRepository.findById(postId).orElseThrow(() -> new NoPostExistException());
 		Comment parent = commentRepository.findById(replyReqDto.getParentId())
 			.orElseThrow(() -> new NoCommentExistsException());
@@ -81,6 +92,9 @@ public class CommentService {
 		if (!parent.getWriter().getId().equals(member.getId())) {
 			notificationService.send(parent.getWriter(), NotificationType.REPLY, replyReqDto.getContent(),
 				comment.getPost().getId());
+			firebaseService.sendPushMessage(parent.getWriter().getId(),
+				"대댓글 알림",
+				String.format("%s님이 댓글을 달았습니다.", member.getNickname()));
 		}
 
 		return ResponseEntity.ok(StatusResponse.builder()

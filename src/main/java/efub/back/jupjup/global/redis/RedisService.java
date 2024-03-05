@@ -50,4 +50,8 @@ public class RedisService {
 	public Optional<String> getBlackList(String accessToken) {
 		return Optional.ofNullable(getData("BlackList:" + accessToken));
 	}
+
+	public Optional<String> getFcmToken(String memberId) {
+		return Optional.ofNullable(getData("FcmToken:" + memberId));
+	}
 }
