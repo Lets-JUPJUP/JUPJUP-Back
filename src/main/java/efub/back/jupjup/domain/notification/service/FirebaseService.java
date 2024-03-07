@@ -86,7 +86,7 @@ public class FirebaseService {
 
 	public void sendPushMessage(Long memberId, String title, String body) throws FirebaseMessagingException {
 		String fcmToken = redisService.getData("FcmToken:" + memberId);
-		FirebaseMessaging.getInstance().send(Message.builder()
+		FirebaseMessaging.getInstance().sendAsync(Message.builder()
 			.setNotification(Notification.builder()
 				.setTitle(title)
 				.setBody(body)
