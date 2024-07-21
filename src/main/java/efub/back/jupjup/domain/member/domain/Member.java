@@ -46,7 +46,7 @@ public class Member extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private ProviderType providerType;
 
-	@Column(name = "age")
+	@Column(name = "age", nullable = false)
 	private Integer age;
 
 	@Column(length = 50)
@@ -117,7 +117,7 @@ public class Member extends BaseTimeEntity {
 	}
 
 	public void updateAge(Integer age) {
-		if (age != null && !this.age.equals(age)) {
+		if (!this.age.equals(age)) {
 			this.age = age;
 		}
 	}

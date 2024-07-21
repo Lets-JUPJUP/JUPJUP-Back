@@ -87,7 +87,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 						.profileImageUrl(oAuth2UserInfo.getProfileImageUrl())
 						.username(oAuth2UserInfo.getName())
 						.providerType(oAuth2UserInfo.getProvider())
-						.age(null)
+						.age(0)
 						.gender(gender)
 						.roleType(RoleType.MEMBER)
 						.status(MemberStatus.ACTIVE)
