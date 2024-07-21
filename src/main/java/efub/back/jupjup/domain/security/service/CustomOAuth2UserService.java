@@ -75,12 +75,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 						gender = Gender.valueOf(oAuth2UserInfo.getGender().toUpperCase().trim());
 					}
 
-					// if (!kakaoAccount.containsKey("age_range")) {
-					// 	ageRange = AgeRange.NOT_DEFINED;
-					// } else {
-					// 	ageRange = AgeRange.fromString(oAuth2UserInfo.getAgeRange());
-					// }
-
 					return Member.builder()
 						.nickname(nickname)
 						.email(oAuth2UserInfo.getEmail())

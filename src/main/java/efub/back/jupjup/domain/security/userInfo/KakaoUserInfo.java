@@ -10,7 +10,6 @@ public class KakaoUserInfo implements OAuth2UserInfo {
 	private static final String NICKNAME = "nickname";
 	private static final String PROFILE = "profile_image_url";
 	private static final String GENDER = "gender";
-	private static final String AGE_RANGE = "age_range";
 	private static final String HAS_GENDER = "has_gender";
 
 	private static final String KEY = "kakao_account";
@@ -70,12 +69,6 @@ public class KakaoUserInfo implements OAuth2UserInfo {
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get(KEY);
 		return kakaoAccount.get(GENDER).toString();
 
-	}
-
-	@Override
-	public String getAgeRange() {
-		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get(KEY);
-		return kakaoAccount.get(AGE_RANGE).toString();
 	}
 
 	@Override
