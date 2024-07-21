@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import efub.back.jupjup.domain.member.domain.AgeRange;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -36,42 +35,43 @@ public enum PostAgeRange {
 		return ageRange;
 	}
 
+	// TODO : 수정 필요
 	// 멤버의 나이 범위가 포스트의 나이 범위에 포함되는지 확인
-	public boolean includes(AgeRange memberAgeRange) {
-		// 모든 범위를 허용하는 경우 항상 true 반환
-		if (this == AGE_ANY) {
-			return true;
-		}
-
-		int startAge = memberAgeRange.getStartAge();
-		int endAge = memberAgeRange.getEndAge();
-
-		switch (this) {
-			case AGE_0_9:
-				return startAge >= 0 && endAge <= 9;
-			case AGE_10_19:
-				return startAge >= 10 && endAge <= 19;
-			case AGE_20_29:
-				return startAge >= 20 && endAge <= 29;
-			case AGE_30_39:
-				return startAge >= 30 && endAge <= 39;
-			case AGE_40_49:
-				return startAge >= 40 && endAge <= 49;
-			case AGE_50_59:
-				return startAge >= 50 && endAge <= 59;
-			case AGE_60_69:
-				return startAge >= 60 && endAge <= 69;
-			case AGE_70_79:
-				return startAge >= 70 && endAge <= 79;
-			case AGE_80_89:
-				return startAge >= 80 && endAge <= 89;
-			case AGE_90_ABOVE:
-				return startAge >= 90;
-			case AGE_ANY:
-				return true; // 모든 나이 범위를 허용
-			default:
-				return false; // 정의되지 않은 범위
-		}
-	}
+	// public boolean includes(AgeRange memberAgeRange) {
+	// 	// 모든 범위를 허용하는 경우 항상 true 반환
+	// 	if (this == AGE_ANY) {
+	// 		return true;
+	// 	}
+	//
+	// 	int startAge = memberAgeRange.getStartAge();
+	// 	int endAge = memberAgeRange.getEndAge();
+	//
+	// 	switch (this) {
+	// 		case AGE_0_9:
+	// 			return startAge >= 0 && endAge <= 9;
+	// 		case AGE_10_19:
+	// 			return startAge >= 10 && endAge <= 19;
+	// 		case AGE_20_29:
+	// 			return startAge >= 20 && endAge <= 29;
+	// 		case AGE_30_39:
+	// 			return startAge >= 30 && endAge <= 39;
+	// 		case AGE_40_49:
+	// 			return startAge >= 40 && endAge <= 49;
+	// 		case AGE_50_59:
+	// 			return startAge >= 50 && endAge <= 59;
+	// 		case AGE_60_69:
+	// 			return startAge >= 60 && endAge <= 69;
+	// 		case AGE_70_79:
+	// 			return startAge >= 70 && endAge <= 79;
+	// 		case AGE_80_89:
+	// 			return startAge >= 80 && endAge <= 89;
+	// 		case AGE_90_ABOVE:
+	// 			return startAge >= 90;
+	// 		case AGE_ANY:
+	// 			return true; // 모든 나이 범위를 허용
+	// 		default:
+	// 			return false; // 정의되지 않은 범위
+	// 	}
+	// }
 }
 

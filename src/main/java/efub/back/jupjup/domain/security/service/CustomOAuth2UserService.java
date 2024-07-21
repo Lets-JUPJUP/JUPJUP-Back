@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import efub.back.jupjup.domain.member.domain.AgeRange;
 import efub.back.jupjup.domain.member.domain.Gender;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.domain.MemberStatus;
@@ -65,11 +64,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 						nickname = String.valueOf(System.currentTimeMillis());
 					}
 					Gender gender = null;
-					AgeRange ageRange = null;
 
 					Map<String, Object> kakaoAccount = (Map<String, Object>)oAuth2UserInfo.getAttributes()
 						.get("kakao_account");
-					log.info("getAttributes :" + kakaoAccount.containsKey("age_range"));
+					// log.info("getAttributes :" + kakaoAccount.containsKey("age_range"));
 
 					if (!kakaoAccount.containsKey("gender")) {
 						gender = Gender.NOT_DEFINED;
@@ -77,11 +75,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 						gender = Gender.valueOf(oAuth2UserInfo.getGender().toUpperCase().trim());
 					}
 
-					if (!kakaoAccount.containsKey("age_range")) {
-						ageRange = AgeRange.NOT_DEFINED;
-					} else {
-						ageRange = AgeRange.fromString(oAuth2UserInfo.getAgeRange());
-					}
+					// if (!kakaoAccount.containsKey("age_range")) {
+					// 	ageRange = AgeRange.NOT_DEFINED;
+					// } else {
+					// 	ageRange = AgeRange.fromString(oAuth2UserInfo.getAgeRange());
+					// }
 
 					return Member.builder()
 						.nickname(nickname)
@@ -89,7 +87,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 						.profileImageUrl(oAuth2UserInfo.getProfileImageUrl())
 						.username(oAuth2UserInfo.getName())
 						.providerType(oAuth2UserInfo.getProvider())
-						.ageRange(ageRange)
+						.age(null)
 						.gender(gender)
 						.roleType(RoleType.MEMBER)
 						.status(MemberStatus.ACTIVE)

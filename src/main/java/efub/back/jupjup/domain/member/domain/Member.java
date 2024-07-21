@@ -46,7 +46,7 @@ public class Member extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private ProviderType providerType;
 
-	@Column(name = "age", nullable = false)
+	@Column(name = "age")
 	private Integer age;
 
 	@Column(length = 50)
@@ -63,7 +63,7 @@ public class Member extends BaseTimeEntity {
 
 	@Builder
 	public Member(String username, String email, String profileImageUrl, String nickname,
-		ProviderType providerType, Integer age, RoleType roleType, MemberStatus status, AgeRange ageRange,
+		ProviderType providerType, Integer age, RoleType roleType, MemberStatus status,
 		Gender gender) {
 		this.username = username;
 		this.email = email;
