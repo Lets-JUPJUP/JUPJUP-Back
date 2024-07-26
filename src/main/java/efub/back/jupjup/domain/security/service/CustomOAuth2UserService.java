@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import efub.back.jupjup.domain.member.domain.AgeRange;
 import efub.back.jupjup.domain.member.domain.Gender;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.domain.MemberStatus;
@@ -52,7 +51,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	private Member saveOrUpdate(OAuth2UserInfo oAuth2UserInfo) {
 		Member member = memberRepository.findByUsername(oAuth2UserInfo.getName())
 			.map(entity -> {
-				entity.updateMember(oAuth2UserInfo.getEmail(), oAuth2UserInfo.getAgeRange());
+				entity.updateMember(oAuth2UserInfo.getEmail());
 				return entity;
 			})
 			.orElseGet(() -> {
@@ -65,22 +64,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 						nickname = String.valueOf(System.currentTimeMillis());
 					}
 					Gender gender = null;
-					AgeRange ageRange = null;
 
 					Map<String, Object> kakaoAccount = (Map<String, Object>)oAuth2UserInfo.getAttributes()
 						.get("kakao_account");
-					log.info("getAttributes :" + kakaoAccount.containsKey("age_range"));
+					// log.info("getAttributes :" + kakaoAccount.containsKey("age_range"));
 
 					if (!kakaoAccount.containsKey("gender")) {
 						gender = Gender.NOT_DEFINED;
 					} else {
 						gender = Gender.valueOf(oAuth2UserInfo.getGender().toUpperCase().trim());
-					}
-
-					if (!kakaoAccount.containsKey("age_range")) {
-						ageRange = AgeRange.NOT_DEFINED;
-					} else {
-						ageRange = AgeRange.fromString(oAuth2UserInfo.getAgeRange());
 					}
 
 					return Member.builder()
@@ -89,7 +81,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 						.profileImageUrl(oAuth2UserInfo.getProfileImageUrl())
 						.username(oAuth2UserInfo.getName())
 						.providerType(oAuth2UserInfo.getProvider())
-						.ageRange(ageRange)
+						.age(0)
 						.gender(gender)
 						.roleType(RoleType.MEMBER)
 						.status(MemberStatus.ACTIVE)
@@ -101,7 +93,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 		if (member == null) {
 			member = memberRepository.findByEmail(oAuth2UserInfo.getEmail()).orElseThrow(MemberNotFoundException::new);
-			member.updateMember(oAuth2UserInfo.getEmail(), oAuth2UserInfo.getAgeRange());
+			member.updateMember(oAuth2UserInfo.getEmail());
 			return member;
 		}
 

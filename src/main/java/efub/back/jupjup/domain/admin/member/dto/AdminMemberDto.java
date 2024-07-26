@@ -1,6 +1,5 @@
 package efub.back.jupjup.domain.admin.member.dto;
 
-import efub.back.jupjup.domain.member.domain.AgeRange;
 import efub.back.jupjup.domain.member.domain.Gender;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.domain.MemberStatus;
@@ -13,7 +12,7 @@ public class AdminMemberDto {
 	private Long id;
 	private String nickname;
 	private String email;
-	private AgeRange ageRange;
+	private Integer age;
 	private Gender gender;
 	private MemberStatus memberStatus;
 
@@ -22,7 +21,7 @@ public class AdminMemberDto {
 			.id(member.getId())
 			.nickname(member.getNickname())
 			.email(member.getEmail())
-			.ageRange(member.getAgeRange())
+			.age(member.getAge())
 			.gender(member.getGender())
 			.memberStatus(member.getMemberStatus())
 			.build();

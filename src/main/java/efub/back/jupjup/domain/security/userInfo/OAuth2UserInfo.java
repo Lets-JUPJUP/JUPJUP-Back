@@ -21,7 +21,5 @@ public interface OAuth2UserInfo {
 
 	String getGender();
 
-	String getAgeRange();
-
 	String getHasGender();
 }

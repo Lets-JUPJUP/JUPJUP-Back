@@ -46,9 +46,8 @@ public class Member extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private ProviderType providerType;
 
-	@Column(length = 50)
-	@Enumerated(EnumType.STRING)
-	private AgeRange ageRange;
+	@Column(name = "age", nullable = false)
+	private Integer age;
 
 	@Column(length = 50)
 	@Enumerated(EnumType.STRING)
@@ -64,7 +63,8 @@ public class Member extends BaseTimeEntity {
 
 	@Builder
 	public Member(String username, String email, String profileImageUrl, String nickname,
-		ProviderType providerType, RoleType roleType, MemberStatus status, AgeRange ageRange, Gender gender) {
+		ProviderType providerType, Integer age, RoleType roleType, MemberStatus status,
+		Gender gender) {
 		this.username = username;
 		this.email = email;
 		this.profileImageUrl = profileImageUrl;
@@ -72,7 +72,7 @@ public class Member extends BaseTimeEntity {
 		this.providerType = providerType;
 		this.roleType = roleType;
 		this.memberStatus = status;
-		this.ageRange = ageRange;
+		this.age = age;
 		this.gender = gender;
 	}
 
@@ -85,13 +85,9 @@ public class Member extends BaseTimeEntity {
 		}
 	}
 
-	public void updateMember(String email, String ageRangeStr) {
+	public void updateMember(String email) {
 		if (!this.email.equals(email)) {
 			this.email = email;
-		}
-		AgeRange inputRange = AgeRange.fromString(ageRangeStr);
-		if (!this.ageRange.equals(inputRange)) {
-			this.ageRange = inputRange;
 		}
 	}
 
@@ -120,9 +116,9 @@ public class Member extends BaseTimeEntity {
 		this.profileImageUrl = profileImageUrl;
 	}
 
-	public void updateAgeRange(AgeRange ageRange) {
-		if (ageRange != null && !this.ageRange.equals(ageRange)) {
-			this.ageRange = ageRange;
+	public void updateAge(Integer age) {
+		if (!this.age.equals(age)) {
+			this.age = age;
 		}
 	}
 

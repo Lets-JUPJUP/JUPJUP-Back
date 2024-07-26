@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 public class MemberReqDto {
 	private String nickname;
 	private String gender;
-	private String ageRange;
+	private Integer age;
 	private String profileImage;
 }

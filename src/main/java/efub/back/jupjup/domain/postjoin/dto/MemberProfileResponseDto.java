@@ -1,6 +1,5 @@
 package efub.back.jupjup.domain.postjoin.dto;
 
-import efub.back.jupjup.domain.member.domain.AgeRange;
 import efub.back.jupjup.domain.member.domain.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +10,6 @@ public class MemberProfileResponseDto {
 	private Long memberId;
 	private String nickname;
 	private String profileImageUrl;
-	private AgeRange ageRange;
+	private Integer age;
 	private Gender gender;
 }

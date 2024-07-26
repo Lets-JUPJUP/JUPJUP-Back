@@ -7,7 +7,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import efub.back.jupjup.domain.auth.dto.AccessTokenDto;
-import efub.back.jupjup.domain.member.domain.AgeRange;
 import efub.back.jupjup.domain.member.domain.Gender;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.dto.request.MemberReqDto;
@@ -40,7 +39,7 @@ public class MemberService {
 	public ResponseEntity<StatusResponse> updateProfile(Member member, MemberReqDto memberReqDto) {
 		member.updateNickname(memberReqDto.getNickname());
 		member.updateGender(Gender.valueOf(memberReqDto.getGender()));
-		member.updateAgeRange(AgeRange.valueOf(memberReqDto.getAgeRange()));
+		member.updateAge(memberReqDto.getAge());
 		member.updateProfileImage(memberReqDto.getProfileImage());
 		Member updatedMember = memberRepository.save(member);
 		MemberResDto memberResDto = MemberResDto.from(updatedMember);
@@ -70,7 +69,7 @@ public class MemberService {
 		if (nickname.equals(Member.WITHDRAWN_NICKNAME)) {
 			isExistingNickname = true;
 		}
-		
+
 		NicknameCheckResDto resDto = new NicknameCheckResDto(isExistingNickname);
 		return make200Response(resDto);
 	}
