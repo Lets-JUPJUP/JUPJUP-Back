@@ -73,7 +73,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{secrets.AWS_ROLE_NAME}}
+          role-to-assume: ${{ secrets.AWS_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Upload to S3
