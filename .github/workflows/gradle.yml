@@ -16,7 +16,7 @@ permissions:
 
 env: # 현재 스크립트에서 사용할 환경변수 정의
   S3_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-  CODE_DEPLOY_APPLICATION_NAME: jupjup
+  CODE_DEPLOY_APPLICATION_NAME: lets-jupjup
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME : deploy-group
 
 jobs:
