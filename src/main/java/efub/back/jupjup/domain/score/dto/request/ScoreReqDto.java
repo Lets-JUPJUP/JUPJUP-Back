@@ -1,6 +1,4 @@
-package efub.back.jupjup.domain.review.dto.request;
-
-import java.util.List;
+package efub.back.jupjup.domain.score.dto.request;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,8 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReviewReqDto {
-	private List<Integer> badgeList;
-	private Long memberId;
+public class ScoreReqDto {
 	private Long postId;
+	private Integer score;
 }
