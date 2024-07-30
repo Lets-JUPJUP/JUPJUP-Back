@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import efub.back.jupjup.domain.member.domain.Member;
+import efub.back.jupjup.domain.post.domain.District;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.domain.PostGender;
+import efub.back.jupjup.domain.post.domain.Route;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
