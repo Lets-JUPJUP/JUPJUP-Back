@@ -1,6 +1,6 @@
 version: '3'
 services:
-  bageasy-api:
+  jupjup:
     build: .
     ports:
       - "8082:8080"
