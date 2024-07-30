@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  dev1:
+    container_name: jupjup-blue
+    build: .
+    ports:
+      - '8081:8080'
+    environment:
+      - TZ=Asia/Seoul
+
+  dev2:
+    container_name: jupjup-green
+    build: .
+    ports:
+      - '8082:8080'
+    environment:
+      - TZ=Asia/Seoul

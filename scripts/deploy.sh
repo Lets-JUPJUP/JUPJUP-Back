@@ -1,50 +1,62 @@
 #!/bin/bash
 
-cd /home/ubuntu/app
-DOCKER_APP_NAME=jupjup
+IS_DEV1=$(docker ps | grep jupjup-blue)
+DEFAULT_CONF=" /etc/nginx/nginx.conf"
+MAX_RETRIES=20
 
-# 현재 실행 중인 컨테이너 확인
-EXIST_BLUE=$(docker compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml ps -q)
-EXIST_GREEN=$(docker compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml ps -q)
+check_service() {
+  local RETRIES=0
+  local URL=$1
+  while [ $RETRIES -lt $MAX_RETRIES ]; do
+    echo "Checking service at $URL... (attempt: $((RETRIES+1)))"
+    sleep 3
 
-# 컨테이너 스위칭
-if [ -z "$EXIST_BLUE" ]; then
-    echo "blue up"
-    docker compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml up --build -d
-
-    BEFORE_COMPOSE_COLOR="green"
-    AFTER_COMPOSE_COLOR="blue"
-
-    # 이전 컨테이너가 존재하면 종료 및 제거
-    if [ -n "$EXIST_GREEN" ]; then
-        echo "$BEFORE_COMPOSE_COLOR down"
-        docker compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml down --remove-orphans
+    REQUEST=$(curl $URL)
+    if [ -n "$REQUEST" ]; then
+      echo "health check success"
+      return 0
     fi
 
+    RETRIES=$((RETRIES+1))
+  done;
+
+  echo "Failed to check service after $MAX_RETRIES attempts."
+  return 1
+}
+
+if [ -z "$IS_DEV1" ];then
+  echo "## DEV2 => DEV1"
+  docker-compose up -d dev1
+
+  echo "## health check"
+  if ! check_service "http://127.0.0.1:8081"; then
+    echo "DEV1 health check 가 실패했습니다."
+    exit 1
+  fi
+
+  echo "## nginx 재실행"
+  sudo cp /etc/nginx/nginx.dev1.conf /etc/nginx/nginx.conf
+  sudo nginx -s reload
+
+  echo "## DEV2 컨테이너 중지 및 제거"
+  docker-compose stop dev2
+  docker-compose rm -f dev2
+
 else
-    echo "green up"
-    docker compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml up --build -d
+  echo "## DEV1 => DEV2"
+  docker-compose up -d dev2
 
-    BEFORE_COMPOSE_COLOR="blue"
-    AFTER_COMPOSE_COLOR="green"
-
-    # 이전 컨테이너가 존재하면 종료 및 제거
-    if [ -n "$EXIST_BLUE" ]; then
-        echo "$BEFORE_COMPOSE_COLOR down"
-        docker compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml down --remove-orphans
+  echo "## health check"
+  if ! check_service "http://127.0.0.1:8082"; then
+      echo "DEV1 health check 가 실패했습니다."
+      exit 1
     fi
-fi
 
-echo "Start sleep"
-sleep 10
-echo "End sleep"
+  echo "## nginx 재실행"
+  sudo cp /etc/nginx/nginx.dev2.conf /etc/nginx/nginx.conf
+  sudo nginx -s reload
 
-# 새로운 컨테이너가 제대로 떴는지 확인
-EXIST_AFTER=$(docker compose -p ${DOCKER_APP_NAME}-${AFTER_COMPOSE_COLOR} -f docker-compose.${AFTER_COMPOSE_COLOR}.yml ps -q)
-
-if [ -n "$EXIST_AFTER" ]; then
-  echo "Deployment successful."
-else
-    echo "> The new container did not run properly."
-    exit 1  
+  echo "## DEV1 컨테이너 중지 및 제거"
+  docker-compose stop dev1
+  docker-compose rm -f dev2
 fi
