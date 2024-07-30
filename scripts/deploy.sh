@@ -16,7 +16,7 @@ if [ -z "$EXIST_BLUE" ]; then
     # 이전 컨테이너가 존재하면 종료 및 제거
     if [ -n "$EXIST_GREEN" ]; then
         echo "$BEFORE_COMPOSE_COLOR down"
-        docker compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml down
+        docker compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml down --remove-orphans
     fi
 
 else
@@ -28,7 +28,7 @@ else
     # 이전 컨테이너가 존재하면 종료 및 제거
     if [ -n "$EXIST_BLUE" ]; then
         echo "$BEFORE_COMPOSE_COLOR down"
-        docker compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml down
+        docker compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml down --remove-orphans
     fi
 fi
 

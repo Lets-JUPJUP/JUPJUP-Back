@@ -1,5 +1,3 @@
-#blue
-version: '3'
 services:
   jupjup:
     build: .
