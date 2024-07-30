@@ -1,4 +1,5 @@
 #!/bin/bash
+
 cd /home/ubuntu/app
 DOCKER_APP_NAME=jupjup
 
@@ -10,6 +11,7 @@ EXIST_GREEN=$(docker compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green
 if [ -z "$EXIST_BLUE" ]; then
     echo "blue up"
     docker compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml up --build -d
+
     BEFORE_COMPOSE_COLOR="green"
     AFTER_COMPOSE_COLOR="blue"
 
@@ -22,6 +24,7 @@ if [ -z "$EXIST_BLUE" ]; then
 else
     echo "green up"
     docker compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml up --build -d
+
     BEFORE_COMPOSE_COLOR="blue"
     AFTER_COMPOSE_COLOR="green"
 
