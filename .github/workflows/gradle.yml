@@ -11,13 +11,15 @@ on:
     branches: [ "develop" ]
     
 permissions:
-  contents: read
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
 
 
 env: # 현재 스크립트에서 사용할 환경변수 정의
-  S3_BUCKET_NAME: jupjup-github-actions-s3-bucket
-  CODE_DEPLOY_APPLICATION_NAME: jupjup
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME : deploy-group
+  S3_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+  CODE_DEPLOY_APPLICATION_NAME: lets-jupjup
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME : letsjujpup-deploy
+
 
 jobs:
   build:
@@ -71,10 +73,9 @@ jobs:
         shell: bash
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Upload to S3
