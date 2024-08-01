@@ -16,6 +16,7 @@ import efub.back.jupjup.domain.score.domain.AverageScore;
 import efub.back.jupjup.domain.score.domain.Score;
 import efub.back.jupjup.domain.score.dto.request.ScoreReqDto;
 import efub.back.jupjup.domain.score.exception.AlreadyScoredException;
+import efub.back.jupjup.domain.score.exception.AuthorScoringNotAllowedException;
 import efub.back.jupjup.domain.score.exception.NotValidScoreException;
 import efub.back.jupjup.domain.score.exception.ScoringNotAllowedException;
 import efub.back.jupjup.domain.score.repository.AverageScoreRepository;
@@ -39,8 +40,8 @@ public class ScoreService {
 		// 존재하는 게시글인지 확인
 		Post post = checkPostExists(scoreReqDto.getPostId());
 
-		// 리뷰 작성자가 플로깅 참여 멤버인지 확인
-		checkMemberJoined(member.getId(), scoreReqDto.getPostId());
+		// 리뷰를 작성하려는 유저가 플로깅 참여 멤버인지 확인
+		checkMemberJoined(member.getId(), post);
 
 		// 이미 리뷰에 참여한 멤버인지 확인
 		validateMemberHasNotScored(member, post);
@@ -54,12 +55,14 @@ public class ScoreService {
 
 		// 평균 평점 저장
 		AverageScore averageScore = new AverageScore(post.getAuthor());
-		BigDecimal updatedAverageScore = averageScore.updateAverageScore(scoreReqDto.getScore());
+		System.out.println(post.getAuthor().getId());
+		averageScore.updateAverageScore(scoreReqDto.getScore());
+		AverageScore savedAverageScore = averageScoreRepository.save(averageScore);
 
 		return ResponseEntity.ok(StatusResponse.builder()
 			.status(StatusEnum.OK.getStatusCode())
 			.message(StatusEnum.OK.getCode())
-			.data("averageScore : " + updatedAverageScore)
+			.data("averageScore : " + savedAverageScore.getAverageScore())
 			.build());
 	}
 
@@ -76,10 +79,15 @@ public class ScoreService {
 			.build());
 	}
 
-	private void checkMemberJoined(Long memberId, Long postId) {
-		List<Long> joinedMemberIds = postjoinRepository.findMemberIdsByPostId(postId);
+	private void checkMemberJoined(Long memberId, Post post) {
+		List<Long> joinedMemberIds = postjoinRepository.findMemberIdsByPostId(post.getId());
 		if (!joinedMemberIds.contains(memberId)) {
 			throw new ScoringNotAllowedException();
+		}
+
+		// 주최자는 자신의 플로깅을 리뷰할 수 없음.
+		if (memberId.equals(post.getAuthor().getId())) {
+			throw new AuthorScoringNotAllowedException();
 		}
 	}
 
@@ -95,6 +103,8 @@ public class ScoreService {
 	}
 
 	private void validateMemberHasNotScored(Member member, Post post) {
-		scoreRepository.findByParticipantAndPost(member, post).orElseThrow(AlreadyScoredException::new);
+		if (scoreRepository.existsByParticipantAndPost(member, post)) {
+			throw new AlreadyScoredException();
+		}
 	}
 }

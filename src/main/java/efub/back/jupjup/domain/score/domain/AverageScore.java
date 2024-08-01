@@ -5,11 +5,9 @@ import java.math.RoundingMode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
 
 import efub.back.jupjup.domain.member.domain.Member;
 import lombok.AccessLevel;
@@ -21,7 +19,9 @@ import lombok.NoArgsConstructor;
 @Getter
 public class AverageScore {
 	@Id
-	private Long memberId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "average_score_id", updatable = false)
+	private Long id;
 
 	@Column(precision = 3, scale = 1)
 	private BigDecimal averageScore;
@@ -32,27 +32,23 @@ public class AverageScore {
 	@Column(nullable = false)
 	private Integer sum;
 
-	@OneToOne(targetEntity = Member.class, fetch = FetchType.LAZY)
-	@MapsId(value = "memberId")
-	@JoinColumn(name = "member_id")
-	private Member member;
+	@Column(nullable = false)
+	private Long memberId;
 
-	public BigDecimal updateAverageScore(Integer score) {
+	public void updateAverageScore(Integer score) {
 		count += 1;
 		sum += score;
 
 		BigDecimal sumBD = BigDecimal.valueOf(sum);
 		BigDecimal countBD = BigDecimal.valueOf(count);
 		averageScore = sumBD.divide(countBD, 1, RoundingMode.HALF_UP);
-		return averageScore;
 	}
 
 	public AverageScore(Member member) {
-		this.memberId = member.getId();
 		this.averageScore = BigDecimal.valueOf(0);
 		this.count = 0;
 		this.sum = 0;
-		this.member = member;
+		this.memberId = member.getId();
 	}
 
 }
