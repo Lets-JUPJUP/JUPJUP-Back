@@ -43,7 +43,7 @@ public class ScoreService {
 		checkMemberJoined(member.getId(), scoreReqDto.getPostId());
 
 		// 이미 리뷰에 참여한 멤버인지 확인
-		validateMemberHasNotScored(member.getId());
+		validateMemberHasNotScored(member, post);
 
 		// 유효한 값의 평점인지 확인
 		validateScore(scoreReqDto.getScore());
@@ -94,7 +94,7 @@ public class ScoreService {
 		}
 	}
 
-	private void validateMemberHasNotScored(Long memberId) {
-		averageScoreRepository.findById(memberId).orElseThrow(AlreadyScoredException::new);
+	private void validateMemberHasNotScored(Member member, Post post) {
+		scoreRepository.findByParticipantAndPost(member, post).orElseThrow(AlreadyScoredException::new);
 	}
 }
