@@ -1,5 +1,7 @@
 package efub.back.jupjup.domain.score.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +24,8 @@ public class ScoreController {
 	private final ScoreService scoreService;
 
 	@PostMapping("")
-	public ResponseEntity<StatusResponse> writeReview(@AuthUser Member member, @RequestBody ScoreReqDto scoreReqDto) {
+	public ResponseEntity<StatusResponse> writeReview(@AuthUser Member member,
+		@RequestBody @Valid ScoreReqDto scoreReqDto) {
 		return scoreService.giveScore(member, scoreReqDto);
 	}
 

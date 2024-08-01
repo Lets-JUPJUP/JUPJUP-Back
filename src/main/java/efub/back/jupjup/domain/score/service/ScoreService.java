@@ -17,7 +17,6 @@ import efub.back.jupjup.domain.score.domain.Score;
 import efub.back.jupjup.domain.score.dto.request.ScoreReqDto;
 import efub.back.jupjup.domain.score.exception.AlreadyScoredException;
 import efub.back.jupjup.domain.score.exception.AuthorScoringNotAllowedException;
-import efub.back.jupjup.domain.score.exception.NotValidScoreException;
 import efub.back.jupjup.domain.score.exception.ScoringNotAllowedException;
 import efub.back.jupjup.domain.score.repository.AverageScoreRepository;
 import efub.back.jupjup.domain.score.repository.ScoreRepository;
@@ -45,10 +44,7 @@ public class ScoreService {
 
 		// 이미 리뷰에 참여한 멤버인지 확인
 		validateMemberHasNotScored(member, post);
-
-		// 유효한 값의 평점인지 확인
-		validateScore(scoreReqDto.getScore());
-
+		
 		// 평점 데이터 저장
 		Score score = scoreReqDto.toEntity(scoreReqDto, post, member);
 		scoreRepository.save(score);
@@ -94,12 +90,6 @@ public class ScoreService {
 	private Post checkPostExists(Long postId) {
 		Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
 		return post;
-	}
-
-	private void validateScore(Integer score) {
-		if (score < 1 || score > 5) {
-			throw new NotValidScoreException();
-		}
 	}
 
 	private void validateMemberHasNotScored(Member member, Post post) {
