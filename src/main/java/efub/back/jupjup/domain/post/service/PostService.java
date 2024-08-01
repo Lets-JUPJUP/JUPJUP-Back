@@ -51,6 +51,25 @@ public class PostService {
 			.build();
 	}
 
+	// PostResponseDto 리스트 생성 메소드
+	private List<PostResponseDto> createPostResponseDtos(List<Post> posts, Member member, LocalDateTime now) {
+		return posts.stream().map(post -> {
+			List<String> urlList = postImageRepository.findAllByPost(post)
+				.stream()
+				.map(PostImage::getFileUrl)
+				.collect(Collectors.toList());
+
+			boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+			boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+			boolean isJoined = isAuthor || hasJoined;
+			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
+			boolean isEnded = now.isAfter(post.getDueDate());
+			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
+
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed);
+		}).collect(Collectors.toList());
+	}
+
 	// 플로깅 게시글 작성
 	public ResponseEntity<StatusResponse> savePost(PostRequestDto requestDto, Member member) {
 		Post post = requestDto.toEntity(requestDto, member);
@@ -274,5 +293,32 @@ public class PostService {
 		response.put("endedPosts", endedPosts);
 
 		return ResponseEntity.ok(createStatusResponse(response));
+	}
+
+	// 모집 중인 게시글 조회
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getRecruitingPosts(Member member) {
+		LocalDateTime now = LocalDateTime.now();
+		List<Post> posts = postRepository.findAllByDueDateAfterOrderByCreatedAtDesc(now);
+		List<PostResponseDto> responseDtos = createPostResponseDtos(posts, member, now);
+		return ResponseEntity.ok(createStatusResponse(responseDtos));
+	}
+
+	// 모집 성공한 게시글 조회
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getSuccessfulRecruitmentPosts(Member member) {
+		LocalDateTime now = LocalDateTime.now();
+		List<Post> posts = postRepository.findAllByDueDateBeforeAndIsRecruitmentSuccessfulTrueOrderByCreatedAtDesc(now);
+		List<PostResponseDto> responseDtos = createPostResponseDtos(posts, member, now);
+		return ResponseEntity.ok(createStatusResponse(responseDtos));
+	}
+
+	// 완료된 게시글 조회
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getCompletedPosts(Member member) {
+		LocalDateTime now = LocalDateTime.now();
+		List<Post> posts = postRepository.findAllByDueDateBeforeOrderByCreatedAtDesc(now);
+		List<PostResponseDto> responseDtos = createPostResponseDtos(posts, member, now);
+		return ResponseEntity.ok(createStatusResponse(responseDtos));
 	}
 }

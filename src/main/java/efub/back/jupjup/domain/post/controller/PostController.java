@@ -78,4 +78,22 @@ public class PostController {
 	public ResponseEntity<StatusResponse> getJoinedPosts(@AuthUser Member member) {
 		return postService.getJoinedPosts(member);
 	}
+
+	// [모집 중] 게시글 리스트 조회
+	@GetMapping("/recruiting")
+	public ResponseEntity<StatusResponse> getRecruitingPosts(@AuthUser Member member) {
+		return postService.getRecruitingPosts(member);
+	}
+
+	// [모집 완료] 게시글 리스트 조회
+	@GetMapping("/successful")
+	public ResponseEntity<StatusResponse> getSuccessfulRecruitmentPosts(@AuthUser Member member) {
+		return postService.getSuccessfulRecruitmentPosts(member);
+	}
+
+	// [완료] 게시글 리스트 조회
+	@GetMapping("/completed")
+	public ResponseEntity<StatusResponse> getCompletedPosts(@AuthUser Member member) {
+		return postService.getCompletedPosts(member);
+	}
 }
