@@ -8,14 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.post.domain.Post;
-import efub.back.jupjup.domain.post.domain.PostAgeRange;
 import efub.back.jupjup.domain.post.domain.PostGender;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
 	List<Post> findAllByPostGender(PostGender postGender, Sort sort);
-
-	List<Post> findAllByPostAgeRangesContaining(PostAgeRange postAgeRange, Sort sort);
 
 	List<Post> findAllByWithPet(boolean withPet, Sort sort);
 
