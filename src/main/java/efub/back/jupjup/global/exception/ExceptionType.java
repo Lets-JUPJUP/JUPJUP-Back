@@ -20,6 +20,7 @@ import efub.back.jupjup.domain.post.exception.MismatchPostGenderException;
 import efub.back.jupjup.domain.post.exception.PostNotFoundException;
 import efub.back.jupjup.domain.post.exception.PostjoinNotFoundException;
 import efub.back.jupjup.domain.post.exception.WrongImageFormatException;
+import efub.back.jupjup.domain.score.exception.AlreadyScoredException;
 import efub.back.jupjup.domain.score.exception.NotValidScoreException;
 import efub.back.jupjup.domain.score.exception.ScoringNotAllowedException;
 import efub.back.jupjup.domain.security.exception.BlockedAccountException;
@@ -52,6 +53,7 @@ public enum ExceptionType {
 	// score 관련 - C3***
 	SCORING_NOT_ALLOWED_EXCEPTION("C3001", "참여 멤버가 아니면 리뷰를 작성할 수 없습니다.", ScoringNotAllowedException.class),
 	NOT_VALID_SCORE_EXCEPTION("C3002", "플로깅 평점은 1~5 사이의 정수값만 가능합니다.", NotValidScoreException.class),
+	ALREADY_SCORED_EXCEPTION("C3003", "이미 리뷰를 완료한 유저입니다.", AlreadyScoredException.class),
 
 	// trashCan 관련 - C4***
 	FEEDBACK_NOT_EXISTS_FOR_CODE_EXCEPTION("C4000", "해당 코드와 일치하는 쓰레기통 피드백이 존재하지 않습니다.",

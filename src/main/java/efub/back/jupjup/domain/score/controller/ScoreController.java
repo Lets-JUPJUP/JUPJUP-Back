@@ -16,7 +16,7 @@ import efub.back.jupjup.global.response.StatusResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/reviews")
+@RequestMapping("/api/v2/scores")
 @RequiredArgsConstructor
 public class ScoreController {
 	private final ScoreService scoreService;
@@ -26,8 +26,9 @@ public class ScoreController {
 		return scoreService.giveScore(member, scoreReqDto);
 	}
 
-	@GetMapping("/top3/{memberId}")
-	public ResponseEntity<StatusResponse> getTop3Reviews(@PathVariable Long memberId) {
-		return scoreService.findTop3Badges(memberId);
+	@GetMapping("/{memberId}")
+	public ResponseEntity<StatusResponse> getReviewScore(@PathVariable Long memberId) {
+		return scoreService.getAverageScore(memberId);
 	}
+
 }
