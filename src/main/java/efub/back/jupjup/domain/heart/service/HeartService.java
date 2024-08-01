@@ -88,8 +88,9 @@ public class HeartService {
 			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
+			boolean isAuthor = post.getAuthor().getId().equals(member.getId());
 
-			PostResponseDto postResponseDto = PostResponseDto.of(post, imgUrlList, Optional.of(isJoined), Optional.of(isHearted), isEnded);
+			PostResponseDto postResponseDto = PostResponseDto.of(post, imgUrlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor);
 			postList.add(postResponseDto);
 		}
 
