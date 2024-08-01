@@ -5,5 +5,11 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class PostjoinNotFoundException extends NotFoundException {
+	public PostjoinNotFoundException(Long id) {
+		super("id = " + id);
+	}
 
+	public PostjoinNotFoundException(Long id1, Long id2) {
+		super("id = " + id1 + " & " + id2);
+	}
 }
