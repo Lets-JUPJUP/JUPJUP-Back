@@ -52,7 +52,7 @@ public class Post extends BaseTimeEntity {
 	private String content;
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
+	@Column(name = "district", nullable = false)
 	private District district;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,11 +1,7 @@
 package efub.back.jupjup.domain.post.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
@@ -19,7 +15,6 @@ import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.exception.MemberNotFoundException;
 import efub.back.jupjup.domain.member.repository.MemberRepository;
 import efub.back.jupjup.domain.post.domain.Post;
-import efub.back.jupjup.domain.post.domain.PostAgeRange;
 import efub.back.jupjup.domain.post.domain.PostGender;
 import efub.back.jupjup.domain.post.domain.PostImage;
 import efub.back.jupjup.domain.post.dto.PostRequestDto;
@@ -64,8 +59,9 @@ public class PostService {
 		boolean isJoined = true;
 		boolean isEnded = false;
 		boolean isHearted = false;
+		boolean isAuthor = true;
 
-		PostResponseDto postResponseDto = PostResponseDto.of(post, imageUrls, Optional.of(isJoined), Optional.of(isHearted), isEnded);
+		PostResponseDto postResponseDto = PostResponseDto.of(post, imageUrls, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor);
 
 		return ResponseEntity.ok(createStatusResponse(postResponseDto));
 	}
@@ -87,7 +83,7 @@ public class PostService {
 		boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 		boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-		PostResponseDto responseDto = PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded);
+		PostResponseDto responseDto = PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor);
 		return ResponseEntity.ok(createStatusResponse(responseDto));
 	}
 
@@ -108,26 +104,7 @@ public class PostService {
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded);
-		}).collect(Collectors.toList());
-
-		return ResponseEntity.ok(createStatusResponse(responseDtos));
-	}
-
-	// 플로깅 게시글 리스트 보기 - (로그인 없이)
-	@Transactional(readOnly = true)
-	public ResponseEntity<StatusResponse> getAllPostsUnAuth() {
-		List<Post> posts = postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
-
-		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
-			List<String> urlList = postImageRepository.findAllByPost(post)
-				.stream()
-				.map(PostImage::getFileUrl)
-				.collect(Collectors.toList());
-
-			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
-
-			return PostResponseDto.of(post, urlList, Optional.empty(), Optional.empty(), isEnded);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -152,72 +129,7 @@ public class PostService {
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded);
-		}).collect(Collectors.toList());
-
-		return ResponseEntity.ok(createStatusResponse(responseDtos));
-	}
-
-	// 성별을 기준으로 게시글 필터링 하는 기능 - (로그인 없이)
-	@Transactional(readOnly = true)
-	public ResponseEntity<StatusResponse> getPostsByGenderUnAuth(String postGenderStr) {
-
-		PostGender postGender = PostGender.valueOf(postGenderStr.toUpperCase());
-		List<Post> posts = postRepository.findAllByPostGender(postGender, Sort.by(Sort.Direction.DESC, "createdAt"));
-
-		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
-			List<String> urlList = postImageRepository.findAllByPost(post)
-				.stream()
-				.map(PostImage::getFileUrl)
-				.collect(Collectors.toList());
-
-			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
-
-			return PostResponseDto.of(post, urlList, Optional.empty(), Optional.empty(), isEnded);
-		}).collect(Collectors.toList());
-
-		return ResponseEntity.ok(createStatusResponse(responseDtos));
-	}
-
-	// 나이를 기준으로 게시글 필터링 하는 기능
-	@Transactional(readOnly = true)
-	public ResponseEntity<StatusResponse> getPostsByAgeRange(PostAgeRange postAge, Member member) {
-
-		List<Post> posts = postRepository.findAllByPostAgeRangesContaining(postAge, Sort.by(Sort.Direction.DESC, "createdAt"));
-
-		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
-			List<String> urlList = postImageRepository.findAllByPost(post)
-				.stream()
-				.map(PostImage::getFileUrl)
-				.collect(Collectors.toList());
-
-			boolean isAuthor = member.getId().equals(post.getAuthor().getId());
-			boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
-			boolean isJoined = isAuthor || hasJoined;
-			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
-			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
-
-			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted),isEnded);
-		}).collect(Collectors.toList());
-
-		return ResponseEntity.ok(createStatusResponse(responseDtos));
-	}
-
-	// 나이를 기준으로 게시글 필터링 하는 기능 - (로그인 없이)
-	@Transactional(readOnly = true)
-	public ResponseEntity<StatusResponse> getPostsByAgeRangeUnAuth(PostAgeRange postAge) {
-
-		List<Post> posts = postRepository.findAllByPostAgeRangesContaining(postAge, Sort.by(Sort.Direction.DESC, "createdAt"));
-
-		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
-			List<String> urlList = postImageRepository.findAllByPost(post)
-				.stream()
-				.map(PostImage::getFileUrl)
-				.collect(Collectors.toList());
-
-			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
-
-			return PostResponseDto.of(post, urlList, Optional.empty(), Optional.empty(), isEnded);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -241,27 +153,7 @@ public class PostService {
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded);
-		}).collect(Collectors.toList());
-
-		return ResponseEntity.ok(createStatusResponse(responseDtos));
-	}
-
-	// 반려동물 여부 기준으로 게시글 필터링 하는 기능 - (로그인 없이)
-	@Transactional(readOnly = true)
-	public ResponseEntity<StatusResponse> getPostsByWithPetUnAuth(boolean withPetValue) {
-
-		List<Post> posts = postRepository.findAllByWithPet(withPetValue, Sort.by(Sort.Direction.DESC, "createdAt"));
-
-		List<PostResponseDto> responseDtos = posts.stream().map(post -> {
-			List<String> urlList = postImageRepository.findAllByPost(post)
-				.stream()
-				.map(PostImage::getFileUrl)
-				.collect(Collectors.toList());
-
-			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
-
-			return PostResponseDto.of(post, urlList, Optional.empty(), Optional.empty(), isEnded);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -330,7 +222,7 @@ public class PostService {
 				boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 				boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 
-				return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded);
+				return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor);
 			}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(hostedPostsDtos));
@@ -355,9 +247,10 @@ public class PostService {
 
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = now.isAfter(post.getStartDate());
+			boolean isAuthor = post.getAuthor().getId().equals(member.getId());
 
 			PostResponseDto dto = PostResponseDto.of(post, urlList, Optional.of(true),
-				Optional.of(isHearted), isEnded);
+				Optional.of(isHearted), isEnded, isAuthor);
 
 			if (isEnded) {
 				endedPosts.add(dto);
