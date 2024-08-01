@@ -19,7 +19,6 @@ public class TrashCanDto {
 		return TrashCanDto.builder()
 			.trashCanId(trashCan.getId())
 			.address(trashCan.getAddress())
-			.detail(trashCan.getDetail())
 			.latitude(trashCan.getLatitude())
 			.longitude(trashCan.getLongitude())
 			.build();

@@ -24,8 +24,8 @@ public class TrashCan {
 	@Column(name = "trash_can_id")
 	private Long id;
 
-	private String address;
-	private String detail;
+	private String address; // 도로명 주소 + 세부 위치
+	private String name; // {자치구명} + {수거쓰레기종류} + 통
 
 	@Column(precision = 18, scale = 10)
 	private BigDecimal latitude;

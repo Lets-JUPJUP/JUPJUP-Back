@@ -89,12 +89,10 @@ public class TrashCanService {
 		}
 
 		List<BinFeedback> binFeedbacks = binFeedbackRepository.findAllByMemberAndTrashCanId(member, trashcanId);
-		Map<Integer, Boolean> feedbackExistsMap = new HashMap<>();
+		Map<String, Integer> feedbackExistsMap = new HashMap<>();
 		for (Feedback feedback : Feedback.values()) {
-			boolean feedbackExists = binFeedbacks.stream()
-				.anyMatch(binFeedback -> binFeedback.getFeedback() == feedback);
-			feedbackExistsMap.put(feedback.getCode(), feedbackExists);
-
+			Long count = binFeedbackRepository.countByFeedbackAndTrashCanId(feedback, trashcanId);
+			feedbackExistsMap.put(feedback.getDescription(), count.intValue());
 		}
 
 		return make200Response(feedbackExistsMap);

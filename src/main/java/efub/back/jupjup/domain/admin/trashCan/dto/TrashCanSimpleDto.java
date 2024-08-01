@@ -17,7 +17,6 @@ public class TrashCanSimpleDto {
 			.trashCanId(trashCan.getId())
 			.feedbackCount(feedbackCount)
 			.address(trashCan.getAddress())
-			.detail(trashCan.getDetail())
 			.build();
 	}
 }
