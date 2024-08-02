@@ -3,7 +3,6 @@ package efub.back.jupjup.domain.admin.trashCan.dto;
 import java.math.BigDecimal;
 
 import efub.back.jupjup.domain.trashCan.domain.TrashCan;
-import efub.back.jupjup.domain.trashCan.domain.TrashCanType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,18 +14,13 @@ public class TrashCanDto {
 	private String detail;
 	private BigDecimal latitude;
 	private BigDecimal longitude;
-	private TrashCanType trashCanType;
-	private String trashCategory;
 
 	public static TrashCanDto from(TrashCan trashCan) {
 		return TrashCanDto.builder()
 			.trashCanId(trashCan.getId())
 			.address(trashCan.getAddress())
-			.detail(trashCan.getDetail())
 			.latitude(trashCan.getLatitude())
 			.longitude(trashCan.getLongitude())
-			.trashCanType(trashCan.getTrashCanType())
-			.trashCategory(trashCan.getTrashCategory())
 			.build();
 	}
 }

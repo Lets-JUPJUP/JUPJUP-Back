@@ -17,7 +17,7 @@ import efub.back.jupjup.global.response.StatusResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/trashCans")
+@RequestMapping("/api/v2/trashCans")
 @RequiredArgsConstructor
 public class TrashCanController {
 	private final TrashCanService trashCanService;
