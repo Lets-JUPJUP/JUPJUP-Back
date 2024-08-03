@@ -121,7 +121,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 	private String makeRedirectUrl(String email, String redirectUrl) {
 
-		redirectUrl = "https://lets-jupjup.com";
+		// redirectUrl = "https://lets-jupjup.com";
+		redirectUrl = "http://localhost:80";
 		if (email.equals(adminEmail)) {
 			redirectUrl = adminRedirectUrl;
 		}
