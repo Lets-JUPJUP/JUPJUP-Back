@@ -4,28 +4,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 import efub.back.jupjup.domain.comment.domain.Comment;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.global.BaseTimeEntity;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,14 +23,17 @@ public class Post extends BaseTimeEntity {
 	@Column(nullable = false)
 	private String title;
 
-	@Column(columnDefinition = "TEXT")
-	private String content;
-
-	@Column(name = "start_place", nullable = false)
-	private String startPlace;
-
 	@Column(name = "start_date", nullable = false)
 	private LocalDateTime startDate;
+
+	@Column(name = "due_date", nullable = false)
+	private LocalDateTime dueDate;
+
+	@Column(name = "min_age", nullable = false)
+	private int minAge;
+
+	@Column(name = "max_age", nullable = false)
+	private int maxAge;
 
 	@Column(name = "min_member", nullable = false)
 	private int minMember;
@@ -58,16 +45,19 @@ public class Post extends BaseTimeEntity {
 	@Column(name = "post_gender", nullable = false)
 	private PostGender postGender;
 
-	@ElementCollection(targetClass = PostAgeRange.class, fetch = FetchType.EAGER)
-	@CollectionTable(name = "post_age_range", joinColumns = @JoinColumn(name = "post_id"))
-	@Enumerated(EnumType.STRING)
-	private List<PostAgeRange> postAgeRanges = new ArrayList<>();
-
-	@Column(name = "due_date", nullable = false)
-	private LocalDateTime dueDate;
-
 	@Column(name = "with_pet", nullable = false)
 	private boolean withPet;
+
+	@Column(columnDefinition = "TEXT")
+	private String content;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "district", nullable = false)
+	private District district;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "post_id")
+	private List<Route> route = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
@@ -88,20 +78,20 @@ public class Post extends BaseTimeEntity {
 	private List<Comment> commentList = new ArrayList<>();
 
 	@Builder
-	public Post(String title, String content, String startPlace,
-		LocalDateTime startDate, int minMember, int maxMember, PostGender postGender, List<PostAgeRange> postAgeRanges,
-		LocalDateTime dueDate,
-		boolean withPet, Member author, Boolean isRecruitmentSuccessful) {
+	public Post(String title, LocalDateTime startDate, LocalDateTime dueDate, int minAge, int maxAge, int minMember, int maxMember,
+		PostGender postGender, boolean withPet, String content, District district, List<Route> route, Member author, Boolean isRecruitmentSuccessful) {
 		this.title = title;
-		this.content = content;
-		this.startPlace = startPlace;
 		this.startDate = startDate;
+		this.dueDate = dueDate;
+		this.minAge = minAge;
+		this.maxAge = maxAge;
 		this.minMember = minMember;
 		this.maxMember = maxMember;
 		this.postGender = postGender;
-		this.postAgeRanges = postAgeRanges;
-		this.dueDate = dueDate;
 		this.withPet = withPet;
+		this.content = content;
+		this.district = district;
+		this.route = route;
 		this.author = author;
 		this.isRecruitmentSuccessful = isRecruitmentSuccessful;
 	}

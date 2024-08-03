@@ -21,6 +21,7 @@ import efub.back.jupjup.domain.post.exception.PostNotFoundException;
 import efub.back.jupjup.domain.post.repository.PostImageRepository;
 import efub.back.jupjup.domain.post.repository.PostRepository;
 import efub.back.jupjup.domain.postjoin.repository.PostjoinRepository;
+import efub.back.jupjup.domain.score.repository.ScoreRepository;
 import efub.back.jupjup.global.response.StatusEnum;
 import efub.back.jupjup.global.response.StatusResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class HeartService {
 	private final PostRepository postRepository;
 	private final PostImageRepository postImageRepository;
 	private final PostjoinRepository postjoinRepository;
+	private final ScoreRepository scoreRepository;
 
 	// 게시글 찜하기
 	public ResponseEntity<StatusResponse> heartPost(Member member, Long postId) {
@@ -88,8 +90,11 @@ public class HeartService {
 			boolean isJoined = postjoinRepository.existsByMemberAndPost(member, post);
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
+			boolean isAuthor = post.getAuthor().getId().equals(member.getId());
+			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
 
-			PostResponseDto postResponseDto = PostResponseDto.of(post, imgUrlList, Optional.of(isJoined), Optional.of(isHearted), isEnded);
+
+			PostResponseDto postResponseDto = PostResponseDto.of(post, imgUrlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed);
 			postList.add(postResponseDto);
 		}
 
