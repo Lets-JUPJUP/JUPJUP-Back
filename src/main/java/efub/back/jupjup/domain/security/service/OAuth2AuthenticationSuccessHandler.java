@@ -131,7 +131,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		log.info(accessToken);
 
 		return UriComponentsBuilder.fromHttpUrl(redirectUrl)
-			.path("/kakao-login")
+			.path("/login/loading")
 			.queryParam("accessToken", accessToken)
 			.queryParam("redirectUrl", redirectUrl)
 			.build()
