@@ -1,5 +1,7 @@
 package efub.back.jupjup.domain.post.specification;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.jpa.domain.Specification;
 import efub.back.jupjup.domain.post.domain.District;
 import efub.back.jupjup.domain.post.domain.Post;
@@ -7,9 +9,12 @@ import efub.back.jupjup.domain.post.domain.PostGender;
 
 public class PostSpecification {
 
-	public static Specification<Post> withGender(PostGender gender) {
+	public static Specification<Post> withGender(PostGender userGender) {
 		return (root, query, criteriaBuilder) ->
-			gender == null ? null : criteriaBuilder.equal(root.get("postGender"), gender);
+			userGender == null ? null : criteriaBuilder.or(
+				criteriaBuilder.equal(root.get("postGender"), PostGender.ANY),
+				criteriaBuilder.equal(root.get("postGender"), userGender)
+			);
 	}
 
 	public static Specification<Post> withPet(Boolean withPet) {
@@ -32,5 +37,11 @@ public class PostSpecification {
 				criteriaBuilder.lessThanOrEqualTo(root.get("maxAge"), maxAge)
 			);
 		};
+	}
+
+	public static Specification<Post> excludeClosedRecruitment(Boolean exclude) {
+		return (root, query, criteriaBuilder) ->
+			exclude == null || !exclude ? null :
+				criteriaBuilder.greaterThan(root.get("dueDate"), LocalDateTime.now());
 	}
 }

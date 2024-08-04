@@ -101,6 +101,7 @@ public class PostController {
 	// 필터링된 게시글 리스트 조회
 	@GetMapping("/filter")
 	public ResponseEntity<StatusResponse> getFilteredPosts(@ModelAttribute PostFilterDto filterDto, @AuthUser Member member) {
+		filterDto.setUserGender(member.getGender());  // 사용자의 성별 설정
 		return postService.getFilteredPosts(filterDto, member);
 	}
 }

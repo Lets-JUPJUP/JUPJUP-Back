@@ -329,8 +329,8 @@ public class PostService {
 	public ResponseEntity<StatusResponse> getFilteredPosts(PostFilterDto filterDto, Member member) {
 		Specification<Post> spec = Specification.where(null);
 
-		if (filterDto.getPostGender() != null) {
-			spec = spec.and(PostSpecification.withGender(filterDto.getPostGender()));
+		if (filterDto.getUserGender() != null) {
+			spec = spec.and(PostSpecification.withGender(filterDto.getUserGender()));
 		}
 		if (filterDto.getWithPet() != null) {
 			spec = spec.and(PostSpecification.withPet(filterDto.getWithPet()));
@@ -340,6 +340,9 @@ public class PostService {
 		}
 		if (filterDto.getMinAge() != null || filterDto.getMaxAge() != null) {
 			spec = spec.and(PostSpecification.withAgeRange(filterDto.getMinAge(), filterDto.getMaxAge()));
+		}
+		if (filterDto.getExcludeClosedRecruitment() != null) {
+			spec = spec.and(PostSpecification.excludeClosedRecruitment(filterDto.getExcludeClosedRecruitment()));
 		}
 
 		List<Post> filteredPosts = postRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "createdAt"));

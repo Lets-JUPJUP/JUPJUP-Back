@@ -1,5 +1,6 @@
 package efub.back.jupjup.domain.post.dto;
 
+import efub.back.jupjup.domain.member.domain.Gender;
 import efub.back.jupjup.domain.post.domain.District;
 import efub.back.jupjup.domain.post.domain.PostGender;
 import lombok.Getter;
@@ -13,4 +14,6 @@ public class PostFilterDto {
 	private District district;
 	private Integer minAge;
 	private Integer maxAge;
+	private Boolean excludeClosedRecruitment;
+	private Gender userGender;
 }
