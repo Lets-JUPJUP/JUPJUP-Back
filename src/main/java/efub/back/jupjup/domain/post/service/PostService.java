@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +18,13 @@ import efub.back.jupjup.domain.member.repository.MemberRepository;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.domain.PostGender;
 import efub.back.jupjup.domain.post.domain.PostImage;
+import efub.back.jupjup.domain.post.dto.PostFilterDto;
 import efub.back.jupjup.domain.post.dto.PostRequestDto;
 import efub.back.jupjup.domain.post.dto.PostResponseDto;
 import efub.back.jupjup.domain.post.exception.PostNotFoundException;
 import efub.back.jupjup.domain.post.repository.PostImageRepository;
 import efub.back.jupjup.domain.post.repository.PostRepository;
+import efub.back.jupjup.domain.post.specification.PostSpecification;
 import efub.back.jupjup.domain.postjoin.domain.Postjoin;
 import efub.back.jupjup.domain.postjoin.repository.PostjoinRepository;
 import efub.back.jupjup.domain.score.repository.ScoreRepository;
@@ -319,6 +322,29 @@ public class PostService {
 		LocalDateTime now = LocalDateTime.now();
 		List<Post> posts = postRepository.findAllByDueDateBeforeOrderByCreatedAtDesc(now);
 		List<PostResponseDto> responseDtos = createPostResponseDtos(posts, member, now);
+		return ResponseEntity.ok(createStatusResponse(responseDtos));
+	}
+
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getFilteredPosts(PostFilterDto filterDto, Member member) {
+		Specification<Post> spec = Specification.where(null);
+
+		if (filterDto.getPostGender() != null) {
+			spec = spec.and(PostSpecification.withGender(filterDto.getPostGender()));
+		}
+		if (filterDto.getWithPet() != null) {
+			spec = spec.and(PostSpecification.withPet(filterDto.getWithPet()));
+		}
+		if (filterDto.getDistrict() != null) {
+			spec = spec.and(PostSpecification.withDistrict(filterDto.getDistrict()));
+		}
+		if (filterDto.getMinAge() != null || filterDto.getMaxAge() != null) {
+			spec = spec.and(PostSpecification.withAgeRange(filterDto.getMinAge(), filterDto.getMaxAge()));
+		}
+
+		List<Post> filteredPosts = postRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "createdAt"));
+		List<PostResponseDto> responseDtos = createPostResponseDtos(filteredPosts, member, LocalDateTime.now());
+
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
 	}
 }
