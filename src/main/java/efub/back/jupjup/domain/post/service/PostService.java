@@ -329,8 +329,8 @@ public class PostService {
 	public ResponseEntity<StatusResponse> getFilteredPosts(PostFilterDto filterDto, Member member) {
 		Specification<Post> spec = Specification.where(null);
 
-		if (filterDto.getUserGender() != null) {
-			spec = spec.and(PostSpecification.withGender(filterDto.getUserGender()));
+		if (filterDto.getUserGender() != null) { // 사용자의 성별로 필터링
+			spec = spec.and(PostSpecification.withGender(member.getGender()));
 		}
 		if (filterDto.getWithPet() != null) {
 			spec = spec.and(PostSpecification.withPet(filterDto.getWithPet()));

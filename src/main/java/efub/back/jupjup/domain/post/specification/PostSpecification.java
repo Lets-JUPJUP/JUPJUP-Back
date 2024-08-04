@@ -3,18 +3,31 @@ package efub.back.jupjup.domain.post.specification;
 import java.time.LocalDateTime;
 
 import org.springframework.data.jpa.domain.Specification;
+
+import efub.back.jupjup.domain.member.domain.Gender;
 import efub.back.jupjup.domain.post.domain.District;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.domain.PostGender;
 
 public class PostSpecification {
 
-	public static Specification<Post> withGender(PostGender userGender) {
+	public static Specification<Post> withGender(Gender userGender) {
 		return (root, query, criteriaBuilder) ->
 			userGender == null ? null : criteriaBuilder.or(
 				criteriaBuilder.equal(root.get("postGender"), PostGender.ANY),
-				criteriaBuilder.equal(root.get("postGender"), userGender)
+				criteriaBuilder.equal(root.get("postGender"), convertGenderToPostGender(userGender))
 			);
+	}
+
+	private static PostGender convertGenderToPostGender(Gender gender) {
+		switch (gender) {
+			case FEMALE:
+				return PostGender.FEMALE;
+			case MALE:
+				return PostGender.MALE;
+			default:
+				return PostGender.ANY;
+		}
 	}
 
 	public static Specification<Post> withPet(Boolean withPet) {
