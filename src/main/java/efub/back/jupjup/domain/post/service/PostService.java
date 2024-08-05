@@ -338,8 +338,12 @@ public class PostService {
 		if (filterDto.getDistrict() != null) {
 			spec = spec.and(PostSpecification.withDistrict(filterDto.getDistrict()));
 		}
-		if (filterDto.getMinAge() != null || filterDto.getMaxAge() != null) {
-			spec = spec.and(PostSpecification.withAgeRange(filterDto.getMinAge(), filterDto.getMaxAge()));
+		if (filterDto.getIncludeAllAges() != null || filterDto.getIncludeUserAge() != null) {
+			spec = spec.and(PostSpecification.withAgeRange(
+				filterDto.getIncludeAllAges(),
+				filterDto.getIncludeUserAge(),
+				member.getAge()  // 사용자의 나이
+			));
 		}
 		if (filterDto.getExcludeClosedRecruitment() != null) {
 			spec = spec.and(PostSpecification.excludeClosedRecruitment(filterDto.getExcludeClosedRecruitment()));

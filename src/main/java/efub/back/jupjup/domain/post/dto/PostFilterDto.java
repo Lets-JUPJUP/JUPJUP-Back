@@ -12,8 +12,8 @@ public class PostFilterDto {
 	private PostGender postGender;
 	private Boolean withPet;
 	private District district;
-	private Integer minAge;
-	private Integer maxAge;
+	private Boolean includeAllAges; // '연령무관' 옵션
+	private Boolean includeUserAge; // '내 연령 포함' 옵션
 	private Boolean excludeClosedRecruitment;
 	private Gender userGender;
 	private Boolean includeAllGenders; // '성별무관' 옵션

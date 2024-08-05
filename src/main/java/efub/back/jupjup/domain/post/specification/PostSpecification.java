@@ -48,15 +48,19 @@ public class PostSpecification {
 			district == null ? null : criteriaBuilder.equal(root.get("district"), district);
 	}
 
-	public static Specification<Post> withAgeRange(Integer minAge, Integer maxAge) {
+	public static Specification<Post> withAgeRange(Boolean includeAllAges, Boolean includeUserAge, Integer userAge) {
 		return (root, query, criteriaBuilder) -> {
-			if (minAge == null && maxAge == null) return null;
-			if (minAge == null) return criteriaBuilder.lessThanOrEqualTo(root.get("maxAge"), maxAge);
-			if (maxAge == null) return criteriaBuilder.greaterThanOrEqualTo(root.get("minAge"), minAge);
-			return criteriaBuilder.and(
-				criteriaBuilder.greaterThanOrEqualTo(root.get("minAge"), minAge),
-				criteriaBuilder.lessThanOrEqualTo(root.get("maxAge"), maxAge)
-			);
+			if (Boolean.TRUE.equals(includeAllAges)) {
+				return null; // 모든 연령 포함
+			}
+			if (Boolean.TRUE.equals(includeUserAge) && userAge != null) {
+				return criteriaBuilder.and(
+					criteriaBuilder.lessThanOrEqualTo(root.get("minAge"), userAge),
+					criteriaBuilder.greaterThanOrEqualTo(root.get("maxAge"), userAge)
+				);
+			}
+			// 기본적으로 모든 연령 포함
+			return null;
 		};
 	}
 
