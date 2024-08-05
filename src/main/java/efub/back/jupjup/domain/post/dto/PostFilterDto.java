@@ -16,4 +16,6 @@ public class PostFilterDto {
 	private Integer maxAge;
 	private Boolean excludeClosedRecruitment;
 	private Gender userGender;
+	private Boolean includeAllGenders; // '성별무관' 옵션
+	private Boolean includeUserGender; // '내 성별 포함' 옵션
 }

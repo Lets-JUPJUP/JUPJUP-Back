@@ -11,12 +11,20 @@ import efub.back.jupjup.domain.post.domain.PostGender;
 
 public class PostSpecification {
 
-	public static Specification<Post> withGender(Gender userGender) {
-		return (root, query, criteriaBuilder) ->
-			userGender == null ? null : criteriaBuilder.or(
-				criteriaBuilder.equal(root.get("postGender"), PostGender.ANY),
-				criteriaBuilder.equal(root.get("postGender"), convertGenderToPostGender(userGender))
-			);
+	public static Specification<Post> withGender(Boolean includeAllGenders, Boolean includeUserGender, Gender userGender) {
+		return (root, query, criteriaBuilder) -> {
+			if (Boolean.TRUE.equals(includeAllGenders)) {
+				return null; // 모든 성별 포함
+			}
+			if (Boolean.TRUE.equals(includeUserGender)) {
+				return criteriaBuilder.or(
+					criteriaBuilder.equal(root.get("postGender"), PostGender.ANY),
+					criteriaBuilder.equal(root.get("postGender"), convertGenderToPostGender(userGender))
+				);
+			}
+			// 기본적으로 ANY만 포함
+			return criteriaBuilder.equal(root.get("postGender"), PostGender.ANY);
+		};
 	}
 
 	private static PostGender convertGenderToPostGender(Gender gender) {

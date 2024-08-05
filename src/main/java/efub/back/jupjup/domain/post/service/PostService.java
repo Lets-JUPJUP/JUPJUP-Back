@@ -330,7 +330,7 @@ public class PostService {
 		Specification<Post> spec = Specification.where(null);
 
 		if (filterDto.getUserGender() != null) { // 사용자의 성별로 필터링
-			spec = spec.and(PostSpecification.withGender(member.getGender()));
+			spec = spec.and(PostSpecification.withGender(filterDto.getIncludeAllGenders(), filterDto.getIncludeUserGender(), member.getGender()));
 		}
 		if (filterDto.getWithPet() != null) {
 			spec = spec.and(PostSpecification.withPet(filterDto.getWithPet()));
