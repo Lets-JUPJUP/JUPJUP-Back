@@ -335,8 +335,8 @@ public class PostService {
 		if (filterDto.getWithPet() != null) {
 			spec = spec.and(PostSpecification.withPet(filterDto.getWithPet()));
 		}
-		if (filterDto.getDistrict() != null) {
-			spec = spec.and(PostSpecification.withDistrict(filterDto.getDistrict()));
+		if (filterDto.getDistricts() != null && !filterDto.getDistricts().isEmpty()) {
+			spec = spec.and(PostSpecification.withDistricts(filterDto.getDistricts()));
 		}
 		if (filterDto.getIncludeAllAges() != null || filterDto.getIncludeUserAge() != null) {
 			spec = spec.and(PostSpecification.withAgeRange(

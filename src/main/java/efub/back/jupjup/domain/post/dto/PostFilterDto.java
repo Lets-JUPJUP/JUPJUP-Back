@@ -1,5 +1,7 @@
 package efub.back.jupjup.domain.post.dto;
 
+import java.util.List;
+
 import efub.back.jupjup.domain.member.domain.Gender;
 import efub.back.jupjup.domain.post.domain.District;
 import efub.back.jupjup.domain.post.domain.PostGender;
@@ -11,7 +13,7 @@ import lombok.Setter;
 public class PostFilterDto {
 	private PostGender postGender;
 	private Boolean withPet;
-	private District district;
+	private List<District> districts;
 	private Boolean includeAllAges; // '연령무관' 옵션
 	private Boolean includeUserAge; // '내 연령 포함' 옵션
 	private Boolean excludeClosedRecruitment;

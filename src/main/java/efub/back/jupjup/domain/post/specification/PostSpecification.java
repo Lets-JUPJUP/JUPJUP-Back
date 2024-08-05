@@ -1,6 +1,7 @@
 package efub.back.jupjup.domain.post.specification;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
@@ -43,9 +44,13 @@ public class PostSpecification {
 			withPet == null ? null : criteriaBuilder.equal(root.get("withPet"), withPet);
 	}
 
-	public static Specification<Post> withDistrict(District district) {
-		return (root, query, criteriaBuilder) ->
-			district == null ? null : criteriaBuilder.equal(root.get("district"), district);
+	public static Specification<Post> withDistricts(List<District> districts) {
+		return (root, query, criteriaBuilder) -> {
+			if (districts == null || districts.isEmpty()) {
+				return null;
+			}
+			return root.get("district").in(districts);
+		};
 	}
 
 	public static Specification<Post> withAgeRange(Boolean includeAllAges, Boolean includeUserAge, Integer userAge) {
