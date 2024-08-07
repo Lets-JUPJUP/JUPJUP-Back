@@ -329,8 +329,8 @@ public class PostService {
 	public ResponseEntity<StatusResponse> getFilteredPosts(PostFilterDto filterDto, Member member) {
 		Specification<Post> spec = Specification.where(null);
 
-		if (filterDto.getUserGender() != null) { // 사용자의 성별로 필터링
-			spec = spec.and(PostSpecification.withGender(filterDto.getIncludeAllGenders(), filterDto.getIncludeUserGender(), member.getGender()));
+		if (filterDto.getAllGender() != null) {
+			spec = spec.and(PostSpecification.withGender(filterDto.getAllGender(), member.getGender()));
 		}
 		if (filterDto.getWithPet() != null) {
 			spec = spec.and(PostSpecification.withPet(filterDto.getWithPet()));
@@ -338,12 +338,8 @@ public class PostService {
 		if (filterDto.getDistricts() != null && !filterDto.getDistricts().isEmpty()) {
 			spec = spec.and(PostSpecification.withDistricts(filterDto.getDistricts()));
 		}
-		if (filterDto.getIncludeAllAges() != null || filterDto.getIncludeUserAge() != null) {
-			spec = spec.and(PostSpecification.withAgeRange(
-				filterDto.getIncludeAllAges(),
-				filterDto.getIncludeUserAge(),
-				member.getAge()  // 사용자의 나이
-			));
+		if (filterDto.getAllAge() != null) {
+			spec = spec.and(PostSpecification.withAgeRange(filterDto.getAllAge(), member.getAge()));
 		}
 		if (filterDto.getExcludeClosedRecruitment() != null) {
 			spec = spec.and(PostSpecification.excludeClosedRecruitment(filterDto.getExcludeClosedRecruitment()));
