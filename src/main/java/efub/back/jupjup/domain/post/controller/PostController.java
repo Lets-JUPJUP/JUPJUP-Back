@@ -1,6 +1,12 @@
 package efub.back.jupjup.domain.post.controller;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import efub.back.jupjup.domain.member.domain.Member;
+import efub.back.jupjup.domain.post.domain.District;
+import efub.back.jupjup.domain.post.dto.PostFilterDto;
 import efub.back.jupjup.domain.post.dto.PostRequestDto;
 import efub.back.jupjup.domain.post.service.PostService;
 import efub.back.jupjup.domain.security.userInfo.AuthUser;
@@ -95,5 +101,23 @@ public class PostController {
 	@GetMapping("/completed")
 	public ResponseEntity<StatusResponse> getCompletedPosts(@AuthUser Member member) {
 		return postService.getCompletedPosts(member);
+	}
+
+	// 필터링된 게시글 리스트 조회
+	@GetMapping("/filter")
+	public ResponseEntity<StatusResponse> getFilteredPosts(
+		@ModelAttribute PostFilterDto filterDto,
+		@AuthUser Member member,
+		@RequestParam(required = false) List<String> districts) {
+
+		if (districts != null && !districts.isEmpty()) {
+			List<District> districtList = districts.stream()
+				.map(District::from)
+				.collect(Collectors.toList());
+			filterDto.setDistricts(districtList);
+		}
+
+		filterDto.setUserGender(member.getGender());
+		return postService.getFilteredPosts(filterDto, member);
 	}
 }
