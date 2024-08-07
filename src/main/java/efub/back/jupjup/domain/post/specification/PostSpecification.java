@@ -12,19 +12,16 @@ import efub.back.jupjup.domain.post.domain.PostGender;
 
 public class PostSpecification {
 
-	public static Specification<Post> withGender(Boolean includeAllGenders, Boolean includeUserGender, Gender userGender) {
+	public static Specification<Post> withGender(Boolean allGender, Gender userGender) {
 		return (root, query, criteriaBuilder) -> {
-			if (Boolean.TRUE.equals(includeAllGenders)) {
+			if (Boolean.TRUE.equals(allGender)) {
 				return null; // 모든 성별 포함
 			}
-			if (Boolean.TRUE.equals(includeUserGender)) {
-				return criteriaBuilder.or(
-					criteriaBuilder.equal(root.get("postGender"), PostGender.ANY),
-					criteriaBuilder.equal(root.get("postGender"), convertGenderToPostGender(userGender))
-				);
-			}
-			// 기본적으로 ANY만 포함
-			return criteriaBuilder.equal(root.get("postGender"), PostGender.ANY);
+			// allGender가 false인 경우, 사용자 성별과 ANY만 포함
+			return criteriaBuilder.or(
+				criteriaBuilder.equal(root.get("postGender"), PostGender.ANY),
+				criteriaBuilder.equal(root.get("postGender"), convertGenderToPostGender(userGender))
+			);
 		};
 	}
 
@@ -53,18 +50,17 @@ public class PostSpecification {
 		};
 	}
 
-	public static Specification<Post> withAgeRange(Boolean includeAllAges, Boolean includeUserAge, Integer userAge) {
+	public static Specification<Post> withAgeRange(Boolean allAge, Integer userAge) {
 		return (root, query, criteriaBuilder) -> {
-			if (Boolean.TRUE.equals(includeAllAges)) {
+			if (Boolean.TRUE.equals(allAge)) {
 				return null; // 모든 연령 포함
 			}
-			if (Boolean.TRUE.equals(includeUserAge) && userAge != null) {
+			if (userAge != null) {
 				return criteriaBuilder.and(
 					criteriaBuilder.lessThanOrEqualTo(root.get("minAge"), userAge),
 					criteriaBuilder.greaterThanOrEqualTo(root.get("maxAge"), userAge)
 				);
 			}
-			// 기본적으로 모든 연령 포함
 			return null;
 		};
 	}
