@@ -1,8 +1,6 @@
 package efub.back.jupjup.domain.trashCan.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -20,6 +18,7 @@ import efub.back.jupjup.domain.trashCan.dto.Location;
 import efub.back.jupjup.domain.trashCan.dto.request.FeedbackReqDto;
 import efub.back.jupjup.domain.trashCan.dto.response.FeedbackResDto;
 import efub.back.jupjup.domain.trashCan.dto.response.TrashCansResDto;
+import efub.back.jupjup.domain.trashCan.exception.FeedbackAlreadyExistsException;
 import efub.back.jupjup.domain.trashCan.exception.TrashCanNotFoundException;
 import efub.back.jupjup.domain.trashCan.repository.BinFeedbackRepository;
 import efub.back.jupjup.domain.trashCan.repository.TrashCanRepository;
@@ -73,6 +72,11 @@ public class TrashCanService {
 		if (!trashCanRepository.existsById(feedbackReqDto.getTrashCanId())) {
 			throw new TrashCanNotFoundException();
 		}
+
+		if (binFeedbackRepository.existsBinFeedbackByMemberAndTrashCanId(member, feedbackReqDto.getTrashCanId())) {
+			throw new FeedbackAlreadyExistsException();
+		}
+
 		Feedback feedback = Feedback.getFeedbackByCode(feedbackReqDto.getFeedbackCode());
 		BinFeedback savedFeedback = binFeedbackRepository.save(BinFeedback.builder()
 			.trashCanId(feedbackReqDto.getTrashCanId())
@@ -83,19 +87,25 @@ public class TrashCanService {
 		return make200Response(resDto);
 	}
 
-	public ResponseEntity<StatusResponse> findFeedbacks(Member member, Long trashcanId) {
+	public ResponseEntity<StatusResponse> findFeedback(Member member, Long trashcanId) {
 		if (!trashCanRepository.existsById(trashcanId)) {
 			throw new TrashCanNotFoundException();
 		}
 
-		List<BinFeedback> binFeedbacks = binFeedbackRepository.findAllByMemberAndTrashCanId(member, trashcanId);
-		Map<String, Integer> feedbackExistsMap = new HashMap<>();
-		for (Feedback feedback : Feedback.values()) {
-			Long count = binFeedbackRepository.countByFeedbackAndTrashCanId(feedback, trashcanId);
-			feedbackExistsMap.put(feedback.getDescription(), count.intValue());
-		}
+		FeedbackResDto binFeedback = binFeedbackRepository.findBinFeedbackByMemberAndTrashCanId(member, trashcanId)
+			.map(FeedbackResDto::from)
+			.orElseGet(() -> {
+				return FeedbackResDto.builder()
+					.id(null)
+					.trashCanId(trashcanId)
+					.feedbackCode(Feedback.UNDEFINED.getCode())
+					.feedback(null)
+					.memberId(member.getId())
+					.createdAt(null)
+					.build();
+			});
 
-		return make200Response(feedbackExistsMap);
+		return make200Response(binFeedback);
 	}
 
 	private ResponseEntity<StatusResponse> make200Response(Object obj) {
