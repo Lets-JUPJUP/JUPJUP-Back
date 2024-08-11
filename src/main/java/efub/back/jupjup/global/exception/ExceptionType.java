@@ -26,6 +26,7 @@ import efub.back.jupjup.domain.score.exception.NotValidScoreException;
 import efub.back.jupjup.domain.score.exception.ScoringNotAllowedException;
 import efub.back.jupjup.domain.security.exception.BlockedAccountException;
 import efub.back.jupjup.domain.security.exception.ExpiredTokenException;
+import efub.back.jupjup.domain.trashCan.exception.FeedbackAlreadyExistsException;
 import efub.back.jupjup.domain.trashCan.exception.FeedbackNotExistsForCodeException;
 import efub.back.jupjup.domain.trashCan.exception.TrashCanNotFoundException;
 import efub.back.jupjup.global.exception.custom.ApplicationException;
@@ -61,6 +62,7 @@ public enum ExceptionType {
 	FEEDBACK_NOT_EXISTS_FOR_CODE_EXCEPTION("C4000", "해당 코드와 일치하는 쓰레기통 피드백이 존재하지 않습니다.",
 		FeedbackNotExistsForCodeException.class),
 	TRASHCAN_NOT_FOUND_EXCEPTION("C4001", "존재하지 않는 쓰레기통입니다.", TrashCanNotFoundException.class),
+	FEEDBACK_ALREADY_EXISTS_EXCEPTION("C4002", "이미 쓰레기통 리뷰를 완료했습니다.", FeedbackAlreadyExistsException.class),
 
 	// 알림 관련 - C5***
 	NOTIFICATION_NOT_FOUND_EXCEPTION("C5000", "해당 알림을 찾을 수 없습니다.", NotificationNotFoundException.class),

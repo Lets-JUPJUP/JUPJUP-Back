@@ -9,7 +9,8 @@ import lombok.Getter;
 public enum Feedback {
 	NEEDS_MAINTENANCE(0, "관리 필요"),
 	NORMAL(1, "보통"),
-	EXCELLENT(2, "우수");
+	EXCELLENT(2, "우수"),
+	UNDEFINED(3, "존재하지 않음");
 
 	private final Integer code;
 	private final String description;
