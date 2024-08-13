@@ -26,7 +26,6 @@ public class HeartController {
 	// 게시글 찜하기
 	@PostMapping("/{postId}")
 	public ResponseEntity<StatusResponse> heartPost(@PathVariable Long postId, @AuthUser Member member) {
-		Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
 		return heartService.heartPost(member, postId);
 	}
 

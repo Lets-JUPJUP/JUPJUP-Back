@@ -38,6 +38,7 @@ public class PostResponseDto {
 	private String authorProfileImageUrl;    // 글쓴이의 프로필 이미지 URL 필드
 	private Boolean isRecruitmentSuccessful;
 	private Boolean isReviewed;  // 리뷰 완료 여부를 나타내는 필드
+	private Long joinedMemberCount; // Postjoin한 멤버의 인원수 보는 필드
 
 	@Getter
 	@Builder
@@ -47,7 +48,7 @@ public class PostResponseDto {
 		private double longitude;
 	}
 
-	public static PostResponseDto of(Post post, List<String> imgUrlList, Optional<Boolean> isJoined, Optional<Boolean> isHearted, Boolean isEnded, Boolean isAuthor, Boolean isReviewed) {
+	public static PostResponseDto of(Post post, List<String> imgUrlList, Optional<Boolean> isJoined, Optional<Boolean> isHearted, Boolean isEnded, Boolean isAuthor, Boolean isReviewed, Long joinedMemberCount) {
 		return PostResponseDto.builder()
 			.id(post.getId())
 			.title(post.getTitle())
@@ -80,6 +81,7 @@ public class PostResponseDto {
 			.authorProfileImageUrl(post.getAuthor().getProfileImageUrl())
 			.isRecruitmentSuccessful(post.getIsRecruitmentSuccessful())
 			.isReviewed(isReviewed)
+			.joinedMemberCount(joinedMemberCount)
 			.build();
 	}
 }
