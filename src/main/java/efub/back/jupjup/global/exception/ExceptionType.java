@@ -10,6 +10,7 @@ import efub.back.jupjup.domain.auth.exception.RefreshTokenNotValidException;
 import efub.back.jupjup.domain.comment.exception.NoAuthorityCommentRemoveException;
 import efub.back.jupjup.domain.comment.exception.NoCommentExistsException;
 import efub.back.jupjup.domain.eventcomment.exception.NoEventInfoException;
+import efub.back.jupjup.domain.heart.exception.DuplicateHeartException;
 import efub.back.jupjup.domain.member.exception.InvalidNicknameException;
 import efub.back.jupjup.domain.member.exception.MemberNotFoundException;
 import efub.back.jupjup.domain.notification.exception.NotificationNotFoundException;
@@ -71,6 +72,7 @@ public enum ExceptionType {
 	MISMATCH_POST_GENDER_EXCEPTION("C6002", "성별이 해당 플로깅의 조건과 맞지 않습니다.", MismatchPostGenderException.class),
 	MISMATCH_POST_AGE_RANGE_EXCEPTION("C6003", "나이가 해당 플로깅의 조건과 맞지 않습니다.", MismatchPostAgeRangeException.class),
 	POST_JOIN_NOT_FOUND_EXCEPTION("C6004", "게시글 참여 정보가 없습니다.", PostjoinNotFoundException.class),
+	DUPLICATE_HEART_EXCEPTION("C6005", "이미 좋아요를 누른 게시글입니다.", DuplicateHeartException.class),
 
 	// 관리자 관련 - C7***
 	ADMIN_ACCESS_DENIED_EXCEPTION("C7000", "관리자가 아닌 계정은 접근할 수 없습니다.", AdminAccessDeniedException.class),

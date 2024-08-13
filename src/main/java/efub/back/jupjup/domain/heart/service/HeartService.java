@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import efub.back.jupjup.domain.heart.domain.Heart;
 import efub.back.jupjup.domain.heart.dto.HeartResponseDto;
+import efub.back.jupjup.domain.heart.exception.DuplicateHeartException;
 import efub.back.jupjup.domain.heart.repository.HeartRepository;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.post.domain.Post;
@@ -43,6 +44,11 @@ public class HeartService {
 
 		Post post = postRepository.findById(postId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
+
+		// 이미 좋아요를 눌렀는지 확인
+		if (heartRepository.existsByMemberAndPost(member, post)) {
+			throw new DuplicateHeartException();
+		}
 
 		Heart heart = new Heart(member, post);
 		heartRepository.save(heart);
