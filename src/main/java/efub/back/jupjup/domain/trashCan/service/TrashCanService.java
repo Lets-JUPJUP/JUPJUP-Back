@@ -1,6 +1,7 @@
 package efub.back.jupjup.domain.trashCan.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -73,17 +74,28 @@ public class TrashCanService {
 			throw new TrashCanNotFoundException();
 		}
 
-		if (binFeedbackRepository.existsBinFeedbackByMemberAndTrashCanId(member, feedbackReqDto.getTrashCanId())) {
-			throw new FeedbackAlreadyExistsException();
+		Optional<BinFeedback> binFeedbackOptional = binFeedbackRepository.findBinFeedbackByMemberAndTrashCanId(member,
+			feedbackReqDto.getTrashCanId());
+		BinFeedback binFeedback;
+		Feedback newFeedback = Feedback.getFeedbackByCode(feedbackReqDto.getFeedbackCode());
+
+		if (binFeedbackOptional.isPresent()) {
+			binFeedback = binFeedbackOptional.get();
+			// 동일한 피드백을 보내는 경우
+			if (binFeedback.getFeedback().equals(newFeedback)) {
+				throw new FeedbackAlreadyExistsException();
+			}
+			binFeedback.updateFeedback(newFeedback);
+		} else {
+			binFeedback = BinFeedback.builder()
+				.trashCanId(feedbackReqDto.getTrashCanId())
+				.feedback(newFeedback)
+				.member(member)
+				.build();
 		}
 
-		Feedback feedback = Feedback.getFeedbackByCode(feedbackReqDto.getFeedbackCode());
-		BinFeedback savedFeedback = binFeedbackRepository.save(BinFeedback.builder()
-			.trashCanId(feedbackReqDto.getTrashCanId())
-			.feedback(feedback)
-			.member(member)
-			.build());
-		FeedbackResDto resDto = FeedbackResDto.from(savedFeedback);
+		BinFeedback savedBinFeedback = binFeedbackRepository.save(binFeedback);
+		FeedbackResDto resDto = FeedbackResDto.from(savedBinFeedback);
 		return make200Response(resDto);
 	}
 
