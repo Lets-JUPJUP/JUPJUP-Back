@@ -169,18 +169,13 @@ public class CommentService {
 			.build());
 	}
 
-	// 내가 쓴 댓글의 게시글 모아보기
+	// 내가 쓴 댓글의 게시글 모아보기 (수정됨)
 	public ResponseEntity<StatusResponse> getCommentedPosts(Member member) {
 		List<Comment> comments = commentRepository.findByWriter(member);
 
 		List<CommentPostDto> commentedPosts = comments.stream()
-			.collect(Collectors.toMap(
-				comment -> comment.getPost().getId(),
-				CommentPostDto::of,
-				(existing, replacement) -> existing,
-				LinkedHashMap::new
-			))
-			.values().stream()
+			.map(CommentPostDto::of)
+			.distinct()
 			.collect(Collectors.toList());
 
 		return ResponseEntity.ok(StatusResponse.builder()

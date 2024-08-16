@@ -78,13 +78,12 @@ public class HeartService {
 			.build());
 	}
 
-	// 찜한 글 모아보기
+	// 찜한 글 모아보기 (수정됨)
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> findHeartPostList(Member member) {
 		List<Heart> heartList = heartRepository.findAllByMemberOrderByIdDesc(member);
 
-		List<PostResponseDto> postList = new ArrayList<>();
-		for (Heart heart : heartList) {
+		List<PostResponseDto> postList = heartList.stream().map(heart -> {
 			Post post = postRepository.findById(heart.getPost().getId())
 				.orElseThrow(() -> new PostNotFoundException(heart.getPost().getId()));
 
@@ -100,18 +99,13 @@ public class HeartService {
 			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
 			Long joinedMemberCount = postjoinRepository.countByPost(post);
 
+			return PostResponseDto.of(post, imgUrlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
+		}).collect(Collectors.toList());
 
-			PostResponseDto postResponseDto = PostResponseDto.of(post, imgUrlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
-			postList.add(postResponseDto);
-		}
-
-			Long count = heartRepository.countByMember(member);
-			HeartResponseDto response = new HeartResponseDto(postList, member.getId(), count);
-
-			return ResponseEntity.ok(StatusResponse.builder()
-				.status(StatusEnum.OK.getStatusCode())
-				.message(StatusEnum.OK.getCode())
-				.data(response)
-				.build());
+		return ResponseEntity.ok(StatusResponse.builder()
+			.status(StatusEnum.OK.getStatusCode())
+			.message(StatusEnum.OK.getCode())
+			.data(postList)
+			.build());
 	}
 }
