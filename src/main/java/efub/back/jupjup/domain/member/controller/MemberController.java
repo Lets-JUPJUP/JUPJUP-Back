@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.dto.request.MemberReqDto;
 import efub.back.jupjup.domain.member.dto.request.NicknameCheckReqDto;
+import efub.back.jupjup.domain.member.service.MemberProfileFacade;
 import efub.back.jupjup.domain.member.service.MemberService;
 import efub.back.jupjup.domain.security.userInfo.AuthUser;
 import efub.back.jupjup.global.response.StatusResponse;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberController {
 	private final MemberService memberService;
+	private final MemberProfileFacade memberProfileFacade;
 
 	@GetMapping("/{memberId}")
 	public ResponseEntity<StatusResponse> readProfile(@PathVariable Long memberId) {
@@ -46,4 +48,10 @@ public class MemberController {
 		@AuthUser Member member) {
 		return memberService.checkDuplicateNickname(nicknameCheckReqDto, member);
 	}
+
+	@GetMapping("/stats/{memberId}")
+	public ResponseEntity<StatusResponse> getUserProfileStats(@PathVariable Long memberId) {
+		return memberProfileFacade.getUserProfileStats(memberId);
+	}
+
 }
