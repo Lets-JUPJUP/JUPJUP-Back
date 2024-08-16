@@ -120,4 +120,10 @@ public class PostController {
 		filterDto.setUserGender(member.getGender());
 		return postService.getFilteredPosts(filterDto, member);
 	}
+
+	// 가장 최근에 완료한 플로깅 게시글 1개 조회하기
+	@GetMapping("/latest-completed")
+	public ResponseEntity<StatusResponse> getLatestCompletedPost(@AuthUser Member member) {
+		return postService.getLatestCompletedPost(member);
+	}
 }

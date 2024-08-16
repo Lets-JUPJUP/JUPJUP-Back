@@ -22,4 +22,5 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
 	List<Post> findAllByDueDateAfterOrderByCreatedAtDesc(LocalDateTime now);
 	List<Post> findAllByDueDateBeforeAndIsRecruitmentSuccessfulTrueOrderByCreatedAtDesc(LocalDateTime now);
 	List<Post> findAllByDueDateBeforeOrderByCreatedAtDesc(LocalDateTime now);
+	List<Post> findAllByDueDateBeforeOrderByDueDateDesc(LocalDateTime now);
 }
