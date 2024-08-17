@@ -47,4 +47,8 @@ public class BinFeedback extends BaseTimeEntity {
 		this.trashCanId = trashCanId;
 		this.member = member;
 	}
+
+	public void updateFeedback(Feedback feedback) {
+		this.feedback = feedback;
+	}
 }
