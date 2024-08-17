@@ -311,7 +311,11 @@ public class PostService {
 	public ResponseEntity<StatusResponse> getRecruitingPosts(Member member) {
 		LocalDateTime now = LocalDateTime.now();
 		List<Post> posts = postRepository.findAllByDueDateAfterOrderByCreatedAtDesc(now);
-		List<PostResponseDto> responseDtos = createPostResponseDtos(posts, member, now);
+		List<Post> filteredPosts = posts.stream()
+			.filter(post -> post.getAuthor().getId().equals(member.getId()) ||
+				postjoinRepository.existsByMemberAndPost(member, post))
+			.collect(Collectors.toList());
+		List<PostResponseDto> responseDtos = createPostResponseDtos(filteredPosts, member, now);
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
 	}
 
@@ -320,7 +324,11 @@ public class PostService {
 	public ResponseEntity<StatusResponse> getSuccessfulRecruitmentPosts(Member member) {
 		LocalDateTime now = LocalDateTime.now();
 		List<Post> posts = postRepository.findAllByDueDateBeforeAndIsRecruitmentSuccessfulTrueOrderByCreatedAtDesc(now);
-		List<PostResponseDto> responseDtos = createPostResponseDtos(posts, member, now);
+		List<Post> filteredPosts = posts.stream()
+			.filter(post -> post.getAuthor().getId().equals(member.getId()) ||
+				postjoinRepository.existsByMemberAndPost(member, post))
+			.collect(Collectors.toList());
+		List<PostResponseDto> responseDtos = createPostResponseDtos(filteredPosts, member, now);
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
 	}
 
@@ -329,8 +337,47 @@ public class PostService {
 	public ResponseEntity<StatusResponse> getCompletedPosts(Member member) {
 		LocalDateTime now = LocalDateTime.now();
 		List<Post> posts = postRepository.findAllByDueDateBeforeOrderByCreatedAtDesc(now);
-		List<PostResponseDto> responseDtos = createPostResponseDtos(posts, member, now);
+		List<Post> filteredPosts = posts.stream()
+			.filter(post -> post.getAuthor().getId().equals(member.getId()) ||
+				postjoinRepository.existsByMemberAndPost(member, post))
+			.collect(Collectors.toList());
+		List<PostResponseDto> responseDtos = createPostResponseDtos(filteredPosts, member, now);
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
+	}
+
+	// 가장 최근에 완료한 플로깅 게시글 1개 조회
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getLatestCompletedPost(Member member) {
+		LocalDateTime now = LocalDateTime.now();
+		List<Post> completedPosts = postRepository.findAllByDueDateBeforeOrderByDueDateDesc(now);
+		Optional<Post> latestCompletedPost = completedPosts.stream()
+			.filter(post -> post.getAuthor().getId().equals(member.getId()) ||
+				postjoinRepository.existsByMemberAndPost(member, post))
+			.findFirst();
+
+		if (latestCompletedPost.isPresent()) {
+			PostResponseDto responseDto = createPostResponseDto(latestCompletedPost.get(), member, now);
+			return ResponseEntity.ok(createStatusResponse(responseDto));
+		} else {
+			return ResponseEntity.ok(createStatusResponse(null));
+		}
+	}
+
+	private PostResponseDto createPostResponseDto(Post post, Member member, LocalDateTime now) {
+		List<String> urlList = postImageRepository.findAllByPost(post)
+			.stream()
+			.map(PostImage::getFileUrl)
+			.collect(Collectors.toList());
+
+		boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+		boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+		boolean isJoined = isAuthor || hasJoined;
+		boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
+		boolean isEnded = now.isAfter(post.getDueDate());
+		boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
+		Long joinedMemberCount = postjoinRepository.countByPost(post);
+
+		return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 	}
 
 	@Transactional(readOnly = true)
