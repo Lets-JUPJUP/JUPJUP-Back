@@ -68,7 +68,7 @@ public class PostService {
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = now.isAfter(post.getDueDate());
 			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
-			Long joinedMemberCount = postjoinRepository.countByPost(post);
+			Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
 			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 		}).collect(Collectors.toList());
@@ -86,7 +86,7 @@ public class PostService {
 		boolean isHearted = false;
 		boolean isAuthor = true;
 		boolean isReviewed = false;
-		Long joinedMemberCount = postjoinRepository.countByPost(post);
+		Long joinedMemberCount = 1L;
 
 		PostResponseDto postResponseDto = PostResponseDto.of(post, imageUrls, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 
@@ -110,7 +110,7 @@ public class PostService {
 		boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 		boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 		boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
-		Long joinedMemberCount = postjoinRepository.countByPost(post);
+		Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
 
 		PostResponseDto responseDto = PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
@@ -134,7 +134,7 @@ public class PostService {
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
-			Long joinedMemberCount = postjoinRepository.countByPost(post);
+			Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
 			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 		}).collect(Collectors.toList());
@@ -161,7 +161,7 @@ public class PostService {
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
-			Long joinedMemberCount = postjoinRepository.countByPost(post);
+			Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
 			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 		}).collect(Collectors.toList());
@@ -187,7 +187,7 @@ public class PostService {
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
-			Long joinedMemberCount = postjoinRepository.countByPost(post);
+			Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
 			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 		}).collect(Collectors.toList());
@@ -258,7 +258,7 @@ public class PostService {
 				boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 				boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 				boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
-				Long joinedMemberCount = postjoinRepository.countByPost(post);
+				Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
 				return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 			}).collect(Collectors.toList());
@@ -287,7 +287,7 @@ public class PostService {
 			boolean isEnded = now.isAfter(post.getStartDate());
 			boolean isAuthor = post.getAuthor().getId().equals(member.getId());
 			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
-			Long joinedMemberCount = postjoinRepository.countByPost(post);
+			Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
 			PostResponseDto dto = PostResponseDto.of(post, urlList, Optional.of(true),
 				Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
@@ -375,7 +375,7 @@ public class PostService {
 		boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 		boolean isEnded = now.isAfter(post.getDueDate());
 		boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
-		Long joinedMemberCount = postjoinRepository.countByPost(post);
+		Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
 		return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 	}
