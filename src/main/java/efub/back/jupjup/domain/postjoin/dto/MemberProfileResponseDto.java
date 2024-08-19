@@ -12,4 +12,5 @@ public class MemberProfileResponseDto {
 	private String profileImageUrl;
 	private Integer age;
 	private Gender gender;
+	private boolean isHost;  // 새로 추가된 필드
 }
