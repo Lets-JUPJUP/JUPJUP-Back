@@ -19,8 +19,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
 	long countByAuthor(Member author);
 	List<Post> findAllByAuthor(Member author, Sort sort);
 	List<Post> findByDueDateBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
-	List<Post> findAllByDueDateAfterOrderByCreatedAtDesc(LocalDateTime now);
-	List<Post> findAllByDueDateBeforeAndIsRecruitmentSuccessfulTrueOrderByCreatedAtDesc(LocalDateTime now);
-	List<Post> findAllByDueDateBeforeOrderByCreatedAtDesc(LocalDateTime now);
 	List<Post> findAllByDueDateBeforeOrderByDueDateDesc(LocalDateTime now);
+	List<Post> findAllByDueDateAfterOrderByCreatedAtDesc(LocalDateTime now);
+	List<Post> findAllByDueDateBeforeAndStartDateAfterAndIsRecruitmentSuccessfulTrueOrderByCreatedAtDesc(LocalDateTime dueDate, LocalDateTime startDate);
+	List<Post> findAllByStartDateBeforeAndIsRecruitmentSuccessfulTrueOrderByCreatedAtDesc(LocalDateTime now);
 }
