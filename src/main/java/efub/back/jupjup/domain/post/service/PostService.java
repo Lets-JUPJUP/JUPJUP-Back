@@ -323,7 +323,7 @@ public class PostService {
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getSuccessfulRecruitmentPosts(Member member) {
 		LocalDateTime now = LocalDateTime.now();
-		List<Post> posts = postRepository.findAllByDueDateBeforeAndIsRecruitmentSuccessfulTrueOrderByCreatedAtDesc(now);
+		List<Post> posts = postRepository.findAllByDueDateBeforeAndStartDateAfterAndIsRecruitmentSuccessfulTrueOrderByCreatedAtDesc(now, now);
 		List<Post> filteredPosts = posts.stream()
 			.filter(post -> post.getAuthor().getId().equals(member.getId()) ||
 				postjoinRepository.existsByMemberAndPost(member, post))
@@ -336,7 +336,7 @@ public class PostService {
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getCompletedPosts(Member member) {
 		LocalDateTime now = LocalDateTime.now();
-		List<Post> posts = postRepository.findAllByDueDateBeforeOrderByCreatedAtDesc(now);
+		List<Post> posts = postRepository.findAllByStartDateBeforeAndIsRecruitmentSuccessfulTrueOrderByCreatedAtDesc(now);
 		List<Post> filteredPosts = posts.stream()
 			.filter(post -> post.getAuthor().getId().equals(member.getId()) ||
 				postjoinRepository.existsByMemberAndPost(member, post))
