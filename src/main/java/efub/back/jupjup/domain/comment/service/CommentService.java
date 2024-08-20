@@ -1,8 +1,9 @@
 package efub.back.jupjup.domain.comment.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,8 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 
 import efub.back.jupjup.domain.comment.domain.Comment;
 import efub.back.jupjup.domain.comment.dto.CommentDto;
-import efub.back.jupjup.domain.comment.dto.CommentPostDto;
+import efub.back.jupjup.domain.post.dto.PostResponseDto;
+import efub.back.jupjup.domain.post.domain.PostImage;
 import efub.back.jupjup.domain.comment.dto.CommentRequestDto;
 import efub.back.jupjup.domain.comment.dto.CommentResponseDto;
 import efub.back.jupjup.domain.comment.dto.ReplyRequestDto;
@@ -21,9 +23,13 @@ import efub.back.jupjup.domain.comment.dto.ReplyResponseDto;
 import efub.back.jupjup.domain.comment.exception.NoAuthorityCommentRemoveException;
 import efub.back.jupjup.domain.comment.exception.NoCommentExistsException;
 import efub.back.jupjup.domain.comment.exception.NoPostExistException;
+import efub.back.jupjup.domain.postjoin.repository.PostjoinRepository;
+import efub.back.jupjup.domain.score.repository.ScoreRepository;
+import efub.back.jupjup.domain.post.repository.PostImageRepository;
 import efub.back.jupjup.domain.comment.repository.CommentRepository;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.member.repository.MemberRepository;
+import efub.back.jupjup.domain.heart.repository.HeartRepository;
 import efub.back.jupjup.domain.notification.domain.NotificationType;
 import efub.back.jupjup.domain.notification.service.FirebaseService;
 import efub.back.jupjup.domain.notification.service.NotificationService;
@@ -44,6 +50,10 @@ public class CommentService {
 	private final CommentRepository commentRepository;
 	private final PostRepository postRepository;
 	private final MemberRepository memberRepository;
+	private final PostImageRepository postImageRepository;
+	private final ScoreRepository scoreRepository;
+	private final PostjoinRepository postjoinRepository;
+	private final HeartRepository heartRepository;
 	private final NotificationService notificationService;
 	private final FirebaseService firebaseService;
 
@@ -172,10 +182,12 @@ public class CommentService {
 	// 내가 쓴 댓글의 게시글 모아보기 (수정됨)
 	public ResponseEntity<StatusResponse> getCommentedPosts(Member member) {
 		List<Comment> comments = commentRepository.findByWriter(member);
+		LocalDateTime now = LocalDateTime.now();
 
-		List<CommentPostDto> commentedPosts = comments.stream()
-			.map(CommentPostDto::of)
+		List<PostResponseDto> commentedPosts = comments.stream()
+			.map(Comment::getPost)
 			.distinct()
+			.map(post -> createPostResponseDto(post, member, now))
 			.collect(Collectors.toList());
 
 		return ResponseEntity.ok(StatusResponse.builder()
@@ -183,5 +195,22 @@ public class CommentService {
 			.message(StatusEnum.OK.getCode())
 			.data(commentedPosts)
 			.build());
+	}
+
+	private PostResponseDto createPostResponseDto(Post post, Member member, LocalDateTime now) {
+		List<String> urlList = postImageRepository.findAllByPost(post)
+			.stream()
+			.map(PostImage::getFileUrl)
+			.collect(Collectors.toList());
+
+		boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+		boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+		boolean isJoined = isAuthor || hasJoined;
+		boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
+		boolean isEnded = now.isAfter(post.getDueDate());
+		boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
+		Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
+
+		return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 	}
 }
