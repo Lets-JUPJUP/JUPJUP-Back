@@ -1,5 +1,7 @@
 package efub.back.jupjup.domain.userHeart.dto.request;
 
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,5 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserHeartReqDto {
 	private Long postId;
-	private Long targetId;
+	private List<Long> targetIds;
 }

@@ -1,6 +1,7 @@
 package efub.back.jupjup.domain.postjoin.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,24 +114,38 @@ public class PostjoinService {
 
 	// 참여 신청한 멤버 조회
 	public ResponseEntity<StatusResponse> getJoinedMembers(Long postId) {
-
 		Post post = postRepository.findById(postId)
 			.orElseThrow(() -> new PostNotFoundException(postId));
 
+		List<MemberProfileResponseDto> memberDtos = new ArrayList<>();
+
+		// 주최자 정보 추가
+		Member host = post.getAuthor();
+		memberDtos.add(new MemberProfileResponseDto(
+			host.getId(),
+			host.getNickname(),
+			host.getProfileImageUrl(),
+			host.getAge(),
+			host.getGender(),
+			true  // isHost 필드 추가
+		));
+
+		// 참여 멤버 정보 추가
 		List<Member> joinedMembers = postjoinRepository.findAllByPost(post)
 			.stream()
 			.map(Postjoin::getMember)
 			.collect(Collectors.toList());
 
-		List<MemberProfileResponseDto> memberDtos = joinedMembers.stream()
+		memberDtos.addAll(joinedMembers.stream()
 			.map(member -> new MemberProfileResponseDto(
 				member.getId(),
 				member.getNickname(),
 				member.getProfileImageUrl(),
 				member.getAge(),
-				member.getGender()
+				member.getGender(),
+				false  // isHost 필드 추가
 			))
-			.collect(Collectors.toList());
+			.collect(Collectors.toList()));
 
 		return ResponseEntity.ok(StatusResponse.builder()
 			.status(StatusEnum.OK.getStatusCode())

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import efub.back.jupjup.domain.heart.domain.Heart;
 import efub.back.jupjup.domain.heart.dto.HeartResponseDto;
+import efub.back.jupjup.domain.heart.exception.DuplicateHeartException;
 import efub.back.jupjup.domain.heart.repository.HeartRepository;
 import efub.back.jupjup.domain.member.domain.Member;
 import efub.back.jupjup.domain.post.domain.Post;
@@ -44,6 +45,11 @@ public class HeartService {
 		Post post = postRepository.findById(postId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다."));
 
+		// 이미 좋아요를 눌렀는지 확인
+		if (heartRepository.existsByMemberAndPost(member, post)) {
+			throw new DuplicateHeartException();
+		}
+
 		Heart heart = new Heart(member, post);
 		heartRepository.save(heart);
 
@@ -72,13 +78,12 @@ public class HeartService {
 			.build());
 	}
 
-	// 찜한 글 모아보기
+	// 찜한 글 모아보기 (수정됨)
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> findHeartPostList(Member member) {
 		List<Heart> heartList = heartRepository.findAllByMemberOrderByIdDesc(member);
 
-		List<PostResponseDto> postList = new ArrayList<>();
-		for (Heart heart : heartList) {
+		List<PostResponseDto> postList = heartList.stream().map(heart -> {
 			Post post = postRepository.findById(heart.getPost().getId())
 				.orElseThrow(() -> new PostNotFoundException(heart.getPost().getId()));
 
@@ -92,19 +97,15 @@ public class HeartService {
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 			boolean isAuthor = post.getAuthor().getId().equals(member.getId());
 			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
+			Long joinedMemberCount = postjoinRepository.countByPost(post);
 
+			return PostResponseDto.of(post, imgUrlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
+		}).collect(Collectors.toList());
 
-			PostResponseDto postResponseDto = PostResponseDto.of(post, imgUrlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed);
-			postList.add(postResponseDto);
-		}
-
-			Long count = heartRepository.countByMember(member);
-			HeartResponseDto response = new HeartResponseDto(postList, member.getId(), count);
-
-			return ResponseEntity.ok(StatusResponse.builder()
-				.status(StatusEnum.OK.getStatusCode())
-				.message(StatusEnum.OK.getCode())
-				.data(response)
-				.build());
+		return ResponseEntity.ok(StatusResponse.builder()
+			.status(StatusEnum.OK.getStatusCode())
+			.message(StatusEnum.OK.getCode())
+			.data(postList)
+			.build());
 	}
 }

@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +18,13 @@ import efub.back.jupjup.domain.member.repository.MemberRepository;
 import efub.back.jupjup.domain.post.domain.Post;
 import efub.back.jupjup.domain.post.domain.PostGender;
 import efub.back.jupjup.domain.post.domain.PostImage;
+import efub.back.jupjup.domain.post.dto.PostFilterDto;
 import efub.back.jupjup.domain.post.dto.PostRequestDto;
 import efub.back.jupjup.domain.post.dto.PostResponseDto;
 import efub.back.jupjup.domain.post.exception.PostNotFoundException;
 import efub.back.jupjup.domain.post.repository.PostImageRepository;
 import efub.back.jupjup.domain.post.repository.PostRepository;
+import efub.back.jupjup.domain.post.specification.PostSpecification;
 import efub.back.jupjup.domain.postjoin.domain.Postjoin;
 import efub.back.jupjup.domain.postjoin.repository.PostjoinRepository;
 import efub.back.jupjup.domain.score.repository.ScoreRepository;
@@ -65,8 +68,9 @@ public class PostService {
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = now.isAfter(post.getDueDate());
 			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
+			Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
-			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 		}).collect(Collectors.toList());
 	}
 
@@ -82,8 +86,9 @@ public class PostService {
 		boolean isHearted = false;
 		boolean isAuthor = true;
 		boolean isReviewed = false;
+		Long joinedMemberCount = 1L;
 
-		PostResponseDto postResponseDto = PostResponseDto.of(post, imageUrls, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed);
+		PostResponseDto postResponseDto = PostResponseDto.of(post, imageUrls, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 
 		return ResponseEntity.ok(createStatusResponse(postResponseDto));
 	}
@@ -105,9 +110,10 @@ public class PostService {
 		boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 		boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 		boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
+		Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
 
-		PostResponseDto responseDto = PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed);
+		PostResponseDto responseDto = PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 		return ResponseEntity.ok(createStatusResponse(responseDto));
 	}
 
@@ -128,8 +134,9 @@ public class PostService {
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
+			Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
-			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -154,8 +161,9 @@ public class PostService {
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
+			Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
-			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -179,8 +187,9 @@ public class PostService {
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
+			Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
-			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed);
+			return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 		}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
@@ -249,8 +258,9 @@ public class PostService {
 				boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 				boolean isEnded = LocalDateTime.now().isAfter(post.getDueDate());
 				boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
+				Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
-				return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed);
+				return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 			}).collect(Collectors.toList());
 
 		return ResponseEntity.ok(createStatusResponse(hostedPostsDtos));
@@ -277,9 +287,10 @@ public class PostService {
 			boolean isEnded = now.isAfter(post.getStartDate());
 			boolean isAuthor = post.getAuthor().getId().equals(member.getId());
 			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
+			Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
 			PostResponseDto dto = PostResponseDto.of(post, urlList, Optional.of(true),
-				Optional.of(isHearted), isEnded, isAuthor, isReviewed);
+				Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
 
 			if (isEnded) {
 				endedPosts.add(dto);
@@ -300,7 +311,11 @@ public class PostService {
 	public ResponseEntity<StatusResponse> getRecruitingPosts(Member member) {
 		LocalDateTime now = LocalDateTime.now();
 		List<Post> posts = postRepository.findAllByDueDateAfterOrderByCreatedAtDesc(now);
-		List<PostResponseDto> responseDtos = createPostResponseDtos(posts, member, now);
+		List<Post> filteredPosts = posts.stream()
+			.filter(post -> post.getAuthor().getId().equals(member.getId()) ||
+				postjoinRepository.existsByMemberAndPost(member, post))
+			.collect(Collectors.toList());
+		List<PostResponseDto> responseDtos = createPostResponseDtos(filteredPosts, member, now);
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
 	}
 
@@ -308,8 +323,12 @@ public class PostService {
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getSuccessfulRecruitmentPosts(Member member) {
 		LocalDateTime now = LocalDateTime.now();
-		List<Post> posts = postRepository.findAllByDueDateBeforeAndIsRecruitmentSuccessfulTrueOrderByCreatedAtDesc(now);
-		List<PostResponseDto> responseDtos = createPostResponseDtos(posts, member, now);
+		List<Post> posts = postRepository.findAllByDueDateBeforeAndStartDateAfterAndIsRecruitmentSuccessfulTrueOrderByCreatedAtDesc(now, now);
+		List<Post> filteredPosts = posts.stream()
+			.filter(post -> post.getAuthor().getId().equals(member.getId()) ||
+				postjoinRepository.existsByMemberAndPost(member, post))
+			.collect(Collectors.toList());
+		List<PostResponseDto> responseDtos = createPostResponseDtos(filteredPosts, member, now);
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
 	}
 
@@ -317,8 +336,73 @@ public class PostService {
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getCompletedPosts(Member member) {
 		LocalDateTime now = LocalDateTime.now();
-		List<Post> posts = postRepository.findAllByDueDateBeforeOrderByCreatedAtDesc(now);
-		List<PostResponseDto> responseDtos = createPostResponseDtos(posts, member, now);
+		List<Post> posts = postRepository.findAllByStartDateBeforeAndIsRecruitmentSuccessfulTrueOrderByCreatedAtDesc(now);
+		List<Post> filteredPosts = posts.stream()
+			.filter(post -> post.getAuthor().getId().equals(member.getId()) ||
+				postjoinRepository.existsByMemberAndPost(member, post))
+			.collect(Collectors.toList());
+		List<PostResponseDto> responseDtos = createPostResponseDtos(filteredPosts, member, now);
+		return ResponseEntity.ok(createStatusResponse(responseDtos));
+	}
+
+	// 가장 최근에 완료한 플로깅 게시글 1개 조회
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getLatestCompletedPost(Member member) {
+		LocalDateTime now = LocalDateTime.now();
+		List<Post> completedPosts = postRepository.findAllByDueDateBeforeOrderByDueDateDesc(now);
+		Optional<Post> latestCompletedPost = completedPosts.stream()
+			.filter(post -> post.getAuthor().getId().equals(member.getId()) ||
+				postjoinRepository.existsByMemberAndPost(member, post))
+			.findFirst();
+
+		if (latestCompletedPost.isPresent()) {
+			PostResponseDto responseDto = createPostResponseDto(latestCompletedPost.get(), member, now);
+			return ResponseEntity.ok(createStatusResponse(responseDto));
+		} else {
+			return ResponseEntity.ok(createStatusResponse(null));
+		}
+	}
+
+	private PostResponseDto createPostResponseDto(Post post, Member member, LocalDateTime now) {
+		List<String> urlList = postImageRepository.findAllByPost(post)
+			.stream()
+			.map(PostImage::getFileUrl)
+			.collect(Collectors.toList());
+
+		boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+		boolean hasJoined = postjoinRepository.existsByMemberAndPost(member, post);
+		boolean isJoined = isAuthor || hasJoined;
+		boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
+		boolean isEnded = now.isAfter(post.getDueDate());
+		boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
+		Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
+
+		return PostResponseDto.of(post, urlList, Optional.of(isJoined), Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
+	}
+
+	@Transactional(readOnly = true)
+	public ResponseEntity<StatusResponse> getFilteredPosts(PostFilterDto filterDto, Member member) {
+		Specification<Post> spec = Specification.where(null);
+
+		if (filterDto.getAllGender() != null) {
+			spec = spec.and(PostSpecification.withGender(filterDto.getAllGender(), member.getGender()));
+		}
+		if (filterDto.getWithPet() != null) {
+			spec = spec.and(PostSpecification.withPet(filterDto.getWithPet()));
+		}
+		if (filterDto.getDistricts() != null && !filterDto.getDistricts().isEmpty()) {
+			spec = spec.and(PostSpecification.withDistricts(filterDto.getDistricts()));
+		}
+		if (filterDto.getAllAge() != null) {
+			spec = spec.and(PostSpecification.withAgeRange(filterDto.getAllAge(), member.getAge()));
+		}
+		if (filterDto.getExcludeClosedRecruitment() != null) {
+			spec = spec.and(PostSpecification.excludeClosedRecruitment(filterDto.getExcludeClosedRecruitment()));
+		}
+
+		List<Post> filteredPosts = postRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "createdAt"));
+		List<PostResponseDto> responseDtos = createPostResponseDtos(filteredPosts, member, LocalDateTime.now());
+
 		return ResponseEntity.ok(createStatusResponse(responseDtos));
 	}
 }

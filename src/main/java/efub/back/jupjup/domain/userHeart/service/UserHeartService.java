@@ -35,15 +35,19 @@ public class UserHeartService {
 	private final PostRepository postRepository;
 	private final PostjoinRepository postjoinRepository;
 
-	public ResponseEntity<StatusResponse> giveUserHeart(Member member, UserHeartReqDto userHeartReqDto) {
-		Member target = memberRepository.findById(userHeartReqDto.getTargetId())
-			.orElseThrow(MemberNotFoundException::new);
-		Post post = postRepository.findById(userHeartReqDto.getPostId()).orElseThrow(PostNotFoundException::new);
+	public ResponseEntity<StatusResponse> giveUserHeart(Member writer, UserHeartReqDto userHeartReqDto) {
+		Post post = postRepository.findById(userHeartReqDto.getPostId())
+			.orElseThrow(PostNotFoundException::new);
 
-		checkPloggingMember(userHeartReqDto, member, target, post);
+		userHeartReqDto.getTargetIds().forEach(id -> {
+			Member target = memberRepository.findById(id)
+				.orElseThrow(MemberNotFoundException::new);
 
-		UserHeart userHeart = new UserHeart(target, post);
-		userHeartRepository.save(userHeart);
+			checkPloggingMember(writer, target, post);
+
+			UserHeart userHeart = new UserHeart(target, post);
+			userHeartRepository.save(userHeart);
+		});
 
 		return ResponseEntity.ok()
 			.body(StatusResponse.builder()
@@ -66,7 +70,7 @@ public class UserHeartService {
 	}
 
 	// 플로깅에 참여한 유저들인지 확인
-	private void checkPloggingMember(UserHeartReqDto userHeartReqDto, Member member, Member target, Post post) {
+	private void checkPloggingMember(Member writer, Member target, Post post) {
 		List<Member> joinedMembers = postjoinRepository.findAllByPost(post)
 			.stream()
 			.map(Postjoin::getMember)
@@ -75,16 +79,16 @@ public class UserHeartService {
 		joinedMembers.add(author);
 
 		Optional<Member> memberOptional = joinedMembers.stream()
-			.filter(m -> m.getId().equals(member.getId()))
+			.filter(m -> m.getId().equals(writer.getId()))
 			.findFirst();
 		Optional<Member> targetOptional = joinedMembers.stream()
 			.filter(m -> m.getId().equals(target.getId()))
 			.findFirst();
 
 		if (memberOptional.isEmpty() && targetOptional.isEmpty()) {
-			throw new PostjoinNotFoundException(member.getId(), target.getId());
+			throw new PostjoinNotFoundException(writer.getId(), target.getId());
 		} else if (memberOptional.isEmpty()) {
-			throw new PostjoinNotFoundException(member.getId());
+			throw new PostjoinNotFoundException(writer.getId());
 		} else if (targetOptional.isEmpty()) {
 			throw new PostjoinNotFoundException(target.getId());
 		}

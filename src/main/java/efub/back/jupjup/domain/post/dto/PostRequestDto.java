@@ -50,7 +50,7 @@ public class PostRequestDto {
 			.maxMember(dto.getMaxMember())
 			.postGender(dto.getPostGender())
 			.withPet(dto.isWithPet())
-			.district(District.valueOf(dto.getDistrict()))
+			.district(District.from(dto.getDistrict()))
 			.route(dto.getRoute().stream()
 				.map(routeDto -> new Route(routeDto.getAddress(), routeDto.getLatitude(), routeDto.getLongitude()))
 				.collect(Collectors.toList()))
