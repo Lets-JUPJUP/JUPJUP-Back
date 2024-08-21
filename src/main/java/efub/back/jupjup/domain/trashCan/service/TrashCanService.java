@@ -51,21 +51,23 @@ public class TrashCanService {
 		Location northEast = GeometryUtil.calculate(x, y, distance, Direction.NORTHEAST.getBearing());
 		Location southWest = GeometryUtil.calculate(x, y, distance, Direction.SOUTHWEST.getBearing());
 
+		// 경도와 위도를 맞바꿔야 합니다.
 		String pointFormat = String.format(
 			"'LINESTRING(%f %f, %f %f)'",
-			northEast.getLatitude(), northEast.getLongitude(), southWest.getLatitude(), southWest.getLongitude()
+			northEast.getLongitude(), northEast.getLatitude(), southWest.getLongitude(), southWest.getLatitude()
 		);
+
 		Query query = em.createNativeQuery(
-				"" +
-					"SELECT * \n" +
+				"SELECT * \n" +
 					"FROM trash_can AS c \n" +
 					"WHERE MBRContains(ST_LINESTRINGFROMTEXT(" + pointFormat + "), c.location)\n" +
-					"ORDER BY ST_DISTANCE(c.location, POINT(:x, :y)) ASC\n" +  // Order by distance ascending
+					"ORDER BY ST_DISTANCE(c.location, POINT(:longitude, :latitude)) ASC\n" +  // 경도, 위도 순서로 지정
 					"LIMIT 20", TrashCan.class)
-			.setParameter("x", x)
-			.setParameter("y", y);
+			.setParameter("longitude", y)  // 경도
+			.setParameter("latitude", x);  // 위도
 
 		List<TrashCan> trashCans = query.getResultList();
+		System.out.println(trashCans.size());
 		return trashCans;
 	}
 
