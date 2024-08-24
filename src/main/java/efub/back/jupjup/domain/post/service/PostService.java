@@ -266,7 +266,7 @@ public class PostService {
 		return ResponseEntity.ok(createStatusResponse(hostedPostsDtos));
 	}
 
-	// 로그인한 사용자가 주최하거나 참여한 플로깅 게시글을 조회하는 메소드
+	// 로그인한 사용자가 주최하거나 참여한 플로깅 게시글을 조회하는 메소드 (단일 리스트로 반환)
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getJoinedPosts(Member member) {
 		LocalDateTime now = LocalDateTime.now();
@@ -284,36 +284,26 @@ public class PostService {
 		Set<Post> allPosts = new LinkedHashSet<>(hostedPosts);
 		allPosts.addAll(joinedPosts);
 
-		List<PostResponseDto> activePosts = new ArrayList<>();
-		List<PostResponseDto> endedPosts = new ArrayList<>();
+		List<PostResponseDto> allPostsDtos = allPosts.stream()
+			.map(post -> {
+				List<String> urlList = postImageRepository.findAllByPost(post)
+					.stream()
+					.map(PostImage::getFileUrl)
+					.collect(Collectors.toList());
 
-		for (Post post : allPosts) {
-			List<String> urlList = postImageRepository.findAllByPost(post)
-				.stream()
-				.map(PostImage::getFileUrl)
-				.collect(Collectors.toList());
+				boolean isAuthor = member.getId().equals(post.getAuthor().getId());
+				boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
+				boolean isEnded = now.isAfter(post.getStartDate());
+				boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
+				Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
-			boolean isAuthor = member.getId().equals(post.getAuthor().getId());
-			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
-			boolean isEnded = now.isAfter(post.getStartDate());
-			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
-			Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
+				return PostResponseDto.of(post, urlList, Optional.of(true),
+					Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
+			})
+			.sorted((p1, p2) -> p2.getCreatedAt().compareTo(p1.getCreatedAt()))  // 생성일 기준 내림차순 정렬
+			.collect(Collectors.toList());
 
-			PostResponseDto dto = PostResponseDto.of(post, urlList, Optional.of(true),
-				Optional.of(isHearted), isEnded, isAuthor, isReviewed, joinedMemberCount);
-
-			if (isEnded) {
-				endedPosts.add(dto);
-			} else {
-				activePosts.add(dto);
-			}
-		}
-
-		Map<String, Object> response = new HashMap<>();
-		response.put("activePosts", activePosts);
-		response.put("endedPosts", endedPosts);
-
-		return ResponseEntity.ok(createStatusResponse(response));
+		return ResponseEntity.ok(createStatusResponse(allPostsDtos));
 	}
 
 	// 모집 중인 게시글 조회
