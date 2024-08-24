@@ -266,26 +266,36 @@ public class PostService {
 		return ResponseEntity.ok(createStatusResponse(hostedPostsDtos));
 	}
 
-	// 로그인한 사용자가 참여한 플로깅 게시글을 조회하는 메소드 (플로깅 시작 시간 이전, 이후 여부에 따라 분리)
+	// 로그인한 사용자가 주최하거나 참여한 플로깅 게시글을 조회하는 메소드
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getJoinedPosts(Member member) {
-
-		List<Postjoin> joinedPostjoins = postjoinRepository.findByMemberOrderByPostCreatedAtDesc(member);
-
 		LocalDateTime now = LocalDateTime.now();
+
+		// 사용자가 주최한 게시글 조회
+		List<Post> hostedPosts = postRepository.findAllByAuthor(member, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+		// 사용자가 참여한 게시글 조회
+		List<Postjoin> joinedPostjoins = postjoinRepository.findByMemberOrderByPostCreatedAtDesc(member);
+		List<Post> joinedPosts = joinedPostjoins.stream()
+			.map(Postjoin::getPost)
+			.collect(Collectors.toList());
+
+		// 두 리스트를 합치고 중복 제거
+		Set<Post> allPosts = new LinkedHashSet<>(hostedPosts);
+		allPosts.addAll(joinedPosts);
+
 		List<PostResponseDto> activePosts = new ArrayList<>();
 		List<PostResponseDto> endedPosts = new ArrayList<>();
 
-		joinedPostjoins.forEach(postjoin -> {
-			Post post = postjoin.getPost();
+		for (Post post : allPosts) {
 			List<String> urlList = postImageRepository.findAllByPost(post)
 				.stream()
 				.map(PostImage::getFileUrl)
 				.collect(Collectors.toList());
 
+			boolean isAuthor = member.getId().equals(post.getAuthor().getId());
 			boolean isHearted = heartRepository.existsByMemberAndPost(member, post);
 			boolean isEnded = now.isAfter(post.getStartDate());
-			boolean isAuthor = post.getAuthor().getId().equals(member.getId());
 			boolean isReviewed = scoreRepository.existsByParticipantAndPost(member, post);
 			Long joinedMemberCount = postjoinRepository.countByPost(post) + 1;
 
@@ -297,7 +307,7 @@ public class PostService {
 			} else {
 				activePosts.add(dto);
 			}
-		});
+		}
 
 		Map<String, Object> response = new HashMap<>();
 		response.put("activePosts", activePosts);
