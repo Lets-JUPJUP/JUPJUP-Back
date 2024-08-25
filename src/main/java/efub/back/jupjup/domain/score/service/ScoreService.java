@@ -2,6 +2,7 @@ package efub.back.jupjup.domain.score.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -44,14 +45,25 @@ public class ScoreService {
 
 		// 이미 리뷰에 참여한 멤버인지 확인
 		validateMemberHasNotScored(member, post);
-		
+
 		// 평점 데이터 저장
 		Score score = scoreReqDto.toEntity(scoreReqDto, post, member);
 		scoreRepository.save(score);
 
 		// 평균 평점 저장
-		AverageScore averageScore = new AverageScore(post.getAuthor());
-		System.out.println(post.getAuthor().getId());
+		Optional<AverageScore> existingAverageScoreOpt = averageScoreRepository.findByMemberId(
+			post.getAuthor().getId());
+
+		AverageScore averageScore;
+		if (existingAverageScoreOpt.isPresent()) {
+			// Update the existing AverageScore
+			averageScore = existingAverageScoreOpt.get();
+		} else {
+			// Create a new AverageScore if it doesn't exist
+			averageScore = new AverageScore(post.getAuthor());
+			System.out.println(post.getAuthor().getId());
+		}
+
 		averageScore.updateAverageScore(scoreReqDto.getScore());
 		AverageScore savedAverageScore = averageScoreRepository.save(averageScore);
 
@@ -64,7 +76,7 @@ public class ScoreService {
 
 	@Transactional(readOnly = true)
 	public ResponseEntity<StatusResponse> getAverageScore(Long memberId) {
-		BigDecimal result = averageScoreRepository.findById(memberId)
+		BigDecimal result = averageScoreRepository.findByMemberId(memberId)
 			.map(AverageScore::getAverageScore)
 			.orElse(BigDecimal.ZERO);
 
