@@ -36,7 +36,7 @@ public class MemberProfileFacade {
 		int joinCount = (int)postjoinRepository.countByMember(member);
 		int postCount = hostCount + joinCount;
 		int userHeartCount = userHeartRepository.countUserHeartsByMemberId(memberId).intValue();
-		BigDecimal averageScore = averageScoreRepository.findById(memberId)
+		BigDecimal averageScore = averageScoreRepository.findByMemberId(memberId)
 			.map(AverageScore::getAverageScore)
 			.orElse(BigDecimal.ZERO);
 
