@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import efub.back.jupjup.domain.chat.domain.Chat;
+import efub.back.jupjup.domain.chat.dto.ChatListResDto;
 import efub.back.jupjup.domain.chat.dto.ChatReqDto;
 import efub.back.jupjup.domain.chat.repository.ChatRepository;
 import efub.back.jupjup.domain.member.domain.Member;
@@ -41,7 +42,11 @@ public class ChatService {
 
 	public ResponseEntity<StatusResponse> getChatList(Member member) {
 		List<Chat> chatList = chatRepository.findByUserIdOrderByTimestampAsc(member.getId());
-		return make200Response(chatList);
+		ChatListResDto resDto = ChatListResDto.builder()
+			.count(chatList.size())
+			.chatList(chatList)
+			.build();
+		return make200Response(resDto);
 	}
 
 	public ResponseEntity<StatusResponse> resetChatRoom(Member member) {
