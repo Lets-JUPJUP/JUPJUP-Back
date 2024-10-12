@@ -2,7 +2,7 @@
 
 cd /home/ubuntu/app
 
-DOCKER_APP_NAME=server
+DOCKER_APP_NAME=jupjup
 
 EXIST_BLUE=$(docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml ps | grep Up)
 echo "$EXIST_BLUE" >> debug.log
